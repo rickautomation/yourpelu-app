@@ -1,14 +1,10 @@
 // lib/apiGet.ts
-export async function apiGet<T>(endpoint: string): Promise<T> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${endpoint}`, {
+export async function apiGet<T>(url: string): Promise<T> {
+  const res = await fetch(process.env.NEXT_PUBLIC_API_URL + url, {
     method: "GET",
-    credentials: "include", // 👈 esto manda la cookie
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
   });
-
-  if (!res.ok) {
-    const errorData = await res.json().catch(() => ({}));
-    throw new Error(errorData.message || "Error en la petición");
-  }
-
+  if (!res.ok) throw new Error("Error en la petición GET");
   return res.json() as Promise<T>;
 }

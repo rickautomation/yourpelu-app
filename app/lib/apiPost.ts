@@ -1,20 +1,26 @@
 // lib/apiPost.ts
-export async function apiPost<T>(
-  endpoint: string,
-  body: Record<string, any>
-): Promise<T> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${endpoint}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-    credentials: "include", // 👈 importante para que se guarde la cookie auth_token
-  });
+import axios, { AxiosError } from "axios";
 
-  if (!res.ok) {
-    // Podés lanzar un error con el mensaje del backend
-    const errorData = await res.json().catch(() => ({}));
-    throw new Error(errorData.message || "Error en la petición");
+export async function apiPost<T>(url: string, body: any): Promise<T> {
+  try {
+    const res = await axios.post<T>(
+      process.env.NEXT_PUBLIC_API_URL + url,
+      body,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`, // 👈 importante si usás JWT
+        },
+        withCredentials: true, // equivalente a credentials: "include"
+      }
+    );
+    return res.data;
+  } catch (err) {
+    const error = err as AxiosError;
+    // Lanzamos un error con más contexto
+    if (error.response) {
+      throw new Error(`HTTP ${error.response.status}`);
+    }
+    throw new Error("Error en la petición POST");
   }
-
-  return res.json() as Promise<T>;
 }

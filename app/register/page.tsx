@@ -16,6 +16,7 @@ export default function RegisterPage({ setView }: Props) {
     name: "",
     lastname: "",
     phoneNumber: "",
+    email: "",       // 👈 agregado
     password: "",
   });
   const [message, setMessage] = useState("");
@@ -38,7 +39,7 @@ export default function RegisterPage({ setView }: Props) {
   return (
     <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-900 animate-slideIn px-4">
       {/* Logo más arriba */}
-      <div className="absolute top-20 text-5xl font-bold">
+      <div className="absolute top-16 text-5xl font-bold">
         <button
           onClick={() => setView?.("home")}
           className="hover:text-pink-400 transition-colors"
@@ -82,6 +83,14 @@ export default function RegisterPage({ setView }: Props) {
           placeholder="Teléfono"
           value={form.phoneNumber}
           onChange={(e) => setForm({ ...form, phoneNumber: e.target.value })}
+          className="px-3 py-2 rounded bg-gray-800 text-white"
+          required
+        />
+        <input
+          type="email"
+          placeholder="Email"              // 👈 nuevo campo
+          value={form.email}
+          onChange={(e) => setForm({ ...form, email: e.target.value })}
           className="px-3 py-2 rounded bg-gray-800 text-white"
           required
         />

@@ -52,3 +52,15 @@ body {
   animation: fadeInOut 2s ease-in-out forwards;
 }
 
+.selectEllipsis {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.optionEllipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+

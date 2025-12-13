@@ -3,12 +3,18 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { apiGet } from "./apiGet";
 
+type Barbershop = {
+  id: string;
+  name: string;
+};
+
 interface User {
   id: string;
   name: string;
   lastname: string;
   phoneNumber: string;
   rol: string;
+  barbershop?: Barbershop; // 👈 ahora el user trae barbería
 }
 
 export function useAuth() {

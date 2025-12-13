@@ -12,7 +12,7 @@ interface Props {
 
 export default function LoginPage({ setView }: Props) {
   const router = useRouter();
-  const [form, setForm] = useState({ phoneNumber: "", password: "" });
+  const [form, setForm] = useState({ identifier: "", password: "" }); // 👈 usamos identifier
   const [message, setMessage] = useState("");
 
   async function handleSubmit(e: React.FormEvent) {
@@ -58,10 +58,10 @@ export default function LoginPage({ setView }: Props) {
         className="w-full max-w-sm flex flex-col gap-4"
       >
         <input
-          type="tel"
-          placeholder="Teléfono"
-          value={form.phoneNumber}
-          onChange={(e) => setForm({ ...form, phoneNumber: e.target.value })}
+          type="text"
+          placeholder="Teléfono o Email" // 👈 ahora puede ser cualquiera
+          value={form.identifier}
+          onChange={(e) => setForm({ ...form, identifier: e.target.value })}
           className="px-3 py-2 rounded bg-gray-800 text-white"
           required
         />
