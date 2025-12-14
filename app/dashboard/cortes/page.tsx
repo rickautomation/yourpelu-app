@@ -4,6 +4,13 @@ import { apiGet } from "@/app/lib/apiGet";
 import { apiPost } from "@/app/lib/apiPost";
 import { useAuth } from "@/app/lib/useAuth";
 
+type Haircut = {
+  id: string;
+  createdAt: string;
+  type: HaircutType;
+  style?: HaircutStyle;
+};
+
 type HaircutType = {
   id: string;
   name: string;
@@ -30,6 +37,8 @@ export default function HaircutsPage() {
 
   const [showDropdown, setShowDropdown] = useState(false);
   const [showTypeDropdown, setShowTypeDropdown] = useState(false);
+
+  const [recentHaircuts, setRecentHaircuts] = useState<Haircut[]>([]);
 
   const [message, setMessage] = useState<{
     type: "success" | "error";
@@ -63,6 +72,19 @@ export default function HaircutsPage() {
     setMessage({ type, text });
     setTimeout(() => setMessage(null), 3000);
   };
+
+  useEffect(() => {
+    const fetchRecent = async () => {
+      try {
+        const data = await apiGet<Haircut[]>(`/haircuts/user/${user?.id}/last`);
+        console.log("Últimos cortes recibidos:", data);
+        setRecentHaircuts(data);
+      } catch (err) {
+        console.error("Error cargando últimos cortes", err);
+      }
+    };
+    if (user?.id) fetchRecent();
+  }, [user]);
 
   const handleAddHaircut = async () => {
     if (!selectedType) return;
@@ -250,6 +272,42 @@ export default function HaircutsPage() {
               </div>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Últimos cortes */}
+      {recentHaircuts.length > 0 && (
+        <div className="bg-gray-800 p-4 rounded-lg shadow-md flex flex-col gap-3">
+          <p className="text-xl font-semibold text-white">Últimos cortes</p>
+          <div className="flex flex-col gap-3">
+            {recentHaircuts.map((h) => (
+              <div
+                key={h.id}
+                className="bg-gray-700 rounded-md p-3 flex justify-between items-center shadow"
+              >
+                {/* Tipo y estilo en columna */}
+                <div className="flex flex-col text-white font-medium">
+                  <span>{h.type.name}</span>
+                  {h.style && (
+                    <span className="text-sm text-gray-300">
+                      🎨 {h.style.name}
+                    </span>
+                  )}
+                </div>
+
+                {/* Fecha y hora en columna */}
+                <span className="text-sm text-gray-400 flex flex-col items-end">
+                  <span>{new Date(h.createdAt).toLocaleDateString()}</span>
+                  <span>
+                    {new Date(h.createdAt).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </span>
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 

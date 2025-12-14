@@ -52,15 +52,34 @@ body {
   animation: fadeInOut 2s ease-in-out forwards;
 }
 
-.selectEllipsis {
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.optionEllipsis {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.react-datepicker {
+  background-color: #1f2937; /* bg-gray-800 */
+  border: 1px solid #374151; /* border-gray-700 */
+  color: #fff;
+  border-radius: 0.5rem;
 }
 
+.react-datepicker__header {
+  background-color: #111827; /* bg-gray-900 */
+  border-bottom: 1px solid #374151;
+}
+
+.react-datepicker__current-month {
+  color: #a78bfa; /* purple-400 */
+}
+
+.react-datepicker__day-name,
+.react-datepicker__day {
+  color: #d1d5db; /* gray-300 */
+}
+
+.react-datepicker__day--selected,
+.react-datepicker__day--keyboard-selected {
+  background-color: #7c3aed; /* purple-600 */
+  color: #fff;
+}
+
+.react-datepicker__day:hover {
+  background-color: #4c1d95; /* purple-900 */
+  color: #fff;
+}
