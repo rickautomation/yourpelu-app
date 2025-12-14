@@ -21,7 +21,7 @@ export default function DashboardLayout({
         {/* Overlay: clic fuera cierra */}
         {sidebarOpen && (
           <div
-            className="fixed top-14 left-0 h-[calc(100%-56px)] w-64 bg-black bg-opacity-50 z-30"
+            className="fixed top-14 left-64 h-[calc(100%-56px)] w-[calc(100%-16rem)] z-30"
             onClick={() => setSidebarOpen(false)}
           />
         )}
