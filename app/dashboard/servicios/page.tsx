@@ -29,22 +29,28 @@ export default function ServicesPage() {
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   useEffect(() => {
-    const fetchServices = async () => {
-      try {
-        const global = await apiGet<HaircutType[]>("/haircut-types");
-        const own = await apiGet<HaircutType[]>(
-          `/client-haircut-types/barbershop/${user?.barbershop?.id}`
-        );
-        setGlobalServices(global);
-        setOwnServices(own);
-      } catch (err) {
-        console.error("Error cargando servicios", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    if (user?.barbershop?.id) fetchServices();
-  }, [user]);
+  const fetchServices = async () => {
+    try {
+      const global = await apiGet<HaircutType[]>("/haircut-types");
+      const own = await apiGet<HaircutType[]>(
+        `/client-haircut-types/barbershop/${user?.barbershop?.id}`
+      );
+      setGlobalServices(global);
+      setOwnServices(own);
+    } catch (err) {
+      console.error("Error cargando servicios", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (user?.barbershop?.id) {
+    fetchServices();
+  } else {
+    // 👇 si no hay barbería, igual desactivamos loading
+    setLoading(false);
+  }
+}, [user]);
 
   const showTempMessage = (type: "success" | "error", text: string) => {
     setMessage({ type, text });
