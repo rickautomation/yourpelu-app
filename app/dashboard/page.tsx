@@ -1,17 +1,16 @@
 // app/dashboard/page.tsx
 "use client";
+import { useEffect, useState } from "react";
 import { useAuth } from "../lib/useAuth";
 
 export default function DashboardPage() {
   const { user, loading, isUnauthorized, router, isAuthenticated } = useAuth();
 
-  console.log("isUnauthorized", isUnauthorized);
-
-  // if (loading) return <p>Cargando...</p>;
-  // if (isUnauthorized) {
-  //   router.push("/login");
-  //   return null;
-  // }
+  if (loading) return <p>Cargando...</p>;
+  if (isUnauthorized) {
+    router.push("/login");
+    return null;
+  }
 
   console.log("user", 10, user)
   console.log("isUnauthorized", isUnauthorized)
