@@ -20,8 +20,14 @@ export default function LoginPage({ setView }: Props) {
     setMessage("");
 
     try {
-      const data = await apiPost<{ ok: boolean }>("/auth/login", form);
+      const data = await apiPost<{ ok: boolean; token?: string }>(
+        "/auth/login",
+        form
+      );
       if (data.ok) {
+        if (data.token) {
+          localStorage.setItem("token", data.token);
+        }
         setMessage("Login exitoso ✅");
         router.push("/dashboard");
       }

@@ -4,7 +4,6 @@ import { View } from "@/app/types";
 import { useState } from "react";
 import { apiPost } from "../lib/apiPost";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 
 interface Props {
   setView: React.Dispatch<React.SetStateAction<View>>;
@@ -16,7 +15,7 @@ export default function RegisterPage({ setView }: Props) {
     name: "",
     lastname: "",
     phoneNumber: "",
-    email: "",       // 👈 agregado
+    email: "", // 👈 agregado
     password: "",
   });
   const [message, setMessage] = useState("");
@@ -26,8 +25,14 @@ export default function RegisterPage({ setView }: Props) {
     setMessage("");
 
     try {
-      const data = await apiPost<{ ok: boolean }>("/auth/register", form);
+      const data = await apiPost<{ ok: boolean; token?: string }>(
+        "/auth/register",
+        form
+      );
       if (data.ok) {
+        if (data.token) {
+          localStorage.setItem("token", data.token);
+        }
         setMessage("Registro exitoso ✅");
         router.push("/dashboard");
       }
@@ -88,7 +93,7 @@ export default function RegisterPage({ setView }: Props) {
         />
         <input
           type="email"
-          placeholder="Email"              // 👈 nuevo campo
+          placeholder="Email" // 👈 nuevo campo
           value={form.email}
           onChange={(e) => setForm({ ...form, email: e.target.value })}
           className="px-3 py-2 rounded bg-gray-800 text-white"
@@ -116,13 +121,13 @@ export default function RegisterPage({ setView }: Props) {
       <div className="flex gap-4 mt-6">
         <button
           onClick={() => setView?.("login")}
-          className="text-sm text-gray-400 hover:text-pink-400"
+          className="text-lg text-gray-400 hover:text-pink-400"
         >
           Ir a Login →
         </button>
         <button
           onClick={() => setView?.("home")}
-          className="text-sm text-gray-400 hover:text-pink-400"
+          className="text-lg text-gray-400 hover:text-pink-400"
         >
           ← Volver
         </button>
