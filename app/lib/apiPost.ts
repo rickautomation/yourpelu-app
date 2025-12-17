@@ -1,19 +1,21 @@
-// lib/apiPost.ts
 import axios, { AxiosError } from "axios";
 
 export async function apiPost<T>(url: string, body: any): Promise<T> {
   try {
+    const token = localStorage.getItem("auth_token"); // 👈 unificado
+
     const res = await axios.post<T>(
       process.env.NEXT_PUBLIC_API_URL + url,
       body,
       {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("auth_token")}`, // 👈 unificado
+          ...(token ? { Authorization: `Bearer ${token}` } : {}), // 👈 igual que apiGet
         },
         withCredentials: true, // cookies si existen
       }
     );
+
     return res.data;
   } catch (err) {
     const error = err as AxiosError;

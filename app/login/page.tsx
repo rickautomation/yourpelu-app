@@ -4,7 +4,6 @@ import { View } from "@/app/types";
 import { useState } from "react";
 import { apiPost } from "../lib/apiPost";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 
 interface Props {
   setView: React.Dispatch<React.SetStateAction<View>>;
@@ -20,10 +19,15 @@ export default function LoginPage({ setView }: Props) {
     setMessage("");
 
     try {
-      const data = await apiPost<{ ok: boolean, token: string }>("/auth/login", form);
+      const data = await apiPost<{ ok: boolean; token?: string }>(
+        "/auth/login",
+        form
+      );
       if (data.ok) {
+        if (data.token) {
+          localStorage.setItem("auth_token", data.token);
+        }
         setMessage("Login exitoso ✅");
-        localStorage.setItem("auth_token", data.token);
         router.push("/dashboard");
       }
     } catch (err: any) {

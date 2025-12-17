@@ -16,9 +16,6 @@ export default function BarbershopPage() {
   const [barbershop, setBarbershop] = useState<Barbershop | null>(null);
   const [isEditing, setIsEditing] = useState(false);
 
-  console.log("user", user);
-  console.log("isAuthenticated", isAuthenticated);
-
   // 🔄 función para traer barbería
   const fetchBarbershop = async () => {
     if (user) {
