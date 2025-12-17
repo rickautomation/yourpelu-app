@@ -1,49 +1,3 @@
-// "use client";
-// import { useEffect, useState } from "react";
-// import { useRouter } from "next/navigation";
-// import { apiGet } from "./apiGet";
-
-// type Barbershop = {
-//   id: string;
-//   name: string;
-// };
-
-// interface User {
-//   id: string;
-//   name: string;
-//   lastname: string;
-//   phoneNumber: string;
-//   rol: string;
-//   barbershop?: Barbershop; // 👈 ahora el user trae barbería
-// }
-
-// export function useAuth() {
-//   const [user, setUser] = useState<User | null>(null);
-//   const [loading, setLoading] = useState(true);
-//   const [error, setError] = useState<string | null>(null);
-//   const router = useRouter();
-
-//   useEffect(() => {
-//     async function fetchUser() {
-//       try {
-//         const data = await apiGet<User>("/auth/me");
-//         setUser(data);
-//       } catch (err: any) {
-//         setError(err.message || "No autorizado");
-//         setUser(null);
-//       } finally {
-//         setLoading(false);
-//       }
-//     }
-//     fetchUser();
-//   }, []);
-
-//   // Helpers para el estado
-//   const isAuthenticated = !!user && !error;
-//   const isUnauthorized = !!error && !user;
-
-//   return { user, loading, error, isAuthenticated, isUnauthorized, router };
-// }
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -76,8 +30,7 @@ export function useAuth() {
         const data = await apiGet<User>("/auth/me");
         setUser(data);
         setError(null);
-      } catch (err: any) {
-        // Fallback: usar token de localStorage si existe
+      } catch (err) {
         const token = localStorage.getItem("auth_token");
         if (token) {
           try {
@@ -85,6 +38,7 @@ export function useAuth() {
               process.env.NEXT_PUBLIC_API_URL + "/auth/me",
               {
                 headers: { Authorization: `Bearer ${token}` },
+                credentials: "include",
               }
             );
             if (res.ok) {
@@ -97,7 +51,9 @@ export function useAuth() {
             console.error("Fallback también falló", e);
           }
         }
-        setError(err.message || "No autorizado");
+        const errorMsg =
+          err instanceof Error ? err.message : "No autorizado";
+        setError(errorMsg);
         setUser(null);
       } finally {
         setLoading(false);
@@ -109,5 +65,12 @@ export function useAuth() {
   const isAuthenticated = !!user && !error;
   const isUnauthorized = !!error && !user;
 
-  return { user, loading, error, isAuthenticated, isUnauthorized, router };
+  // Helper opcional
+  const logout = () => {
+    localStorage.removeItem("auth_token");
+    setUser(null);
+    router.push("/login");
+  };
+
+  return { user, loading, error, isAuthenticated, isUnauthorized, router, logout };
 }

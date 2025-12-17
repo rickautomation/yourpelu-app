@@ -1,15 +1,27 @@
 export async function apiGet<T>(url: string): Promise<T> {
-  const auth_token = localStorage.getItem("auth_token");
+  const isPublic = url.includes("me-fake") || url.includes("login") || url.includes("register");
+
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
 
   const res = await fetch(process.env.NEXT_PUBLIC_API_URL + url, {
     method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      ...(auth_token ? { Authorization: `Bearer ${auth_token}` } : {}), // 👈 fallback localStorage
-    },
-    credentials: "include", // 👈 cookies si están disponibles
+    headers,
+    credentials: "include",
   });
 
-  if (!res.ok) throw new Error("Error en la petición GET");
+  if (!res.ok) {
+    let msg = `Error en la petición GET (HTTP ${res.status})`;
+    try {
+      const errorData = await res.json();
+      msg = errorData.message || msg;
+    } catch {
+      const text = await res.text();
+      if (text) msg = text;
+    }
+    throw new Error(msg);
+  }
+
   return res.json() as Promise<T>;
 }

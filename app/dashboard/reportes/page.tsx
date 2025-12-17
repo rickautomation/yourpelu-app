@@ -1,8 +1,9 @@
 "use client";
 import { useState } from "react";
 import { apiGet } from "@/app/lib/apiGet";
-import { useAuth } from "@/app/lib/useAuth";
+//import { useAuth } from "@/app/lib/useAuth";
 import DarkDatePicker from "@/app/components/DarkDatePicker";
+import { useFakeAuth } from "@/app/lib/useFakeAuth";
 
 type BalanceItem = { label: string; totalIncome: number };
 type CloseDayResponse = {
@@ -14,7 +15,8 @@ type CloseDayResponse = {
 type BalanceResponse = { items: BalanceItem[]; total: number };
 
 export default function ReportsPage() {
-  const { user } = useAuth();
+  const { user } = useFakeAuth();
+
   const [filter, setFilter] = useState<"barber" | "style" | "type" | "month">(
     "month"
   );

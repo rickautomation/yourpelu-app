@@ -2,7 +2,8 @@
 import { useEffect, useState } from "react";
 import { apiGet } from "@/app/lib/apiGet";
 import { apiPost } from "@/app/lib/apiPost";
-import { useAuth } from "@/app/lib/useAuth";
+//import { useAuth } from "@/app/lib/useAuth";
+import { useFakeAuth } from "@/app/lib/useFakeAuth";
 
 type HaircutType = {
   id: string;
@@ -13,10 +14,11 @@ type HaircutType = {
 };
 
 export default function ServicesPage() {
+  const { user } = useFakeAuth();
+
   const [globalServices, setGlobalServices] = useState<HaircutType[]>([]);
   const [ownServices, setOwnServices] = useState<HaircutType[]>([]);
   const [loading, setLoading] = useState(true);
-  const { user } = useAuth();
 
   const [showForm, setShowForm] = useState<"own" | "template" | null>(null);
   const [newName, setNewName] = useState("");

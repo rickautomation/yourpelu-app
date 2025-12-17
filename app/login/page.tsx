@@ -35,6 +35,27 @@ export default function LoginPage({ setView }: Props) {
     }
   }
 
+  async function handleFakeSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setMessage("");
+
+    try {
+      const data = await apiPost<{ ok: boolean; token?: string }>(
+        "/auth/login",
+        form
+      );
+      if (data.ok) {
+        if (data.token) {
+          localStorage.setItem("auth_token", data.token);
+        }
+        setMessage("Login exitoso ✅");
+        router.push("/dashboard");
+      }
+    } catch (err: any) {
+      setMessage(err.message);
+    }
+  }
+
   return (
     <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-900 animate-slideIn px-4">
       {/* Logo más arriba */}
@@ -59,7 +80,7 @@ export default function LoginPage({ setView }: Props) {
 
       {/* Formulario */}
       <form
-        onSubmit={handleSubmit}
+        onSubmit={handleFakeSubmit}
         className="w-full max-w-sm flex flex-col gap-4"
       >
         <input
