@@ -1,14 +1,15 @@
 // NavBar.tsx
 "use client";
 import Link from "next/link";
-import { useAuth } from "../lib/useAuth";
+//import { useAuth } from "../lib/useAuth";
+import { useFakeAuth } from "../lib/useFakeAuth";
 
 export default function Navbar({
   onToggleSidebar,
 }: {
   onToggleSidebar?: () => void;
 }) {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated } = useFakeAuth();
 
   return (
     <header className="w-full flex items-center justify-between bg-gray-900 text-white px-4 py-3">

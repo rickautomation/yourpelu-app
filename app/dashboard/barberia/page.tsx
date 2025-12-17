@@ -2,12 +2,13 @@
 import { useEffect, useState } from "react";
 import { apiPost } from "@/app/lib/apiPost";
 import { apiGet } from "@/app/lib/apiGet";
-import { useAuth } from "@/app/lib/useAuth";
+//import { useAuth } from "@/app/lib/useAuth";
 import { Barbershop } from "@/app/interfaces";
 import { apiUpdate } from "@/app/lib/apiUpdate";
+import { useFakeAuth } from "@/app/lib/useFakeAuth";
 
 export default function BarbershopPage() {
-  const { user, loading, isAuthenticated } = useAuth();
+  const { user, loading, isAuthenticated } = useFakeAuth();
 
   const [name, setName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");

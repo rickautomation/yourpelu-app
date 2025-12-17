@@ -1,16 +1,17 @@
 // app/dashboard/page.tsx
 "use client";
-import { useEffect, useState } from "react";
-import { useAuth } from "../lib/useAuth";
+import { useFakeAuth } from "../lib/useFakeAuth";
 
 export default function DashboardPage() {
-  const { user, loading, isUnauthorized, router, isAuthenticated } = useAuth();
+  const { user, loading, isUnauthorized, router, isAuthenticated } = useFakeAuth();
 
-  if (loading) return <p>Cargando...</p>;
-  if (isUnauthorized) {
-    router.push("/login");
-    return null;
-  }
+  // if (loading) return <p>Cargando...</p>;
+  // if (isUnauthorized) {
+  //   router.push("/login");
+  //   return null;
+  // }
+
+  console.log("user", user)
 
   return (
     <div className="flex flex-col space-y-2">
