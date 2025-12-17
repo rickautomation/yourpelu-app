@@ -6,15 +6,11 @@ import { useAuth } from "../lib/useAuth";
 export default function DashboardPage() {
   const { user, loading, isUnauthorized, router, isAuthenticated } = useAuth();
 
-  // if (loading) return <p>Cargando...</p>;
-  // if (isUnauthorized) {
-  //   router.push("/login");
-  //   return null;
-  // }
-
-  console.log("user", 10, user)
-  console.log("isUnauthorized", isUnauthorized)
-  console.log("isAuthenticated", isAuthenticated)
+  if (loading) return <p>Cargando...</p>;
+  if (isUnauthorized) {
+    router.push("/login");
+    return null;
+  }
 
   return (
     <div className="flex flex-col space-y-2">
