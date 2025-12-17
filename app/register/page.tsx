@@ -37,6 +37,7 @@ export default function RegisterPage({ setView }: Props) {
         router.push("/dashboard");
       }
     } catch (err: any) {
+      console.log("err", err)
       setMessage(err.message);
     }
   }
