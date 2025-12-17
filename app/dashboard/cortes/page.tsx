@@ -46,27 +46,31 @@ export default function HaircutsPage() {
   } | null>(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const own = await apiGet<HaircutType[]>(
-          `/client-haircut-types/barbershop/${user?.barbershop?.id}`
-        );
-        console.log("Tipos propios recibidos:", own); // 👈 log para ver IDs
-        setOwnTypes(own);
+  const fetchData = async () => {
+    try {
+      const own = await apiGet<HaircutType[]>(
+        `/client-haircut-types/barbershop/${user?.barbershop?.id}`
+      );
+      setOwnTypes(own);
 
-        const stylesData = await apiGet<HaircutStyle[]>(
-          `/haircut-styles/barbershop/${user?.barbershop?.id}`
-        );
-        console.log("Estilos recibidos:", stylesData); // 👈 log para ver IDs
-        setStyles(stylesData);
-      } catch (err) {
-        console.error("Error cargando datos", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    if (user?.barbershop?.id) fetchData();
-  }, [user]);
+      const stylesData = await apiGet<HaircutStyle[]>(
+        `/haircut-styles/barbershop/${user?.barbershop?.id}`
+      );
+      setStyles(stylesData);
+    } catch (err) {
+      console.error("Error cargando datos", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (user?.barbershop?.id) {
+    fetchData();
+  } else {
+    // 👇 si no hay barbería, igual desactivamos loading
+    setLoading(false);
+  }
+}, [user]);
 
   const showTempMessage = (type: "success" | "error", text: string) => {
     setMessage({ type, text });
