@@ -1,11 +1,11 @@
 export async function apiGet<T>(url: string): Promise<T> {
-  const token = localStorage.getItem("token");
+  const auth_token = localStorage.getItem("auth_token");
 
   const res = await fetch(process.env.NEXT_PUBLIC_API_URL + url, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}), // 👈 fallback localStorage
+      ...(auth_token ? { Authorization: `Bearer ${auth_token}` } : {}), // 👈 fallback localStorage
     },
     credentials: "include", // 👈 cookies si están disponibles
   });

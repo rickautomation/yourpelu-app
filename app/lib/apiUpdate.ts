@@ -1,5 +1,5 @@
 export async function apiUpdate<T>(url: string, body: any): Promise<T> {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("auth_token");
 
   const res = await fetch(process.env.NEXT_PUBLIC_API_URL + url, {
     method: "PUT",
