@@ -41,7 +41,6 @@ export default function ReportsPage() {
     selectedFilter?: "barber" | "style" | "type" | "month"
   ) => {
     const effectiveFilter = selectedFilter ?? filter;
-    console.log("filter en fetchBalance: ", effectiveFilter);
     if (!user?.barbershop?.id) return;
     setLoadingBalance(true);
     try {
