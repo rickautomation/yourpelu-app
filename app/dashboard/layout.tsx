@@ -67,6 +67,12 @@ export default function DashboardLayout({
                 ✂️ Cortes
               </Link>
               <Link
+                href="/dashboard/haircut-styles"
+                onClick={() => setSidebarOpen(false)}
+              >
+                💇‍♂️ Estilos
+              </Link>
+              <Link
                 href="/dashboard/coloraciones"
                 onClick={() => setSidebarOpen(false)}
               >

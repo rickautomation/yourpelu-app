@@ -13,6 +13,7 @@ type HaircutStyle = {
 export default function HaircutStylesPage() {
   const { user, loading, isUnauthorized, router } = useFakeAuth();
   const [styles, setStyles] = useState<HaircutStyle[]>([]);
+  const [barbershopId, setBarbershopId] = useState<string>("");
   const [showForm, setShowForm] = useState(false);
 
   // campos del formulario
@@ -20,14 +21,10 @@ export default function HaircutStylesPage() {
   const [description, setDescription] = useState("");
   const [message, setMessage] = useState<string | null>(null);
 
-  const barbershopId = user?.barbershop?.id ?? ""; // 👈 patrón consistente
-
   const fetchStyles = async (shopId: string) => {
     try {
       if (shopId) {
-        const res = await apiGet<HaircutStyle[]>(
-          `/haircut-styles/barbershop/${shopId}`
-        );
+        const res = await apiGet<HaircutStyle[]>(`/haircut-styles/barbershop/${shopId}`);
         setStyles(res);
       }
     } catch (err) {
@@ -41,7 +38,7 @@ export default function HaircutStylesPage() {
       await apiPost<HaircutStyle>("/haircut-styles", {
         name,
         description,
-        ...(barbershopId && { barbershopId }), // 👈 incluir solo si existe
+        barbershopId, // 👈 opcional, si quieres asociar el estilo a la barbería
       });
       setMessage("Estilo creado ✅");
       setName("");
@@ -57,6 +54,12 @@ export default function HaircutStylesPage() {
   };
 
   useEffect(() => {
+    if (user?.rol === "admin" && user?.barbershop?.id) {
+      setBarbershopId(user.barbershop.id);
+    }
+  }, [user]);
+
+  useEffect(() => {
     if (barbershopId) {
       fetchStyles(barbershopId);
     }
@@ -70,12 +73,15 @@ export default function HaircutStylesPage() {
 
   return (
     <div className="flex flex-col space-y-2">
+      <h1 className="text-2xl font-bold">Estilos de Corte</h1>
+
       {message && (
         <div className="mb-4 bg-pink-500 text-white text-center py-2 rounded">
           {message}
         </div>
       )}
 
+      {/* Bloque para agregar estilos */}
       {!showForm && (
         <div className="flex items-center px-6 py-4 bg-gray-800 rounded-lg shadow-md">
           <p className="text-xl font-semibold">Agrega tus estilos</p>
@@ -88,6 +94,7 @@ export default function HaircutStylesPage() {
         </div>
       )}
 
+      {/* Formulario */}
       {showForm && (
         <form
           onSubmit={handleSubmit}
@@ -131,23 +138,20 @@ export default function HaircutStylesPage() {
         </form>
       )}
 
-      {/* Lista de estilos: solo se muestra si el form NO está abierto */}
-      {!showForm &&
-        (styles.length === 0 ? (
-          <p className="text-gray-400 text-center">No hay estilos aún.</p>
-        ) : (
-          styles.map((style) => (
-            <div
-              key={style.id}
-              className="flex flex-col px-6 py-4 bg-gray-700 rounded-lg shadow-md"
-            >
-              <p className="text-xl font-semibold">{style.name}</p>
-              <p className="text-gray-300">
-                {style.description || "Sin descripción"}
-              </p>
-            </div>
-          ))
-        ))}
+      {/* Lista de estilos */}
+      {styles.length === 0 ? (
+        <p className="text-gray-400 text-center">No hay estilos aún.</p>
+      ) : (
+        styles.map((style) => (
+          <div
+            key={style.id}
+            className="flex flex-col px-6 py-4 bg-gray-700 rounded-lg shadow-md"
+          >
+            <p className="text-xl font-semibold">{style.name}</p>
+            <p className="text-gray-300">{style.description || "Sin descripción"}</p>
+          </div>
+        ))
+      )}
     </div>
   );
 }
