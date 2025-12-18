@@ -1,5 +1,9 @@
 export async function apiUpdate<T>(url: string, body: any): Promise<T> {
   const res = await fetch(process.env.NEXT_PUBLIC_API_URL + url, {
+    method: "PUT", // 👈 importante
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify(body),
   });
 
