@@ -142,7 +142,7 @@ export default function HaircutStylesPage() {
               className="flex flex-col px-6 py-4 bg-gray-700 rounded-lg shadow-md"
             >
               <p className="text-xl font-semibold">{style.name}</p>
-              <p className="text-gray-300">
+              <p className="text-pink-400">
                 {style.description || "Sin descripción"}
               </p>
             </div>

@@ -83,7 +83,7 @@ export default function BarbershopPage() {
   if (!isAuthenticated) return <p className="text-white">No autorizado</p>;
 
   return (
-    <div className="flex items-center justify-center bg-gray-950 text-white">
+    <div className="flex items-center justify-center bg-gray-950 text-white text-center ">
       <div className="w-full max-w-md rounded-lg shadow-lg pt-0">
         {message && (
           <div className="mb-4 bg-pink-500 text-white text-center py-2 rounded">
@@ -94,7 +94,7 @@ export default function BarbershopPage() {
         {barbershop && !isEditing ? (
           // 📌 Vista de barbería existente
           <div className="p-4 bg-gray-800 rounded">
-            <h2 className="font-bold text-lg mb-2">{barbershop.name}</h2>
+            <h2 className="font-bold text-4xl mb-2">{barbershop.name}</h2>
             <p>📞 {barbershop.phoneNumber}</p>
             <p>📍 {barbershop.address}</p>
             <button
