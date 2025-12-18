@@ -31,12 +31,13 @@ export default function RegisterPage({ setView }: Props) {
       );
       if (data.ok) {
         if (data.token) {
-          localStorage.setItem("token", data.token);
+          localStorage.setItem("auth_token", data.token);
         }
         setMessage("Registro exitoso ✅");
         router.push("/dashboard");
       }
     } catch (err: any) {
+      console.log("err", err)
       setMessage(err.message);
     }
   }
