@@ -73,8 +73,6 @@ export default function HaircutStylesPage() {
 
   return (
     <div className="flex flex-col space-y-2">
-      <h1 className="text-2xl font-bold">Estilos de Corte</h1>
-
       {message && (
         <div className="mb-4 bg-pink-500 text-white text-center py-2 rounded">
           {message}
