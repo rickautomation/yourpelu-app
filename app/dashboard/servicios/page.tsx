@@ -2,152 +2,277 @@
 import { useEffect, useState } from "react";
 import { apiGet } from "@/app/lib/apiGet";
 import { apiPost } from "@/app/lib/apiPost";
+//import { useAuth } from "@/app/lib/useAuth";
 import { useFakeAuth } from "@/app/lib/useFakeAuth";
 
-type HaircutStyle = {
+type HaircutType = {
   id: string;
   name: string;
   description?: string;
+  price?: number;
+  baseType?: { id: string }; // 👈 agregar esta propiedad opcional
 };
 
-export default function HaircutStylesPage() {
-  const { user, loading, isUnauthorized, router } = useFakeAuth();
-  const [styles, setStyles] = useState<HaircutStyle[]>([]);
-  const [showForm, setShowForm] = useState(false);
+export default function ServicesPage() {
+  const { user } = useFakeAuth();
 
-  // campos del formulario
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [message, setMessage] = useState<string | null>(null);
+  const [globalServices, setGlobalServices] = useState<HaircutType[]>([]);
+  const [ownServices, setOwnServices] = useState<HaircutType[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const barbershopId = user?.barbershop?.id ?? ""; // 👈 patrón consistente
+  const [showForm, setShowForm] = useState<"own" | "template" | null>(null);
+  const [newName, setNewName] = useState("");
+  const [newDescription, setNewDescription] = useState("");
+  const [newPrice, setNewPrice] = useState<number>(0);
 
-  const fetchStyles = async (shopId: string) => {
-    try {
-      if (shopId) {
-        const res = await apiGet<HaircutStyle[]>(
-          `/haircut-styles/barbershop/${shopId}`
-        );
-        setStyles(res);
-      }
-    } catch (err) {
-      console.error("Error cargando estilos", err);
-    }
-  };
+  const [openPriceInput, setOpenPriceInput] = useState<string | null>(null);
+  const [price, setPrice] = useState<string>("");
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      await apiPost<HaircutStyle>("/haircut-styles", {
-        name,
-        description,
-        ...(barbershopId && { barbershopId }), // 👈 incluir solo si existe
-      });
-      setMessage("Estilo creado ✅");
-      setName("");
-      setDescription("");
-      setShowForm(false);
-      await fetchStyles(barbershopId);
-      setTimeout(() => setMessage(null), 2000);
-    } catch (err: any) {
-      console.error(err);
-      setMessage(err.message || "Error al crear estilo ❌");
-      setTimeout(() => setMessage(null), 2000);
-    }
-  };
+  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   useEffect(() => {
-    if (barbershopId) {
-      fetchStyles(barbershopId);
+  const fetchServices = async () => {
+    try {
+      const global = await apiGet<HaircutType[]>("/haircut-types");
+      const own = await apiGet<HaircutType[]>(
+        `/client-haircut-types/barbershop/${user?.barbershop?.id}`
+      );
+      setGlobalServices(global);
+      setOwnServices(own);
+    } catch (err) {
+      console.error("Error cargando servicios", err);
+    } finally {
+      setLoading(false);
     }
-  }, [barbershopId]);
+  };
+
+  if (user?.barbershop?.id) {
+    fetchServices();
+  } else {
+    // 👇 si no hay barbería, igual desactivamos loading
+    setLoading(false);
+  }
+}, [user]);
+
+  const showTempMessage = (type: "success" | "error", text: string) => {
+    setMessage({ type, text });
+    setTimeout(() => setMessage(null), 3000);
+  };
+
+  const handleAddOwnService = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await apiPost(`/client-haircut-types/barbershop/${user?.barbershop?.id}`, {
+        name: newName,
+        description: newDescription,
+        price: newPrice,
+      });
+      setNewName("");
+      setNewDescription("");
+      setNewPrice(0);
+      setShowForm(null);
+
+      const own = await apiGet<HaircutType[]>(
+        `/client-haircut-types/barbershop/${user?.barbershop?.id}`
+      );
+      setOwnServices(own);
+      showTempMessage("success", "Servicio propio creado exitosamente");
+    } catch (err) {
+      console.error("Error creando servicio propio", err);
+      showTempMessage("error", "Error al crear servicio propio");
+    }
+  };
+
+  const handleConfirmAddGlobal = async (serviceId: string) => {
+    try {
+      await apiPost(
+        `/client-haircut-types/barbershop/${user?.barbershop?.id}/add/${serviceId}`,
+        { price: Number(price) }
+      );
+      const own = await apiGet<HaircutType[]>(
+        `/client-haircut-types/barbershop/${user?.barbershop?.id}`
+      );
+      setOwnServices(own);
+      setOpenPriceInput(null);
+      setPrice("");
+      showTempMessage("success", "Servicio añadido a tu barbería");
+    } catch (err) {
+      console.error("Error añadiendo servicio global", err);
+      showTempMessage("error", "Error al añadir servicio");
+    }
+  };
 
   if (loading) return <p>Cargando...</p>;
-  if (isUnauthorized) {
-    router.push("/login");
-    return null;
-  }
+
+  // 👇 filtrar globales que ya están en propios
+  const availableTemplates = globalServices.filter(
+    (g) => !ownServices.some((o) => o.baseType?.id === g.id || o.id === g.id)
+  );
 
   return (
-    <div className="flex flex-col space-y-2">
-      {message && (
-        <div className="mb-4 bg-pink-500 text-white text-center py-2 rounded">
-          {message}
+    <div className="flex flex-col space-y-4">
+      {/* Card para agregar servicio propio */}
+      {showForm === null ? (
+        <div className="px-6 py-4 bg-gray-800 rounded-lg shadow-md flex justify-between items-center">
+          <p className="text-lg font-semibold text-white">Agregar servicio</p>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setShowForm("own")}
+              className="px-4 py-2 bg-pink-400 text-white rounded hover:bg-pink-500 transition-colors text-sm font-semibold"
+            >
+              Crear propio
+            </button>
+            <button
+              onClick={() => setShowForm("template")}
+              className="px-4 py-2 bg-pink-400 text-white rounded hover:bg-pink-500 transition-colors text-sm font-semibold"
+            >
+              Usar plantilla
+            </button>
+          </div>
         </div>
-      )}
-
-      {!showForm && (
-        <div className="flex items-center px-6 py-4 bg-gray-800 rounded-lg shadow-md">
-          <p className="text-xl font-semibold">Agrega tus estilos</p>
-          <button
-            onClick={() => setShowForm(true)}
-            className="ml-auto bg-pink-400 text-white px-4 py-2 rounded hover:bg-pink-500 transition-colors"
-          >
-            +
-          </button>
-        </div>
-      )}
-
-      {showForm && (
+      ) : showForm === "own" ? (
         <form
-          onSubmit={handleSubmit}
-          className="flex flex-col gap-4 bg-gray-800 p-4 rounded-lg shadow-md"
+          onSubmit={handleAddOwnService}
+          className="flex flex-col gap-2 bg-gray-800 p-4 rounded-lg shadow-md"
         >
-          <div>
-            <label className="block text-sm mb-1">Nombre</label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              className="px-3 py-2 rounded bg-gray-700 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm mb-1">Descripción</label>
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              className="px-3 py-2 rounded bg-gray-700 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
-            />
-          </div>
-
+          <input
+            type="text"
+            placeholder="Nombre del servicio"
+            value={newName}
+            onChange={(e) => setNewName(e.target.value)}
+            className="px-3 py-2 rounded bg-gray-700 text-white"
+            required
+          />
+          <textarea
+            placeholder="Descripción"
+            value={newDescription}
+            onChange={(e) => setNewDescription(e.target.value)}
+            className="px-3 py-2 rounded bg-gray-700 text-white"
+          />
+          <input
+            type="number"
+            placeholder="Precio"
+            value={newPrice}
+            onChange={(e) => setNewPrice(Number(e.target.value))}
+            className="px-3 py-2 rounded bg-gray-700 text-white"
+            required
+          />
           <div className="flex gap-2">
             <button
               type="submit"
               className="bg-pink-400 text-white px-4 py-2 rounded hover:bg-pink-500 transition-colors font-semibold"
             >
-              Crear Estilo
+              Crear
             </button>
             <button
               type="button"
-              onClick={() => setShowForm(false)}
+              onClick={() => setShowForm(null)}
               className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 transition-colors font-semibold"
             >
               Cancelar
             </button>
           </div>
         </form>
+      ) : (
+        <div className="flex flex-col gap-2">
+          <p className="text-sm text-gray-300">Selecciona un servicio global para añadirlo abajo.</p>
+          <button
+            onClick={() => setShowForm(null)}
+            className="self-start bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 transition-colors text-sm font-semibold"
+          >
+            Cancelar selección de plantilla
+          </button>
+        </div>
       )}
 
-      {/* Lista de estilos: solo se muestra si el form NO está abierto */}
-      {!showForm &&
-        (styles.length === 0 ? (
-          <p className="text-gray-400 text-center">No hay estilos aún.</p>
-        ) : (
-          styles.map((style) => (
-            <div
-              key={style.id}
-              className="flex flex-col px-6 py-4 bg-gray-700 rounded-lg shadow-md"
-            >
-              <p className="text-xl font-semibold">{style.name}</p>
-              <p className="text-pink-400">
-                {style.description || "Sin descripción"}
-              </p>
+      {/* Lista de servicios propios */}
+      {ownServices.map((service) => (
+        <div
+          key={service.id}
+          className="px-6 py-4 bg-gray-700 rounded-lg shadow-md flex flex-col gap-2"
+        >
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-lg font-semibold">{service.name}</p>
+              {service.description && (
+                <p className="text-sm text-gray-300">{service.description}</p>
+              )}
             </div>
-          ))
+            {service.price && (
+              <p className="text-xl text-pink-300 font-semibold">${service.price}</p>
+            )}
+          </div>
+        </div>
+      ))}
+
+      {/* Lista de plantillas disponibles */}
+      {showForm === "template" &&
+        availableTemplates.map((service) => (
+          <div
+            key={service.id}
+            className="px-6 py-4 bg-gray-700 rounded-lg shadow-md flex flex-col gap-2"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-lg font-semibold">{service.name}</p>
+                {service.description && (
+                  <p className="text-sm text-gray-300">{service.description}</p>
+                )}
+              </div>
+              {openPriceInput !== service.id && (
+                <button
+                  onClick={() =>
+                    setOpenPriceInput(openPriceInput === service.id ? null : service.id)
+                  }
+                  className="ml-auto w-28 text-center px-2 py-3 bg-pink-400 text-white rounded hover:bg-pink-500 transition-colors text-lg font-semibold"
+                >
+                  Añadir
+                </button>
+              )}
+            </div>
+
+            {openPriceInput === service.id && (
+              <div className="flex flex-col gap-2 bg-gray-800 p-3 rounded-lg">
+                <input
+                  type="number"
+                  placeholder="Precio"
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
+                  className="px-2 py-1 rounded bg-gray-700 text-white text-lg"
+                />
+                               <div className="flex gap-2">
+                  <button
+                    onClick={() => handleConfirmAddGlobal(service.id)}
+                    className="flex-1 bg-pink-400 text-white px-3 py-2 rounded hover:bg-pink-500 transition-colors text-sm font-semibold"
+                  >
+                    Confirmar
+                  </button>
+                  <button
+                    onClick={() => {
+                      setOpenPriceInput(null);
+                      setPrice("");
+                    }}
+                    className="flex-1 bg-gray-600 text-white px-3 py-2 rounded hover:bg-gray-700 transition-colors text-sm font-semibold"
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         ))}
+      
+      {/* 👇 Mensaje temporal */}
+      {message && (
+        <p
+          className={`text-sm ${
+            message.type === "success" ? "text-green-400" : "text-red-400"
+          }`}
+        >
+          {message.text}
+        </p>
+      )}
     </div>
   );
 }
+                 
