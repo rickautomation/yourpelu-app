@@ -1,18 +1,16 @@
-export async function apiGet<T>(url: string): Promise<T> {
-  const isPublic = url.includes("me-fake") || url.includes("login") || url.includes("register");
-
+export async function apiDelete<T>(url: string): Promise<T> {
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
   };
 
   const res = await fetch(process.env.NEXT_PUBLIC_API_URL + url, {
-    method: "GET",
+    method: "DELETE",
     headers,
     credentials: "include",
   });
 
   if (!res.ok) {
-    let msg = `Error en la petición GET (HTTP ${res.status})`;
+    let msg = `Error en la petición DELETE (HTTP ${res.status})`;
     try {
       const errorData = await res.json();
       msg = errorData.message || msg;

@@ -1,18 +1,22 @@
 export async function apiUpdate<T>(url: string, body: any): Promise<T> {
-  const token = localStorage.getItem("auth_token");
-
   const res = await fetch(process.env.NEXT_PUBLIC_API_URL + url, {
-    method: "PUT",
+    method: "PUT", // 👈 importante
     headers: {
       "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}), // 👈 fallback localStorage
     },
-    credentials: "include",
     body: JSON.stringify(body),
   });
 
   if (!res.ok) {
-    throw new Error("Error en la petición PUT");
+    let msg = `Error en la petición PUT (HTTP ${res.status})`;
+    try {
+      const errorData = await res.json();
+      msg = errorData.message || msg;
+    } catch {
+      const text = await res.text();
+      if (text) msg = text;
+    }
+    throw new Error(msg);
   }
 
   return res.json() as Promise<T>;

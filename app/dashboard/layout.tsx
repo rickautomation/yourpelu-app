@@ -51,6 +51,13 @@ export default function DashboardLayout({
                 💈 Barberos
               </Link>
 
+               <Link
+                href="/dashboard/barbershop-profile-settings"
+                onClick={() => setSidebarOpen(false)}
+              >
+                🖼️ Barbershop Feed
+              </Link>
+
               <hr className="border-gray-700 my-2" />
 
               {/* Bloque servicios y operaciones */}
@@ -65,6 +72,12 @@ export default function DashboardLayout({
                 onClick={() => setSidebarOpen(false)}
               >
                 ✂️ Cortes
+              </Link>
+              <Link
+                href="/dashboard/haircut-styles"
+                onClick={() => setSidebarOpen(false)}
+              >
+                💇‍♂️ Estilos
               </Link>
               <Link
                 href="/dashboard/coloraciones"
