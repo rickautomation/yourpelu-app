@@ -46,9 +46,6 @@ export default function LoginPage({ setView }: Props) {
         form
       );
       if (data.ok) {
-        if (data.token) {
-          localStorage.setItem("auth_token", data.token);
-        }
         setMessage("Login exitoso ✅");
         router.push("/dashboard");
       }
