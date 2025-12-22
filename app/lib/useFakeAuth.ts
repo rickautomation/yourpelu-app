@@ -15,6 +15,7 @@ interface User {
   phoneNumber: string;
   rol: string;
   barbershop?: Barbershop;
+  barbershopId?: string;
 }
 
 export function useFakeAuth() {

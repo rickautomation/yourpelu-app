@@ -6,6 +6,7 @@ import { apiGet } from "@/app/lib/apiGet";
 import { Barbershop } from "@/app/interfaces";
 import { apiUpdate } from "@/app/lib/apiUpdate";
 import { useFakeAuth } from "@/app/lib/useFakeAuth";
+import BarbershopForm from "@/app/components/dashboard/BarberShopForm";
 
 export default function BarbershopPage() {
   const { user, loading, isAuthenticated } = useFakeAuth();
@@ -101,55 +102,37 @@ export default function BarbershopPage() {
               onClick={() => setIsEditing(true)}
               className="mt-4 bg-pink-400 text-white px-4 py-2 rounded hover:bg-pink-500 transition-colors font-semibold"
             >
-              Editar Barbería
+              Editar
             </button>
           </div>
         ) : (
           // 📌 Formulario de creación/edición
-          <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-            <div>
-              <label className="block text-sm mb-1">Nombre</label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Nombre de la barbería"
-                required
-                className="px-3 py-2 rounded bg-gray-800 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm mb-1">Contacto</label>
-              <input
-                type="text"
-                value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
-                placeholder="Número de contacto"
-                required
-                className="px-3 py-2 rounded bg-gray-800 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm mb-1">Ubicación</label>
-              <input
-                type="text"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                placeholder="Dirección o ciudad"
-                required
-                className="px-3 py-2 rounded bg-gray-800 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
-              />
-            </div>
-
-            <button
-              type="submit"
-              className="bg-pink-400 text-white px-4 py-2 rounded hover:bg-pink-500 transition-colors font-semibold"
-            >
-              {barbershop ? "Actualizar Barbería" : "Guardar Barbería"}
-            </button>
-          </form>
+          user && (
+            <BarbershopForm
+              barbershop={barbershop}
+              userId={user.id}
+              onSave={async (data) => {
+                if (barbershop) {
+                  await apiUpdate<Barbershop>(
+                    `/barbershops/${barbershop.id}`,
+                    data
+                  );
+                  // 👇 cerrar el form
+                  setIsEditing(false);
+                  await fetchBarbershop();
+                } else {
+                  await apiPost<Barbershop>("/barbershops", {
+                    ...data,
+                    userId: user.id,
+                  });
+                  await fetchBarbershop();
+                  window.location.reload();
+                  // 👇 cerrar el form
+                  setIsEditing(false);
+                }
+              }}
+            />
+          )
         )}
       </div>
     </div>
