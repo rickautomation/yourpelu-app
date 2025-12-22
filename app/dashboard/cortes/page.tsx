@@ -9,6 +9,7 @@ type Haircut = {
   createdAt: string;
   type: HaircutType;
   style?: HaircutStyle;
+  client?: BarberClient;
 };
 
 type HaircutType = {
@@ -23,6 +24,15 @@ type HaircutStyle = {
   name: string;
   description?: string;
   barbershopId?: string;
+};
+
+type BarberClient = {
+  id: string;
+  name: string;
+  lastname: string;
+  email?: string;
+  phone?: string;
+  createdAt: string;
 };
 
 export default function HaircutsPage() {
@@ -40,48 +50,71 @@ export default function HaircutsPage() {
 
   const [recentHaircuts, setRecentHaircuts] = useState<Haircut[]>([]);
 
+  const [clients, setClients] = useState<BarberClient[]>([]);
+  const [showClientDropdown, setShowClientDropdown] = useState(false);
+  const [selectedClient, setSelectedClient] = useState<string>("");
+
+  // Popup modal para crear cliente
+  const [showClientForm, setShowClientForm] = useState(false);
+  const [name, setName] = useState("");
+  const [lastname, setLastname] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+
   const [message, setMessage] = useState<{
     type: "success" | "error";
     text: string;
   } | null>(null);
 
-  useEffect(() => {
-  const fetchData = async () => {
-    try {
-      const own = await apiGet<HaircutType[]>(
-        `/client-haircut-types/barbershop/${user?.barbershop?.id}`
-      );
-      setOwnTypes(own);
+  console.log("recentHaircuts", recentHaircuts)
 
-      const stylesData = await apiGet<HaircutStyle[]>(
-        `/haircut-styles/barbershop/${user?.barbershop?.id}`
-      );
-      setStyles(stylesData);
-    } catch (err) {
-      console.error("Error cargando datos", err);
-    } finally {
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const own = await apiGet<HaircutType[]>(
+          `/client-haircut-types/barbershop/${user?.barbershop?.id}`
+        );
+        setOwnTypes(own);
+
+        const stylesData = await apiGet<HaircutStyle[]>(
+          `/haircut-styles/barbershop/${user?.barbershop?.id}`
+        );
+        setStyles(stylesData);
+      } catch (err) {
+        console.error("Error cargando datos", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (user?.barbershop?.id) {
+      fetchData();
+    } else {
       setLoading(false);
     }
-  };
+  }, [user]);
 
-  if (user?.barbershop?.id) {
-    fetchData();
-  } else {
-    // 👇 si no hay barbería, igual desactivamos loading
-    setLoading(false);
-  }
-}, [user]);
+  useEffect(() => {
+    const fetchClients = async () => {
+      try {
+        const data = await apiGet<BarberClient[]>(
+          `/barber-clients/barbershop/${user?.barbershop?.id}`
+        );
+        setClients(data);
+      } catch (err) {
+        console.error("Error cargando clientes", err);
+      }
+    };
 
-  const showTempMessage = (type: "success" | "error", text: string) => {
-    setMessage({ type, text });
-    setTimeout(() => setMessage(null), 3000);
-  };
+    if (user?.barbershop?.id) {
+      fetchClients();
+    }
+  }, [user]);
 
   useEffect(() => {
     const fetchRecent = async () => {
       try {
         const data = await apiGet<Haircut[]>(`/haircuts/user/${user?.id}/last`);
-        console.log("Últimos cortes recibidos:", data);
         setRecentHaircuts(data);
       } catch (err) {
         console.error("Error cargando últimos cortes", err);
@@ -90,21 +123,56 @@ export default function HaircutsPage() {
     if (user?.id) fetchRecent();
   }, [user]);
 
+  const showTempMessage = (type: "success" | "error", text: string) => {
+    setMessage({ type, text });
+    setTimeout(() => setMessage(null), 3000);
+  };
+
   const handleAddHaircut = async () => {
-    if (!selectedType) return;
+    if (!selectedType || !selectedClient) return;
     try {
       await apiPost(`/haircuts`, {
         userId: user?.id,
-        clientTypeId: selectedType, // 👈 ahora mandamos el id del tipo propio
+        clientId: selectedClient,
+        clientTypeId: selectedType,
         styleId: selectedStyle || null,
       });
       setShowAdd(false);
       setSelectedType("");
       setSelectedStyle("");
+      setSelectedClient("");
       showTempMessage("success", "Corte agregado exitosamente");
     } catch (err) {
       console.error("Error agregando corte", err);
       showTempMessage("error", "Error al agregar corte");
+    }
+  };
+
+  const handleCreateClient = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await apiPost(`/barber-clients/barbershop/${user?.barbershop?.id}`, {
+        name,
+        lastname,
+        email,
+        phone,
+      });
+
+      setName("");
+      setLastname("");
+      setEmail("");
+      setPhone("");
+      setShowClientForm(false);
+
+      const data = await apiGet<BarberClient[]>(
+        `/barber-clients/barbershop/${user?.barbershop?.id}`
+      );
+      setClients(data);
+
+      showTempMessage("success", "Cliente creado exitosamente");
+    } catch (err) {
+      console.error("Error creando cliente", err);
+      showTempMessage("error", "Error al crear cliente");
     }
   };
 
@@ -133,9 +201,65 @@ export default function HaircutsPage() {
 
           {showAdd && (
             <div className="flex flex-col gap-2">
+              {/* Select de clientes */}
+              <div className="relative">
+                <button
+                  onClick={() => setShowClientDropdown(!showClientDropdown)}
+                  className="w-full px-3 py-2 rounded bg-gray-700 text-white flex justify-between items-center truncate"
+                >
+                  <span className="truncate">
+                    {selectedClient
+                      ? clients.find((c) => c.id === selectedClient)?.name +
+                        " " +
+                        clients.find((c) => c.id === selectedClient)?.lastname
+                      : "Selecciona un cliente"}
+                  </span>
+                  <svg
+                    className={`w-4 h-4 ml-2 transition-transform ${
+                      showClientDropdown ? "rotate-180" : "rotate-0"
+                    }`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </button>
+
+                {showClientDropdown && (
+                  <ul className="absolute mt-1 w-full max-h-40 overflow-y-auto bg-gray-800 rounded shadow-lg z-10">
+                    <li
+                      onClick={() => {
+                        setShowClientForm(true); // 👈 abre popup
+                        setShowClientDropdown(false);
+                      }}
+                      className="px-3 py-2 text-white hover:bg-gray-600 cursor-pointer"
+                    >
+                      ➕ Agregar nuevo cliente
+                    </li>
+                    {clients.map((c) => (
+                      <li
+                        key={c.id}
+                        onClick={() => {
+                          setSelectedClient(c.id);
+                          setShowClientDropdown(false);
+                        }}
+                        className="px-3 py-2 text-white hover:bg-gray-600 cursor-pointer truncate"
+                      >
+                        {c.name} {c.lastname}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+
               {/* Select de tipos */}
               <div className="relative">
-                {/* Botón que abre/cierra el menú */}
                 <button
                   onClick={() => setShowTypeDropdown(!showTypeDropdown)}
                   className="w-full px-3 py-2 rounded bg-gray-700 text-white flex justify-between items-center truncate"
@@ -145,8 +269,6 @@ export default function HaircutsPage() {
                       ? ownTypes.find((t) => t.id === selectedType)?.name
                       : "Selecciona un tipo"}
                   </span>
-
-                  {/* Icono de flecha */}
                   <svg
                     className={`w-4 h-4 ml-2 transition-transform ${
                       showTypeDropdown ? "rotate-180" : "rotate-0"
@@ -164,7 +286,6 @@ export default function HaircutsPage() {
                   </svg>
                 </button>
 
-                {/* Menú desplegable controlado por estado */}
                 {showTypeDropdown && (
                   <ul className="absolute mt-1 w-full max-h-40 overflow-y-auto bg-gray-800 rounded shadow-lg z-10">
                     {ownTypes.map((t) => (
@@ -172,7 +293,7 @@ export default function HaircutsPage() {
                         key={t.id}
                         onClick={() => {
                           setSelectedType(t.id);
-                          setShowTypeDropdown(false); // cerrar al elegir
+                          setShowTypeDropdown(false);
                         }}
                         className="px-3 py-2 text-white hover:bg-gray-600 cursor-pointer truncate"
                         title={`${t.name}${t.price ? ` - $${t.price}` : ""}`}
@@ -185,13 +306,11 @@ export default function HaircutsPage() {
               </div>
 
               {/* Select de estilos */}
-              {/* Select de estilos (solo si el tipo no es "Barba") */}
               {selectedType &&
                 ownTypes
                   .find((t) => t.id === selectedType)
                   ?.name.toLowerCase() !== "barba" && (
                   <div className="relative">
-                    {/* Botón que abre/cierra el menú */}
                     <button
                       onClick={() => setShowDropdown(!showDropdown)}
                       className="w-full px-3 py-2 rounded bg-gray-700 text-white flex justify-between items-center truncate"
@@ -201,8 +320,6 @@ export default function HaircutsPage() {
                           ? styles.find((s) => s.id === selectedStyle)?.name
                           : "Selecciona un estilo (opcional)"}
                       </span>
-
-                      {/* Icono de flecha */}
                       <svg
                         className={`w-4 h-4 ml-2 transition-transform ${
                           showDropdown ? "rotate-180" : "rotate-0"
@@ -220,26 +337,23 @@ export default function HaircutsPage() {
                       </svg>
                     </button>
 
-                    {/* Menú desplegable controlado por estado */}
                     {showDropdown && (
                       <ul className="absolute mt-1 w-full max-h-40 overflow-y-auto bg-gray-800 rounded shadow-lg z-10">
-                        {/* Opción Ninguno */}
                         <li
                           onClick={() => {
-                            setSelectedStyle(""); // 👈 resetea estilo
+                            setSelectedStyle("");
                             setShowDropdown(false);
                           }}
                           className="px-3 py-2 text-white hover:bg-gray-600 cursor-pointer"
                         >
                           Ninguno
                         </li>
-
                         {styles.map((s) => (
                           <li
                             key={s.id}
                             onClick={() => {
                               setSelectedStyle(s.id);
-                              setShowDropdown(false); // cerrar al elegir
+                              setShowDropdown(false);
                             }}
                             className="px-3 py-2 text-white hover:bg-gray-600 cursor-pointer truncate"
                             title={`${s.name}${
@@ -289,7 +403,6 @@ export default function HaircutsPage() {
                 key={h.id}
                 className="bg-gray-700 rounded-md p-3 flex justify-between items-center shadow"
               >
-                {/* Tipo y estilo en columna */}
                 <div className="flex flex-col text-white font-medium">
                   <span>{h.type.name}</span>
                   {h.style && (
@@ -298,8 +411,6 @@ export default function HaircutsPage() {
                     </span>
                   )}
                 </div>
-
-                {/* Fecha y hora en columna */}
                 <span className="text-sm text-gray-400 flex flex-col items-end">
                   <span>{new Date(h.createdAt).toLocaleDateString()}</span>
                   <span>
@@ -323,6 +434,96 @@ export default function HaircutsPage() {
         >
           {message.text}
         </p>
+      )}
+
+      {/* Popup modal para crear cliente */}
+      {showClientForm && (
+        <div
+          className="fixed inset-0 backdrop-blur-sm bg-black/30 flex items-center justify-center z-50 px-6"
+          onClick={() => setShowClientForm(false)}
+        >
+          <div
+            className="bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-md"
+            onClick={(e) => e.stopPropagation()} // 👈 evita cerrar al click dentro
+          >
+            <h2 className="text-xl font-semibold text-white mb-4">
+              Agregar nuevo cliente
+            </h2>
+            <form className="flex flex-col gap-4" onSubmit={handleCreateClient}>
+              <div>
+                <label className="block text-sm mb-1 text-white">Nombre</label>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Nombre del cliente"
+                  required
+                  className="px-3 py-2 rounded bg-gray-700 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm mb-1 text-white">
+                  Apellido
+                </label>
+                <input
+                  type="text"
+                  value={lastname}
+                  onChange={(e) => setLastname(e.target.value)}
+                  placeholder="Apellido del cliente"
+                  required
+                  className="px-3 py-2 rounded bg-gray-700 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm mb-1 text-white">Email</label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Correo electrónico"
+                  className="px-3 py-2 rounded bg-gray-700 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm mb-1 text-white">
+                  Teléfono
+                </label>
+                <input
+                  type="text"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="Número de contacto"
+                  className="px-3 py-2 rounded bg-gray-700 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
+                />
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  type="submit"
+                  className="flex-1 bg-pink-400 text-white px-4 py-2 rounded hover:bg-pink-500 transition-colors font-semibold"
+                >
+                  Guardar
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowClientForm(false);
+                    setName("");
+                    setLastname("");
+                    setEmail("");
+                    setPhone("");
+                  }}
+                  className="flex-1 bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-500 transition-colors font-semibold"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       )}
     </div>
   );
