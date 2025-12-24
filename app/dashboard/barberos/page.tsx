@@ -1,12 +1,12 @@
 "use client";
 import { useEffect, useState } from "react";
-//import { useAuth } from "@/app/lib/useAuth";
+import { useAuth } from "@/app/lib/useAuth";
 import { apiPost } from "@/app/lib/apiPost";
 import { apiGet } from "@/app/lib/apiGet";
-import { useFakeAuth } from "@/app/lib/useFakeAuth";
+//import { useFakeAuth } from "@/app/lib/useFakeAuth";
 
 export default function BarbersPage() {
-  const { user, loading, isUnauthorized, router } = useFakeAuth();
+  const { user, loading, isUnauthorized, router } = useAuth();
 
   const [showForm, setShowForm] = useState(false);
   const [name, setName] = useState("");

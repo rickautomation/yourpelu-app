@@ -1,21 +1,22 @@
-// lib/apiPost.ts
-import axios, { AxiosError } from "axios";
-
 export async function apiPost<T>(url: string, body: any): Promise<T> {
-  try {
-    const res = await axios.post<T>(
-      process.env.NEXT_PUBLIC_API_URL + url,
-      body,
-    );
-    return res.data;
-  } catch (err) {
-    const error = err as AxiosError;
-    if (error.response) {
-      const msg =
-        (error.response.data as any)?.message ||
-        `Error POST (HTTP ${error.response.status})`;
-      throw new Error(msg);
+  const res = await fetch(process.env.NEXT_PUBLIC_API_URL + url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include", // 👈 siempre incluimos cookies
+    body: JSON.stringify(body),
+  });
+
+  if (!res.ok) {
+    let msg = `Error en la petición POST (HTTP ${res.status})`;
+    try {
+      const errorData = await res.json();
+      msg = errorData.message || msg;
+    } catch {
+      const text = await res.text();
+      if (text) msg = text;
     }
-    throw new Error("Error en la petición POST");
+    throw new Error(msg);
   }
+
+  return res.json() as Promise<T>;
 }

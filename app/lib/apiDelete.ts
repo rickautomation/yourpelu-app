@@ -1,12 +1,8 @@
 export async function apiDelete<T>(url: string): Promise<T> {
-  const headers: Record<string, string> = {
-    "Content-Type": "application/json",
-  };
-
   const res = await fetch(process.env.NEXT_PUBLIC_API_URL + url, {
     method: "DELETE",
-    headers,
-    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include", // 👈 siempre incluimos cookies
   });
 
   if (!res.ok) {

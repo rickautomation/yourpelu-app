@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { apiGet } from "@/app/lib/apiGet";
 import { apiPost } from "@/app/lib/apiPost";
-import { useFakeAuth } from "@/app/lib/useFakeAuth";
+import { useAuth } from "@/app/lib/useAuth";
 
 type Haircut = {
   id: string;
@@ -36,7 +36,7 @@ type BarberClient = {
 };
 
 export default function HaircutsPage() {
-  const { user } = useFakeAuth();
+  const { user } = useAuth();
   const [ownTypes, setOwnTypes] = useState<HaircutType[]>([]);
   const [styles, setStyles] = useState<HaircutStyle[]>([]);
   const [loading, setLoading] = useState(true);

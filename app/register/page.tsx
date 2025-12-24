@@ -25,19 +25,13 @@ export default function RegisterPage({ setView }: Props) {
     setMessage("");
 
     try {
-      const data = await apiPost<{ ok: boolean; token?: string }>(
-        "/auth/register",
-        form
-      );
+      const data = await apiPost<{ ok: boolean }>("/auth/register", form);
       if (data.ok) {
-        if (data.token) {
-          localStorage.setItem("auth_token", data.token);
-        }
         setMessage("Registro exitoso ✅");
         router.push("/dashboard");
       }
     } catch (err: any) {
-      console.log("err", err)
+      console.log("err", err);
       setMessage(err.message);
     }
   }

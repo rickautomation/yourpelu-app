@@ -1,6 +1,5 @@
 "use client";
 import { useFakeAuth } from "../lib/useFakeAuth";
-import BarbershopPage from "./barberia/page";
 
 export default function DashboardPage() {
   const { user, loading, isUnauthorized, router } = useFakeAuth();
