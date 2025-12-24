@@ -1,14 +1,8 @@
 export async function apiGet<T>(url: string): Promise<T> {
-  const isPublic = url.includes("me-fake") || url.includes("login") || url.includes("register");
-
-  const headers: Record<string, string> = {
-    "Content-Type": "application/json",
-  };
-
   const res = await fetch(process.env.NEXT_PUBLIC_API_URL + url, {
     method: "GET",
-    headers,
-    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include", // 👈 siempre incluimos cookies
   });
 
   if (!res.ok) {

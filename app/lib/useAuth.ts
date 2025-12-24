@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { apiGet } from "./apiGet";
+import { apiPost } from "./apiPost";
 
 type Barbershop = {
   id: string;
@@ -26,35 +27,28 @@ export function useAuth() {
   useEffect(() => {
     async function fetchUser() {
       try {
-        // Primer intento: con cookie
         const data = await apiGet<User>("/auth/me");
         setUser(data);
         setError(null);
       } catch (err) {
-        const token = localStorage.getItem("auth_token");
-        if (token) {
-          try {
-            const res = await fetch(
-              process.env.NEXT_PUBLIC_API_URL + "/auth/me",
-              {
-                headers: { Authorization: `Bearer ${token}` },
-                credentials: "include",
-              }
-            );
-            if (res.ok) {
-              const data = await res.json();
-              setUser(data);
-              setError(null);
-              return;
-            }
-          } catch (e) {
-            console.error("Fallback también falló", e);
+        // Si falla con 401, intentamos refresh
+        try {
+          const refreshRes = await apiPost<{ ok: boolean }>(
+            "/auth/refresh",
+            {}
+          );
+          if (refreshRes.ok) {
+            const data = await apiGet<User>("/auth/me");
+            setUser(data);
+            setError(null);
+          } else {
+            setError("No autorizado");
+            setUser(null);
           }
+        } catch (refreshErr) {
+          setError("No autorizado");
+          setUser(null);
         }
-        const errorMsg =
-          err instanceof Error ? err.message : "No autorizado";
-        setError(errorMsg);
-        setUser(null);
       } finally {
         setLoading(false);
       }
@@ -65,12 +59,25 @@ export function useAuth() {
   const isAuthenticated = !!user && !error;
   const isUnauthorized = !!error && !user;
 
-  // Helper opcional
-  const logout = () => {
-    localStorage.removeItem("auth_token");
-    setUser(null);
-    router.push("/login");
+  // Logout: pide al backend que limpie las cookies
+  const logout = async () => {
+    try {
+      await apiPost("/auth/logout", {});
+    } catch (err) {
+      console.error("Error en logout", err);
+    } finally {
+      setUser(null);
+      router.push("/login");
+    }
   };
 
-  return { user, loading, error, isAuthenticated, isUnauthorized, router, logout };
+  return {
+    user,
+    loading,
+    error,
+    isAuthenticated,
+    isUnauthorized,
+    router,
+    logout,
+  };
 }
