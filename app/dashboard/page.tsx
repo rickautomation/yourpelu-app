@@ -1,8 +1,8 @@
 "use client";
-import { useFakeAuth } from "../lib/useFakeAuth";
+import { useAuth } from "../lib/useAuth";
 
 export default function DashboardPage() {
-  const { user, loading, isUnauthorized, router } = useFakeAuth();
+  const { user, loading, isUnauthorized, router } = useAuth();
 
   if (loading) return <p className="text-white">Cargando...</p>;
   if (isUnauthorized) {
