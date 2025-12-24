@@ -18,6 +18,9 @@ interface User {
   barbershop?: Barbershop;
 }
 
+let isRefreshing = false;
+let refreshPromise: Promise<any> | null = null;
+
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -30,14 +33,19 @@ export function useAuth() {
         const data = await apiGet<User>("/auth/me");
         setUser(data);
         setError(null);
-      } catch (err) {
-        // Si falla con 401, intentamos refresh
+      } catch (err: any) {
+        // Si falla con 401, intentamos refresh con lock
+        if (!isRefreshing) {
+          isRefreshing = true;
+          refreshPromise = apiPost<{ ok: boolean }>("/auth/refresh", {})
+            .finally(() => {
+              isRefreshing = false;
+              refreshPromise = null;
+            });
+        }
         try {
-          const refreshRes = await apiPost<{ ok: boolean }>(
-            "/auth/refresh",
-            {}
-          );
-          if (refreshRes.ok) {
+          const refreshRes = await refreshPromise;
+          if (refreshRes?.ok) {
             const data = await apiGet<User>("/auth/me");
             setUser(data);
             setError(null);
@@ -59,7 +67,6 @@ export function useAuth() {
   const isAuthenticated = !!user && !error;
   const isUnauthorized = !!error && !user;
 
-  // Logout: pide al backend que limpie las cookies
   const logout = async () => {
     try {
       await apiPost("/auth/logout", {});
