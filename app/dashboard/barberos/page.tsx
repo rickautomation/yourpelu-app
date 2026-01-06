@@ -1,30 +1,45 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useAuth } from "@/app/lib/useAuth";
+import { useAuth } from "@/app/hooks/useAuth";
+import { useUserBarbershops } from "@/app/hooks/useUserBarbershops";
 import { apiPost } from "@/app/lib/apiPost";
 import { apiGet } from "@/app/lib/apiGet";
-//import { useFakeAuth } from "@/app/lib/useFakeAuth";
 
 export default function BarbersPage() {
   const { user, loading, isUnauthorized, router } = useAuth();
+  const { activeBarbershop } = useUserBarbershops(user);
 
   const [showForm, setShowForm] = useState(false);
   const [name, setName] = useState("");
   const [lastname, setLastname] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [message, setMessage] = useState<string | null>(null);
-  const [barbershopId, setBarbershopId] = useState<string>("");
   const [barbers, setBarbers] = useState<
-    { id: string; name: string; lastname: string; phoneNumber: string }[]
+    {
+      id: string;
+      name: string;
+      lastname: string;
+      phoneNumber: string;
+      email?: string;
+      needsSetup?: boolean;
+    }[]
   >([]);
+  const [expandedBarberId, setExpandedBarberId] = useState<string | null>(null);
+  const [activationLink, setActivationLink] = useState<string | null>(null);
 
   const fetchBarbers = async (shopId: string) => {
     try {
       if (shopId) {
         const res = await apiGet<
-          { id: string; name: string; lastname: string; phoneNumber: string }[]
+          {
+            id: string;
+            name: string;
+            lastname: string;
+            phoneNumber: string;
+            email?: string;
+            needsSetup?: boolean;
+          }[]
         >(`/user/barbershop/${shopId}/barbers`);
         setBarbers(res);
       }
@@ -33,28 +48,40 @@ export default function BarbersPage() {
     }
   };
 
+  // 👇 recargar barberos cuando cambia la barbería activa
+  useEffect(() => {
+    if (activeBarbershop?.id) {
+      fetchBarbers(activeBarbershop.id);
+    }
+  }, [activeBarbershop]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await apiPost("/user/barber", {
+      if (!activeBarbershop?.id) {
+        setMessage("No hay barbería activa ❌");
+        return;
+      }
+
+      const res = await apiPost<{ activationLink: string }>("/user/barber", {
         name,
         lastname,
         phoneNumber,
         email,
-        password,
-        barbershopId, // 👈 ya viene del estado
+        barbershopId: activeBarbershop.id, // 👈 usamos el hook
       });
-      setMessage("Barbero creado ✅");
+
+      setMessage(`Barbero creado ✅ Enlace: ${res.activationLink}`);
+      setActivationLink(res.activationLink);
       setShowForm(false);
       setName("");
       setLastname("");
       setPhoneNumber("");
       setEmail("");
-      setPassword("");
 
-      await fetchBarbers(barbershopId);
+      await fetchBarbers(activeBarbershop.id);
 
-      setTimeout(() => setMessage(null), 2000);
+      setTimeout(() => setMessage(null), 20000);
     } catch (err: any) {
       console.error(err);
       if (err.message.includes("403")) {
@@ -66,18 +93,6 @@ export default function BarbersPage() {
     }
   };
 
-  useEffect(() => {
-    if (user?.rol === "admin" && user?.barbershop?.id) {
-      setBarbershopId(user.barbershop.id); // 👈 setear barbería automáticamente
-    }
-  }, [user]);
-
-  useEffect(() => {
-    if (barbershopId) {
-      fetchBarbers(barbershopId);
-    }
-  }, [barbershopId]);
-
   if (loading) return <p>Cargando...</p>;
   if (isUnauthorized) {
     router.push("/login");
@@ -86,13 +101,47 @@ export default function BarbersPage() {
 
   return (
     <div className="flex flex-col space-y-2">
-      {message && (
-        <div className="mb-4 bg-pink-500 text-white text-center py-2 rounded">
-          {message}
+      {activationLink && (
+        <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm z-50 px-4">
+          <div className=" bg-gray-800 p-6 rounded-lg shadow-xl text-center max-w-md w-full">
+            <h3 className="text-xl font-semibold mb-4 text-white">
+              Barbero creado ✅
+            </h3>
+            <h4 className="text-lg text-white">
+              Copiá el enlace y pásalo al barbero para que complete su registro
+            </h4>
+
+            <p className="mb-4 text-pink-500 break-all">{activationLink}</p>
+
+            <div className="flex justify-center gap-3">
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(activationLink);
+                  // feedback visual
+                  const toast = document.createElement("div");
+                  toast.innerText = "Enlace copiado ✅";
+                  toast.className =
+                    "fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-4 py-2 rounded shadow-lg";
+                  document.body.appendChild(toast);
+                  setTimeout(() => toast.remove(), 2000);
+                  setActivationLink(null); // cerrar popup
+                }}
+                className="bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600 transition-colors font-semibold"
+              >
+                Copiar enlace
+              </button>
+
+              <button
+                onClick={() => setActivationLink(null)}
+                className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 transition-colors font-semibold"
+              >
+                Cerrar
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
-      {/* 👇 Mostrar encabezado solo si no está abierto el form */}
       {!showForm && (
         <div className="flex text-center items-center px-6 py-4 bg-gray-800 rounded-lg shadow-md">
           <p className="text-2xl">Agregar Barbero</p>
@@ -113,20 +162,37 @@ export default function BarbersPage() {
             barbers.map((barber) => (
               <div
                 key={barber.id}
-                className="flex items-center px-6 py-4 bg-gray-700 rounded-lg shadow-md"
+                className="flex flex-col px-6 py-4 bg-gray-700 rounded-lg shadow-md"
               >
-                <p className="text-2xl">
-                  {barber.name} {barber.lastname}
-                </p>
-                <button
-                  type="button"
-                  className="ml-auto bg-pink-400 text-white px-3 py-1 rounded hover:bg-pink-500 transition-colors text-sm font-semibold"
-                  onClick={() => {
-                    console.log("Ampliar info de:", barber);
-                  }}
-                >
-                  Ver más
-                </button>
+                <div className="flex items-center">
+                  <p className="text-2xl">
+                    {barber.name} {barber.lastname}
+                  </p>
+                  <button
+                    type="button"
+                    className="ml-auto bg-pink-400 text-white px-3 py-1 rounded hover:bg-pink-500 transition-colors text-sm font-semibold"
+                    onClick={() =>
+                      setExpandedBarberId(
+                        expandedBarberId === barber.id ? null : barber.id
+                      )
+                    }
+                  >
+                    {expandedBarberId === barber.id ? "Cerrar" : "Ver más"}
+                  </button>
+                </div>
+
+                {expandedBarberId === barber.id && (
+                  <div className="mt-2 text-gray-200 text-sm space-y-1">
+                    <p>Teléfono: {barber.phoneNumber}</p>
+                    {barber.email && <p>Email: {barber.email}</p>}
+
+                    {barber.needsSetup && (
+                      <p className="text-yellow-400 font-semibold">
+                        ⚠️ Cuenta pendiente de activación
+                      </p>
+                    )}
+                  </div>
+                )}
               </div>
             ))
           )}
@@ -138,6 +204,7 @@ export default function BarbersPage() {
           onSubmit={handleSubmit}
           className="flex flex-col gap-4 bg-gray-800 p-4 rounded-lg shadow-md"
         >
+          {/* Inputs del formulario */}
           <div>
             <label className="block text-sm mb-1">Nombre</label>
             <input
@@ -177,19 +244,6 @@ export default function BarbersPage() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              required
-              className="px-3 py-2 rounded bg-gray-700 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
-            />
-          </div>
-
-          {/* 👇 Eliminamos el select de barbería, ya viene del estado */}
-
-          <div>
-            <label className="block text-sm mb-1">Contraseña</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
               required
               className="px-3 py-2 rounded bg-gray-700 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
             />

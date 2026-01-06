@@ -105,7 +105,7 @@ export default function ServicesPage() {
       showTempMessage("success", "Servicio añadido a tu barbería");
     } catch (err) {
       console.error("Error añadiendo servicio global", err);
-      showTempMessage("error", "Error al añadir servicio");
+      showTempMessage("error", `${err}`);
     }
   };
 

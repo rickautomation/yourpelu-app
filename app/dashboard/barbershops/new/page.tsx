@@ -1,15 +1,14 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { apiPost } from "@/app/lib/apiPost";
 import { apiGet } from "@/app/lib/apiGet";
 import { useAuth } from "@/app/lib/useAuth";
 import { Barbershop } from "@/app/interfaces";
 import { apiUpdate } from "@/app/lib/apiUpdate";
-//import { useFakeAuth } from "@/app/lib/useFakeAuth";
 import BarbershopForm from "@/app/components/dashboard/BarberShopForm";
 
 export default function BarbershopPage() {
-  const { user, loading, isAuthenticated } = useAuth();
+  const { user, loading, isAuthenticated, refreshUser } = useAuth();
 
   const [name, setName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -18,33 +17,18 @@ export default function BarbershopPage() {
   const [barbershop, setBarbershop] = useState<Barbershop | null>(null);
   const [isEditing, setIsEditing] = useState(false);
 
-  // 🔄 función para traer barbería
-  const fetchBarbershop = async () => {
-    if (user) {
-      try {
-        const data = await apiGet<Barbershop>(`/barbershops/user/${user.id}`);
-        setBarbershop(data);
-        setName(data.name || "");
-        setPhoneNumber(data.phoneNumber || "");
-        setAddress(data.address || "");
-      } catch (err: any) {
-        console.error(err);
-        setBarbershop(null);
-        setMessage("No se encontró barbería asociada ❌");
-        setTimeout(() => setMessage(null), 2000);
-      }
-    }
-  };
+ const barbershops = user?.barbershops ?? [];
 
-  useEffect(() => {
-    fetchBarbershop();
-  }, [user]);
+  const sessionId = useMemo(() => {
+    return typeof crypto.randomUUID === "function"
+      ? crypto.randomUUID()
+      : String(Date.now());
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) {
       setMessage("Debes estar autenticado para crear/editar una barbería");
-      setTimeout(() => setMessage(null), 2000);
       return;
     }
 
@@ -61,22 +45,15 @@ export default function BarbershopPage() {
           phoneNumber,
           address,
           userId: user.id,
+          sessionId, // 👈 importante
         });
-
-        // 🔄 refrescar barbería
-        await fetchBarbershop();
-
-        // 👇 refrescar sesión para que useAuth traiga el rol actualizado
-        window.location.reload();
       }
 
       setMessage("Barbería guardada ✅");
       setIsEditing(false);
-      setTimeout(() => setMessage(null), 2000);
     } catch (err: any) {
       console.error(err);
       setMessage(err.message || "Error al guardar barbería ❌");
-      setTimeout(() => setMessage(null), 2000);
     }
   };
 
@@ -93,7 +70,6 @@ export default function BarbershopPage() {
         )}
 
         {barbershop && !isEditing ? (
-          // 📌 Vista de barbería existente
           <div className="p-4 bg-gray-800 rounded">
             <h2 className="font-bold text-4xl mb-2">{barbershop.name}</h2>
             <p>📞 {barbershop.phoneNumber}</p>
@@ -106,7 +82,6 @@ export default function BarbershopPage() {
             </button>
           </div>
         ) : (
-          // 📌 Formulario de creación/edición
           user && (
             <BarbershopForm
               barbershop={barbershop}
@@ -117,17 +92,16 @@ export default function BarbershopPage() {
                     `/barbershops/${barbershop.id}`,
                     data
                   );
-                  // 👇 cerrar el form
                   setIsEditing(false);
-                  await fetchBarbershop();
                 } else {
                   await apiPost<Barbershop>("/barbershops", {
                     ...data,
                     userId: user.id,
+                    sessionId, // 👈 agregado aquí también
                   });
-                  await fetchBarbershop();
-                  window.location.reload();
-                  // 👇 cerrar el form
+                  if (typeof refreshUser === "function") {
+                    await refreshUser();
+                  }
                   setIsEditing(false);
                 }
               }}
