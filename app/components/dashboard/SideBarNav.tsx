@@ -9,7 +9,7 @@ type Barbershop = {
   address?: string;
 };
 
-type UserRole = "admin" | "barber" | "client";
+type UserRole = "admin" | "barber" | "client" | "user";
 
 export default function SidebarNav({
   barbershops,
@@ -141,7 +141,7 @@ export default function SidebarNav({
         {!showSelector && (
           <>
             {/* Solo admin */}
-            {userRole === "admin" && (
+            {userRole === "admin" || userRole === "user" && (
               <>
               <Link
                   href="/dashboard/panel"
@@ -166,7 +166,7 @@ export default function SidebarNav({
             )}
 
             {/* Admin y barber */}
-            {(userRole === "admin" || userRole === "barber") && (
+            {(userRole === "admin" || userRole === "barber" || userRole === "user") && (
               <>
                 <Link
                   href="/dashboard/servicios"
