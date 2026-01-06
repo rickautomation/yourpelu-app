@@ -13,7 +13,7 @@ export default function DashboardPage() {
   console.log("user", user)
 
   return (
-    <div className="flex flex-col space-y-4 p-2">
+    <div className="flex flex-col space-y-4 p-4">
       <h3 className="text-white text-2xl font-semibold mb-4">
         ¡Bienvenido, {user?.name}!
       </h3>

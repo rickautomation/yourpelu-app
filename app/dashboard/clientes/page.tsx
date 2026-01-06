@@ -89,7 +89,7 @@ export default function ClientsPage() {
   };
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 p-4">
       {/* Card para agregar cliente */}
       <div className="bg-gray-800 p-4 rounded-lg shadow-md flex flex-col gap-3">
         <div className="flex justify-between items-center">

@@ -93,7 +93,7 @@ export default function ReportsPage() {
   };
 
   return (
-    <div className="px-1 space-y-4">
+    <div className="space-y-4 p-4">
       {/* Menú inicial */}
       {view === "none" && (
         <div className="space-y-4">

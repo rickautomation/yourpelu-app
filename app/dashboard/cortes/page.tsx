@@ -37,7 +37,7 @@ type BarberClient = {
 
 export default function HaircutsPage() {
   const { user } = useAuth();
-  const [ownTypes, setOwnTypes] = useState<HaircutType[]>([]);
+  const [ownTypes, setOwnTypes] = useState<HaircutType[] | null>(null);
   const [styles, setStyles] = useState<HaircutStyle[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -65,8 +65,6 @@ export default function HaircutsPage() {
     type: "success" | "error";
     text: string;
   } | null>(null);
-
-  console.log("recentHaircuts", recentHaircuts)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -129,11 +127,11 @@ export default function HaircutsPage() {
   };
 
   const handleAddHaircut = async () => {
-    if (!selectedType || !selectedClient) return;
+    if (!selectedType) return;
     try {
       await apiPost(`/haircuts`, {
         userId: user?.id,
-        clientId: selectedClient,
+        clientId: selectedClient || null,
         clientTypeId: selectedType,
         styleId: selectedStyle || null,
       });
@@ -179,12 +177,11 @@ export default function HaircutsPage() {
   if (loading) return <p>Cargando...</p>;
 
   return (
-    <div className="flex flex-col space-y-4">
-      {ownTypes.length === 0 && user ? (
-        <p className="text-sm text-red-400">
-          No tienes tipos propios de cortes. Debes agregarlos primero en
-          “Servicios”.
-        </p>
+    <div className="flex flex-col space-y-4 p-4">
+      {ownTypes === null ? (
+        <p>...</p>
+      ) : ownTypes.length === 0 ? (
+        <p className="text-sm text-red-400">No tienes servicios…</p>
       ) : (
         <div className="bg-gray-800 p-4 rounded-lg shadow-md flex flex-col gap-3">
           <div className="flex justify-between items-center">

@@ -100,7 +100,7 @@ export default function BarbersPage() {
   }
 
   return (
-    <div className="flex flex-col space-y-2">
+    <div className="flex flex-col space-y-2 p-4">
       {activationLink && (
         <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm z-50 px-4">
           <div className=" bg-gray-800 p-6 rounded-lg shadow-xl text-center max-w-md w-full">
