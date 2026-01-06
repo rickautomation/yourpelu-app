@@ -5,7 +5,7 @@ import { useState, useMemo } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { useUserBarbershops } from "../hooks/useUserBarbershops";
 
-type UserRole = "admin" | "barber" | "client";
+type UserRole = "admin" | "barber" | "client" | "user";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -15,7 +15,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     useUserBarbershops(user);
 
   const role: UserRole =
-    user?.rol === "admin" || user?.rol === "barber" || user?.rol === "client"
+    user?.rol === "admin" || user?.rol === "barber" || user?.rol === "client" || user?.rol === "user"
       ? user.rol
       : "client";
 

@@ -61,7 +61,7 @@ export default function SidebarNav({
     >
       <nav className="flex flex-col gap-2 px-3">
         <div className="text-center">
-          {userRole === "admin" &&
+          {userRole === "admin" || userRole === "user" &&
             (barbershops.length > 0 ? (
               <>
                 {/* Botón para abrir/cerrar selector */}
