@@ -157,7 +157,7 @@ export default function ServicesPage() {
   );
 
   return (
-    <div className="flex flex-col space-y-4">
+    <div className="flex flex-col space-y-4 p-4">
       {/* Card para agregar servicio propio */}
       {showForm === null ? (
         <div className="px-6 py-4 bg-gray-800 rounded-lg shadow-md flex justify-between items-center">
