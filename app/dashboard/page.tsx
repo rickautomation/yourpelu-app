@@ -10,6 +10,8 @@ export default function DashboardPage() {
     return null;
   }
 
+  console.log("user", user)
+
   return (
     <div className="flex flex-col space-y-4 p-2">
       <h3 className="text-white text-2xl font-semibold mb-4">
