@@ -1,24 +1,51 @@
 "use client";
-import { useState } from "react";
 import Navbar from "../components/NavBar";
-import Link from "next/link";
+import SidebarNav from "../components/dashboard/SideBarNav";
+import { useState, useMemo } from "react";
+import { useAuth } from "../hooks/useAuth";
+import { useUserBarbershops } from "../hooks/useUserBarbershops";
 
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+type UserRole = "admin" | "barber" | "client";
+
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const { user, loading } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const { activeBarbershop, barbershops, setActiveBarbershop, loading: shopsLoading } =
+    useUserBarbershops(user);
+
+  const role: UserRole =
+    user?.rol === "admin" || user?.rol === "barber" || user?.rol === "client"
+      ? user.rol
+      : "client";
+
+  const sessionId = useMemo(() => {
+    return typeof crypto.randomUUID === "function"
+      ? crypto.randomUUID()
+      : String(Date.now());
+  }, []);
+
+  if (loading || shopsLoading) {
+    return <div className="p-6 text-white">Cargando...</div>;
+  }
+
+  if (!user) {
+    return <div className="p-6 text-white">No autorizado</div>;
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-950 text-white relative">
-      {/* Navbar */}
-      <div className="z-50 relative">
-        <Navbar onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
-      </div>
+      <Navbar
+        onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+        activeBarbershop={activeBarbershop}
+        setActiveBarbershop={setActiveBarbershop}
+        barbershops={barbershops}
+        userId={user.id}
+        sessionId={sessionId}
+        sidebarOpen={sidebarOpen}
+      />
 
       <div className="flex-1 relative">
-        {/* Overlay: clic fuera cierra */}
         {sidebarOpen && (
           <div
             className="fixed top-14 left-64 h-[calc(100%-56px)] w-[calc(100%-16rem)] z-30"
@@ -26,119 +53,19 @@ export default function DashboardLayout({
           />
         )}
 
-        {/* Sidebar */}
         {sidebarOpen && (
-          <aside
-            className="
-              fixed top-14 left-0 h-[calc(100%-56px)] w-64
-              bg-gray-900 p-6 flex flex-col gap-4 z-40
-              transform transition-transform duration-300 delay-200
-              translate-x-0
-            "
-          >
-            <nav className="flex flex-col gap-2">
-              {/* Bloque negocio */}
-              <Link
-                href="/dashboard/barberia"
-                onClick={() => setSidebarOpen(false)}
-              >
-                🏢 Barbería
-              </Link>
-              <Link
-                href="/dashboard/barberos"
-                onClick={() => setSidebarOpen(false)}
-              >
-                💈 Barberos
-              </Link>
-
-               <Link
-                href="/dashboard/barbershop-profile-settings"
-                onClick={() => setSidebarOpen(false)}
-              >
-                🖼️ Barbershop Feed
-              </Link>
-
-              <hr className="border-gray-700 my-2" />
-
-              {/* Bloque servicios y operaciones */}
-              <Link
-                href="/dashboard/servicios"
-                onClick={() => setSidebarOpen(false)}
-              >
-                💇 Servicios
-              </Link>
-              <Link
-                href="/dashboard/cortes"
-                onClick={() => setSidebarOpen(false)}
-              >
-                ✂️ Cortes
-              </Link>
-              <Link
-                href="/dashboard/haircut-styles"
-                onClick={() => setSidebarOpen(false)}
-              >
-                💇‍♂️ Estilos
-              </Link>
-              <Link
-                href="/dashboard/coloraciones"
-                onClick={() => setSidebarOpen(false)}
-              >
-                🎨 Coloraciones
-              </Link>
-              <Link
-                href="/dashboard/insumos"
-                onClick={() => setSidebarOpen(false)}
-              >
-                🧴 Insumos
-              </Link>
-
-              <hr className="border-gray-700 my-2" />
-
-              {/* Bloque agenda y clientes */}
-              <Link
-                href="/dashboard/turnos"
-                onClick={() => setSidebarOpen(false)}
-              >
-                📅 Turnos
-              </Link>
-              <Link
-                href="/dashboard/clientes"
-                onClick={() => setSidebarOpen(false)}
-              >
-                👥 Clientes
-              </Link>
-
-              <hr className="border-gray-700 my-2" />
-
-              {/* Bloque reportes */}
-              <Link
-                href="/dashboard/reportes"
-                onClick={() => setSidebarOpen(false)}
-              >
-                📊 Reportes
-              </Link>
-
-              <hr className="border-gray-700 my-2" />
-
-              {/* Bloque perfil y configuración */}
-              <Link
-                href="/dashboard/perfil"
-                onClick={() => setSidebarOpen(false)}
-              >
-                🧑‍🦱 Perfil
-              </Link>
-              <Link
-                href="/dashboard/configuracion"
-                onClick={() => setSidebarOpen(false)}
-              >
-                ⚙️ Configuración
-              </Link>
-            </nav>
-          </aside>
+          <SidebarNav
+            barbershops={barbershops}
+            activeBarbershop={activeBarbershop}
+            setActiveBarbershop={setActiveBarbershop}
+            setSidebarOpen={setSidebarOpen}
+            userRole={role}
+            userId={user.id}
+            sessionId={sessionId}
+          />
         )}
 
-        {/* Main */}
-        <main className="p-6 relative z-20">{children}</main>
+        <main className="relative z-20">{children}</main>
       </div>
     </div>
   );

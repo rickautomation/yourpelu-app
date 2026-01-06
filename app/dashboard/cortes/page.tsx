@@ -180,7 +180,7 @@ export default function HaircutsPage() {
 
   return (
     <div className="flex flex-col space-y-4">
-      {ownTypes.length === 0 ? (
+      {ownTypes.length === 0 && user ? (
         <p className="text-sm text-red-400">
           No tienes tipos propios de cortes. Debes agregarlos primero en
           “Servicios”.
