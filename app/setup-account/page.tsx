@@ -1,20 +1,27 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation"; // 👈 importar router
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { apiPost } from "../lib/apiPost";
 
 export default function SetupAccountPage() {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
-  const router = useRouter(); // 👈 inicializar router
+  const [token, setToken] = useState<string | null>(null);
+  const router = useRouter();
 
-  // Leer token de la URL
-  const params = new URLSearchParams(window.location.search);
-  const token = params.get("token");
+  // 👇 leer token solo en cliente
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    setToken(params.get("token"));
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!token) {
+      setMessage("Token no encontrado en la URL");
+      return;
+    }
 
     try {
       const data = await apiPost<{ message: string }>("/user/setup-account", {
@@ -23,7 +30,6 @@ export default function SetupAccountPage() {
       });
       setMessage(data.message);
 
-      // 👇 si activación correcta, redirigir al login después de 2s
       if (data.message.includes("correctamente")) {
         setTimeout(() => {
           router.push("/login");
