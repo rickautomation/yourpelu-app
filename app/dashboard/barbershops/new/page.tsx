@@ -61,7 +61,7 @@ export default function BarbershopPage() {
   if (!isAuthenticated) return <p className="text-white">No autorizado</p>;
 
   return (
-    <div className="flex items-center justify-center bg-gray-950 text-white text-center ">
+    <div className="flex items-center justify-center bg-gray-950 text-white text-center p-4">
       <div className="w-full max-w-md rounded-lg shadow-lg pt-0">
         {message && (
           <div className="mb-4 bg-pink-500 text-white text-center py-2 rounded">
