@@ -7,6 +7,23 @@ type Barbershop = {
   name: string;
   address?: string;
   phoneNumber?: string;
+  profile?: ProfileData
+};
+
+type BarberImage = {
+  id: string;
+  imageUrl: string;
+};
+
+type ProfileData = {
+  id: string;
+  lema?: string;
+  description?: string;
+  openingHours?: string;
+  adressCoordinates?: string;
+  logoUrl?: string;
+  websiteUrl?: string | null;
+  images?: BarberImage[]; // 👈 incluir imágenes
 };
 
 interface User {
@@ -29,6 +46,7 @@ export function useUserBarbershops(user: User | null) {
           const current = await apiGet<{ barbershop: Barbershop }>(
             `/current-barbershops/user/${user.id}/last`
           );
+          console.log("current barbershop in useUserBarbershop", current)
           if (current?.barbershop) setActiveBarbershop(current.barbershop);
 
           const all = await apiGet<Barbershop[]>(`/barbershops/user/${user.id}/all`);

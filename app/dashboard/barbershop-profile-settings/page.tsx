@@ -7,6 +7,7 @@ import LogoUploader from "./components/LogoUploader";
 import CarouselUploader from "./components/CarouselUploader";
 import LocationSelector from "./components/LocationSelector";
 import BarbershopInfoForm from "./components/BarbershopInfoForm";
+import BarbershopProfileCard from "./components/BarbershopProfileCard";
 
 export default function BarbershopProfileSettingsPage() {
   const { user, loading, isUnauthorized, router } = useAuth();
@@ -15,7 +16,9 @@ export default function BarbershopProfileSettingsPage() {
   const [logo, setLogo] = useState<File | null>(null);
   const [carouselImages, setCarouselImages] = useState<File[]>([]);
   const [step, setStep] = useState(1);
-  const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [location, setLocation] = useState<{ lat: number; lng: number } | null>(
+    null
+  );
   const [info, setInfo] = useState<{
     lema?: string;
     descripcion?: string;
@@ -28,6 +31,10 @@ export default function BarbershopProfileSettingsPage() {
     address: activeBarbershop?.address || "",
     contacto: activeBarbershop?.phoneNumber || "",
   });
+
+  const [success, setSuccess] = useState(false);
+
+  console.log("activeBarbershop", activeBarbershop);
 
   useEffect(() => {
     if (activeBarbershop) {
@@ -48,39 +55,38 @@ export default function BarbershopProfileSettingsPage() {
     const formData = new FormData();
     formData.append("barbershopId", activeBarbershop.id);
 
-    // Info básica
-    formData.append("name", info.name || "");
-    formData.append("address", info.address || "");
-    formData.append("contacto", info.contacto || "");
-    formData.append("horario", info.horario || "");
-    formData.append("lema", info.lema || "");
-    formData.append("descripcion", info.descripcion || "");
+    if (info.lema) formData.append("lema", info.lema);
+    if (info.descripcion) formData.append("descripcion", info.descripcion);
+    if (info.contacto) formData.append("contacto", info.contacto);
+    if (info.horario) formData.append("horario", info.horario);
 
-    // Ubicación
-    if (location) {
+    if (location?.lat && location?.lng) {
       formData.append("lat", location.lat.toString());
       formData.append("lng", location.lng.toString());
     }
 
-    // Logo
-    if (logo) {
-      formData.append("logo", logo);
-    }
-
-    // Carrusel
+    if (logo) formData.append("logo", logo);
     carouselImages.forEach((file) => formData.append("carousel", file));
 
-    await fetch("/api/barbershop/setup-feed", {
-      method: "POST",
-      body: formData,
-    });
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/barbershops/${activeBarbershop.id}/setup-feed`,
+        {
+          method: "POST",
+          body: formData,
+          credentials: "include", // 👈 necesario para enviar la cookie auth_token
+        }
+      );
 
-   console.log([...formData.entries()]);
+      if (!res.ok) throw new Error(`Error HTTP ${res.status}`);
+      const data = await res.json();
 
-    alert("Barbería configurada correctamente ✅");
+      setSuccess(true);
+    } catch (err) {
+      console.error("Error al configurar barbería:", err);
+      alert("Hubo un error al configurar la barbería ❌");
+    }
   };
-
- 
 
   if (loading) return <p>Cargando...</p>;
   if (isUnauthorized) {
@@ -88,9 +94,16 @@ export default function BarbershopProfileSettingsPage() {
     return null;
   }
 
+  if (success) {
+    return <div className="p-6 text-center">✔️ Configuración finalizada</div>;
+  }
+
   return (
     <div className="flex flex-col space-y-6 text-center p-6">
-      {activeBarbershop && (
+      {activeBarbershop?.profile ? (
+        // 👉 Renderizar perfil si ya existe
+        <BarbershopProfileCard barbershop={activeBarbershop} />
+      ) : (
         <>
           {step === 1 && <BarbershopInfoForm info={info} setInfo={setInfo} />}
 
@@ -102,9 +115,7 @@ export default function BarbershopProfileSettingsPage() {
             />
           )}
 
-          {step === 3 && (
-            <LogoUploader logo={logo} setLogo={setLogo} />
-          )}
+          {step === 3 && <LogoUploader logo={logo} setLogo={setLogo} />}
 
           {step === 4 && (
             <CarouselUploader
@@ -116,14 +127,27 @@ export default function BarbershopProfileSettingsPage() {
           {step === 5 && (
             <div className="p-6 bg-gray-800 text-white rounded-lg space-y-4">
               <h2 className="text-xl font-bold mb-4">Confirmación</h2>
-              <p><strong>Contacto:</strong> {info.contacto}</p>
-              <p><strong>Horario:</strong> {info.horario}</p>
-              <p><strong>Dirección:</strong> {info.address}</p>
+              <p>
+                <strong>Contacto:</strong> {info.contacto}
+              </p>
+              <p>
+                <strong>Horario:</strong> {info.horario}
+              </p>
+              <p>
+                <strong>Dirección:</strong> {info.address}
+              </p>
               {location && (
-                <p><strong>Ubicación:</strong> Lat {location.lat}, Lng {location.lng}</p>
+                <p>
+                  <strong>Ubicación:</strong> Lat {location.lat}, Lng{" "}
+                  {location.lng}
+                </p>
               )}
-              <p><strong>Logo:</strong> {logo ? logo.name : "No cargado"}</p>
-              <p><strong>Carrusel:</strong> {carouselImages.length} imágenes</p>
+              <p>
+                <strong>Logo:</strong> {logo ? logo.name : "No cargado"}
+              </p>
+              <p>
+                <strong>Carrusel:</strong> {carouselImages.length} imágenes
+              </p>
 
               <button
                 onClick={handleFinalSubmit}
