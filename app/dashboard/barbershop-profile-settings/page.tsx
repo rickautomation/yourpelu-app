@@ -99,7 +99,7 @@ export default function BarbershopProfileSettingsPage() {
   }
 
   return (
-    <div className="flex flex-col space-y-6 text-center p-6">
+    <div className="flex flex-col space-y-6 text-center">
       {activeBarbershop?.profile ? (
         // 👉 Renderizar perfil si ya existe
         <BarbershopProfileCard barbershop={activeBarbershop} />
@@ -159,7 +159,7 @@ export default function BarbershopProfileSettingsPage() {
           )}
 
           {/* Navegación */}
-          <div className="flex justify-between mt-4">
+          <div className="flex justify-between mt-4 px-4">
             <button
               onClick={() => setStep((s) => Math.max(1, s - 1))}
               disabled={step === 1}

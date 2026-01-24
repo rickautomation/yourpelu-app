@@ -37,22 +37,9 @@ export default function RegisterPage({ setView }: Props) {
   }
 
   return (
-    <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-900 animate-slideIn px-4">
-      {/* Logo más arriba */}
-      <div className="absolute top-16 text-5xl font-bold">
-        <button
-          onClick={() => setView?.("home")}
-          className="hover:text-pink-400 transition-colors"
-        >
-          Your<span className="text-pink-400">Pelu</span>
-        </button>
-      </div>
-
-      {/* Texto de bienvenida ampliado */}
-      <h2 className="text-2xl font-bold mb-2 mt-20">¡Bienvenido!</h2>
+    <div className="flex flex-col items-center justify-center bg-gray-950 animate-slideIn px-4">
       <p className="text-gray-300 mb-6 text-center max-w-md">
-        Registrate para empezar a gestionar tu peluquería. Con Your
-        <span className="text-pink-400">Pelu</span> vas a poder organizar
+        Registrate para empezar a gestionar tu peluquería. Vas a poder organizar
         turnos, clientes y cortes de manera simple y rápida, todo desde tu
         celular.
       </p>
@@ -60,7 +47,7 @@ export default function RegisterPage({ setView }: Props) {
       {/* Formulario */}
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-sm flex flex-col gap-4"
+        className="w-full max-w-sm flex flex-col gap-3"
       >
         <input
           type="text"

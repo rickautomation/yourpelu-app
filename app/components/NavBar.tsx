@@ -4,6 +4,7 @@ import { useAuth } from "../lib/useAuth";
 import { Barbershop } from "../interfaces";
 import { useState, useRef, useEffect } from "react";
 import { apiPost } from "../lib/apiPost";
+import Image from "next/image";
 
 export default function Navbar({
   onToggleSidebar,
@@ -62,11 +63,11 @@ export default function Navbar({
   return (
     <header className="w-full flex items-center justify-between bg-gray-900 text-white px-4 py-2 relative">
       {/* Lado izquierdo: menú + logo */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1">
         {isAuthenticated && onToggleSidebar && (
           <button
             onClick={onToggleSidebar}
-            className="p-2 border border-gray-700 rounded-md hover:bg-gray-800 focus:outline-none"
+            className="p-1 border border-gray-700 rounded-md hover:bg-gray-800 focus:outline-none"
           >
             <svg
               className="w-6 h-6"
@@ -75,7 +76,11 @@ export default function Navbar({
               strokeWidth={2}
               viewBox="0 0 24 24"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M4 6h16M4 12h16M4 18h16"
+              />
             </svg>
           </button>
         )}
@@ -84,12 +89,18 @@ export default function Navbar({
             href="/dashboard"
             className="hover:text-pink-400 transition-colors"
             onClick={() => {
-              if (onToggleSidebar) {
-                onToggleSidebar();
+              if (sidebarOpen && onToggleSidebar) {
+                onToggleSidebar(); // 👈 solo lo cierra si está abierto
               }
             }}
           >
-            Your<span className="text-pink-400">Pelu</span>
+            <Image
+              src="/yourpelu-logo.png"
+              alt="Yourpelu Logo"
+              width={64}
+              height={64}
+              className="h-7 w-auto"
+            />
           </Link>
         </div>
       </div>
@@ -101,7 +112,7 @@ export default function Navbar({
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setShowSelector(!showSelector)}
-                className="px-3 py-2 border border-pink-600 rounded-md text-sm text-pink-400 font-semibold flex items-center gap-2 hover:bg-pink-600 hover:text-white transition"
+                className="p-1 border border-pink-600 rounded-md text-sm text-pink-400 font-semibold flex items-center gap-2 hover:bg-pink-600 hover:text-white transition"
               >
                 {activeBarbershop.name}
                 <svg
@@ -112,7 +123,12 @@ export default function Navbar({
                   stroke="currentColor"
                   viewBox="0 0 24 24"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
                 </svg>
               </button>
 
@@ -141,10 +157,10 @@ export default function Navbar({
             <img
               src={user.avatarUrl}
               alt="User Avatar"
-              className="w-8 h-8 rounded-full border border-gray-700"
+              className="w-6 h-6 rounded-full border border-gray-700"
             />
           ) : (
-            <div className="w-9 h-9 flex items-center justify-center rounded-full bg-pink-500 text-white font-bold">
+            <div className="w-8 h-8 flex items-center justify-center rounded-full bg-pink-500 text-white font-bold">
               {user?.name && user?.lastname
                 ? `${user.name.charAt(0)}${user.lastname.charAt(0)}`
                 : "U"}

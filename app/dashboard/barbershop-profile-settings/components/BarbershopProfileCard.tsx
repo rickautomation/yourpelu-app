@@ -1,10 +1,8 @@
 "use client";
 import Image from "next/image";
+import EditableFieldPopup from "./EditableFieldPopup"; // 👈 importa tu componente
 
-type BarberImage = {
-  id: string;
-  imageUrl: string;
-};
+type BarberImage = { id: string; imageUrl: string };
 
 type ProfileData = {
   id: string;
@@ -22,7 +20,6 @@ type Barbershop = {
   name: string;
   address?: string;
   phoneNumber?: string;
-  deletedAt?: string | null;
   profile?: ProfileData;
 };
 
@@ -30,17 +27,17 @@ interface Props {
   barbershop: Barbershop;
 }
 
-export default function BarbershopProfileCard({ barbershop }: Props) {
+export default function BarbershopProfileCardEditable({ barbershop }: Props) {
   const profile = barbershop.profile;
 
   return (
-    <div className="max-w-3xl mx-auto bg-gray-900 text-white shadow-xl rounded-lg overflow-hidden">
-      {/* Header con logo */}
-      <div className="flex flex-col items-center p-6 bg-gray-800">
+    <div className="max-w-3xl mx-auto text-white overflow-hidden">
+      {/* Header */}
+      <div className="flex flex-col items-center p-3 bg-gray-800">
         <h2 className="mt-4 text-3xl font-bold">{barbershop.name}</h2>
-        <p className="text-gray-400">{barbershop.address}</p>
-        <p className="text-gray-400">📞 {barbershop.phoneNumber}</p>
-                {profile?.logoUrl && (
+        <p className="text-gray-400">{barbershop.address || "📍 Dirección pendiente"}</p>
+        <p className="text-gray-400">📞 {barbershop.phoneNumber || "Teléfono pendiente"}</p>
+              {profile?.logoUrl ? (
           <Image
             src={`${process.env.NEXT_PUBLIC_API_URL}${profile.logoUrl}`}
             alt={`${barbershop.name} logo`}
@@ -49,39 +46,45 @@ export default function BarbershopProfileCard({ barbershop }: Props) {
             className="rounded-full border-4 border-pink-500 shadow-md"
             unoptimized
           />
+        ) : (
+          <div className="w-24 h-24 flex items-center justify-center rounded-full border-4 border-dashed border-pink-500 text-gray-400">
+            Logo pendiente
+          </div>
         )}
       </div>
 
-      {/* Perfil */}
-      {profile && (
-        <div className="p-6 space-y-3">
-          <p><span className="font-semibold text-pink-400">Lema:</span> {profile.lema}</p>
-          <p><span className="font-semibold text-pink-400">Descripción:</span> {profile.description}</p>
-          <p><span className="font-semibold text-pink-400">Horario:</span> {profile.openingHours}</p>
-          <p><span className="font-semibold text-pink-400"></span> {profile.adressCoordinates}</p>
-        </div>
-      )}
+      {/* Campos editables con popup */}
+      <div className="px-3">
+        <h3 className="text-xl font-semibold mt-3 text-pink-400">Informacion general</h3>
+        <div className="flex flex-col items-start p-3 space-y-3">
+        <EditableFieldPopup label="Lema" value={profile?.lema} placeholder="Agrega un lema" />
+        <EditableFieldPopup label="Descripción" value={profile?.description} placeholder="Agrega una descripción" multiline />
+        <EditableFieldPopup label="Horario" value={profile?.openingHours} placeholder="Agrega un horario" />
+        <EditableFieldPopup label="Ubicación" value={profile?.adressCoordinates} placeholder="Agrega una ubicación" />
+      </div>
+      </div>
 
-      {/* Galería */}
-      {profile?.images && profile.images.length > 0 && (
-        <div className="p-6">
-          <h3 className="text-xl font-semibold mb-4 text-center text-pink-400">Galería</h3>
+      {/* Galería editable */}
+      <div className="p-3">
+        <h3 className="text-xl font-semibold mb-4 text-pink-400">Galería</h3>
+        {profile?.images?.length ? (
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {profile.images.map((img) => (
-              <div key={img.id} className="relative group">
-                <Image
-                  src={`${process.env.NEXT_PUBLIC_API_URL}${img.imageUrl}`}
-                  alt="Barbershop image"
-                  width={300}
-                  height={200}
-                  className="rounded-lg object-cover transform group-hover:scale-105 transition duration-300 shadow-lg"
-                  unoptimized
-                />
-              </div>
+              <Image
+                key={img.id}
+                src={`${process.env.NEXT_PUBLIC_API_URL}${img.imageUrl}`}
+                alt="Barbershop image"
+                width={300}
+                height={200}
+                className="rounded-lg object-cover shadow-lg"
+                unoptimized
+              />
             ))}
           </div>
-        </div>
-      )}
+        ) : (
+          <p className="italic text-gray-400">No hay imágenes cargadas</p>
+        )}
+      </div>
     </div>
   );
 }

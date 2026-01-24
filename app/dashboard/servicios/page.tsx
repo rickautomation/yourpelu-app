@@ -1,25 +1,32 @@
 "use client";
+
 import { useEffect, useState } from "react";
-import { apiGet } from "@/app/lib/apiGet";
-import { apiPost } from "@/app/lib/apiPost";
 import { useAuth } from "@/app/lib/useAuth";
-import { apiDelete } from "@/app/lib/apiDelete";
-import { apiUpdate } from "@/app/lib/apiUpdate";
+import { useServices } from "@/app/hooks/useServices";
+import { useUserBarbershops } from "@/app/hooks/useUserBarbershops";
 
-type HaircutType = {
-  id: string;
-  name: string;
-  description?: string;
-  price?: number;
-  baseType?: { id: string }; // 👈 agregar esta propiedad opcional
-};
+interface ServicesPageProps {
+  render?: string;
+  onServicesChange?: (count: number) => void; // 👈 nueva prop
+}
 
-export default function ServicesPage() {
+export default function ServicesPage({
+  render,
+  onServicesChange,
+}: ServicesPageProps) {
   const { user } = useAuth();
+  const { activeBarbershop } = useUserBarbershops(user);
 
-  const [globalServices, setGlobalServices] = useState<HaircutType[]>([]);
-  const [ownServices, setOwnServices] = useState<HaircutType[]>([]);
-  const [loading, setLoading] = useState(true);
+  const {
+    globalServices,
+    ownServices,
+    loading,
+    error,
+    addOwnService,
+    addGlobalService,
+    updateService,
+    deleteService,
+  } = useServices(activeBarbershop?.id);
 
   const [showForm, setShowForm] = useState<"own" | "template" | null>(null);
   const [newName, setNewName] = useState("");
@@ -35,131 +42,26 @@ export default function ServicesPage() {
   } | null>(null);
 
   useEffect(() => {
-    const fetchServices = async () => {
-      try {
-        const global = await apiGet<HaircutType[]>("/haircut-types");
-        const own = await apiGet<HaircutType[]>(
-          `/client-haircut-types/barbershop/${user?.barbershop?.id}`
-        );
-        setGlobalServices(global);
-        setOwnServices(own);
-      } catch (err) {
-        console.error("Error cargando servicios", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (user?.barbershop?.id) {
-      fetchServices();
-    } else {
-      // 👇 si no hay barbería, igual desactivamos loading
-      setLoading(false);
-    }
-  }, [user]);
+    onServicesChange?.(ownServices.length);
+  }, [ownServices, onServicesChange]);
 
   const showTempMessage = (type: "success" | "error", text: string) => {
     setMessage({ type, text });
     setTimeout(() => setMessage(null), 3000);
   };
 
-  const handleAddOwnService = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      await apiPost(
-        `/client-haircut-types/barbershop/${user?.barbershop?.id}`,
-        {
-          name: newName,
-          description: newDescription,
-          price: newPrice,
-        }
-      );
-      setNewName("");
-      setNewDescription("");
-      setNewPrice(0);
-      setShowForm(null);
-
-      const own = await apiGet<HaircutType[]>(
-        `/client-haircut-types/barbershop/${user?.barbershop?.id}`
-      );
-      setOwnServices(own);
-      showTempMessage("success", "Servicio propio creado exitosamente");
-    } catch (err) {
-      console.error("Error creando servicio propio", err);
-      showTempMessage("error", "Error al crear servicio propio");
-    }
-  };
-
-  const handleConfirmAddGlobal = async (serviceId: string) => {
-    try {
-      await apiPost(
-        `/client-haircut-types/barbershop/${user?.barbershop?.id}/add/${serviceId}`,
-        { price: Number(price) }
-      );
-      const own = await apiGet<HaircutType[]>(
-        `/client-haircut-types/barbershop/${user?.barbershop?.id}`
-      );
-      setOwnServices(own);
-      setOpenPriceInput(null);
-      setPrice("");
-      showTempMessage("success", "Servicio añadido a tu barbería");
-    } catch (err) {
-      console.error("Error añadiendo servicio global", err);
-      showTempMessage("error", `${err}`);
-    }
-  };
-
-  const handleUpdate = async (
-    serviceId: string,
-    updatedData: Partial<HaircutType>
-  ) => {
-    try {
-      await apiUpdate(`/client-haircut-types/${serviceId}`, updatedData);
-
-      // refrescamos la lista de servicios propios
-      const own = await apiGet<HaircutType[]>(
-        `/client-haircut-types/barbershop/${user?.barbershop?.id}`
-      );
-      setOwnServices(own);
-
-      showTempMessage("success", "Servicio actualizado exitosamente");
-    } catch (err) {
-      console.error("Error actualizando servicio", err);
-      showTempMessage("error", "Error al actualizar servicio");
-    }
-  };
-
-  const handleSoftDelete = async (serviceId: string) => {
-    try {
-      await apiDelete(`/client-haircut-types/soft/${serviceId}`);
-
-      // refrescamos la lista de servicios propios
-      const own = await apiGet<HaircutType[]>(
-        `/client-haircut-types/barbershop/${user?.barbershop?.id}`
-      );
-      setOwnServices(own);
-
-      showTempMessage(
-        "success",
-        "Servicio eliminado (soft delete) exitosamente"
-      );
-    } catch (err) {
-      console.error("Error eliminando servicio", err);
-      showTempMessage("error", "Error al eliminar servicio");
-    }
-  };
-
   if (loading) return <p>Cargando...</p>;
+  if (error) return <p>Error cargando servicios</p>;
 
-  // 👇 filtrar globales que ya están en propios
   const availableTemplates = globalServices.filter(
-    (g) => !ownServices.some((o) => o.baseType?.id === g.id || o.id === g.id)
+    (g) => !ownServices.some((o) => o.baseType?.id === g.id || o.id === g.id),
   );
 
   return (
-    <div className="flex flex-col space-y-4 p-4">
-      {/* Card para agregar servicio propio */}
-      {showForm === null ? (
+    <div
+      className={`flex flex-col space-y-4 ${render === "true" ? "p-0" : "p-4"}`}
+    >
+      {user?.rol === "admin" && showForm === null ? (
         <div className="px-6 py-4 bg-gray-800 rounded-lg shadow-md flex justify-between items-center">
           <p className="text-lg font-semibold text-white">Agregar servicio</p>
           <div className="flex gap-2">
@@ -179,8 +81,19 @@ export default function ServicesPage() {
         </div>
       ) : showForm === "own" ? (
         <form
-          onSubmit={handleAddOwnService}
-          className="flex flex-col gap-2 bg-gray-800 p-4 rounded-lg shadow-md"
+          onSubmit={async (e) => {
+            e.preventDefault();
+            await addOwnService({
+              name: newName,
+              description: newDescription,
+              price: newPrice,
+            });
+            setNewName("");
+            setNewDescription("");
+            setNewPrice(0);
+            setShowForm(null);
+            showTempMessage("success", "Servicio propio creado exitosamente");
+          }}
         >
           <input
             type="text"
@@ -220,7 +133,7 @@ export default function ServicesPage() {
             </button>
           </div>
         </form>
-      ) : (
+      ) : user?.rol === "admin" && showForm === "template" ? (
         <div className="flex flex-col gap-2">
           <p className="text-sm text-gray-300">
             Selecciona un servicio global para añadirlo abajo.
@@ -232,7 +145,7 @@ export default function ServicesPage() {
             Cancelar selección de plantilla
           </button>
         </div>
-      )}
+      ) : null}
 
       {/* Lista de servicios propios */}
       {ownServices.map((service) => (
@@ -259,9 +172,9 @@ export default function ServicesPage() {
                   <div className="flex gap-2 mt-2">
                     <button
                       onClick={async () => {
-                        await handleUpdate(service.id, {
+                        await updateService(service.id, {
                           price: Number(price),
-                        }); // convertir aquí
+                        });
                         setOpenPriceInput(null);
                       }}
                       className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-500 text-sm font-semibold"
@@ -292,7 +205,13 @@ export default function ServicesPage() {
                       Editar
                     </button>
                     <button
-                      onClick={() => handleSoftDelete(service.id)}
+                      onClick={async () => {
+                        await deleteService(service.id);
+                        showTempMessage(
+                          "success",
+                          "Servicio eliminado exitosamente",
+                        );
+                      }}
                       className="bg-pink-700 text-white px-2 py-2 rounded hover:bg-red-600 transition-colors text-sm font-semibold"
                     >
                       Quitar
@@ -323,7 +242,7 @@ export default function ServicesPage() {
                 <button
                   onClick={() =>
                     setOpenPriceInput(
-                      openPriceInput === service.id ? null : service.id
+                      openPriceInput === service.id ? null : service.id,
                     )
                   }
                   className="ml-auto w-28 text-center px-2 py-3 bg-pink-400 text-white rounded hover:bg-pink-500 transition-colors text-lg font-semibold"
@@ -344,7 +263,15 @@ export default function ServicesPage() {
                 />
                 <div className="flex gap-2">
                   <button
-                    onClick={() => handleConfirmAddGlobal(service.id)}
+                    onClick={async () => {
+                      await addGlobalService(service.id, Number(price));
+                      setOpenPriceInput(null);
+                      setPrice("");
+                      showTempMessage(
+                        "success",
+                        "Servicio añadido a tu barbería",
+                      );
+                    }}
                     className="flex-1 bg-pink-400 text-white px-3 py-2 rounded hover:bg-pink-500 transition-colors text-sm font-semibold"
                   >
                     Confirmar

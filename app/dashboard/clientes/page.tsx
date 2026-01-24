@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { apiGet } from "@/app/lib/apiGet";
 import { apiPost } from "@/app/lib/apiPost";
 import { useAuth } from "@/app/lib/useAuth";
+import Link from "next/link";
 
 type BarberClient = {
   id: string;
@@ -20,6 +21,7 @@ export default function ClientsPage() {
   const [loading, setLoading] = useState(true);
 
   const [showAdd, setShowAdd] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const [name, setName] = useState("");
   const [lastname, setLastname] = useState("");
@@ -31,14 +33,11 @@ export default function ClientsPage() {
     text: string;
   } | null>(null);
 
-  // Estado para controlar qué cliente está expandido
-  const [expandedClientId, setExpandedClientId] = useState<string | null>(null);
-
   useEffect(() => {
     const fetchClients = async () => {
       try {
         const data = await apiGet<BarberClient[]>(
-          `/barber-clients/barbershop/${user?.barbershop?.id}`
+          `/barber-clients/barbershop/${user?.barbershop?.id}`,
         );
         setClients(data);
       } catch (err) {
@@ -54,6 +53,12 @@ export default function ClientsPage() {
       setLoading(false);
     }
   }, [user]);
+
+  const filteredClients = clients.filter((client) =>
+    `${client.name} ${client.lastname} ${client.email ?? ""} ${client.phone ?? ""}`
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase()),
+  );
 
   const showTempMessage = (type: "success" | "error", text: string) => {
     setMessage({ type, text });
@@ -77,7 +82,7 @@ export default function ClientsPage() {
       setShowAdd(false);
 
       const data = await apiGet<BarberClient[]>(
-        `/barber-clients/barbershop/${user?.barbershop?.id}`
+        `/barber-clients/barbershop/${user?.barbershop?.id}`,
       );
       setClients(data);
 
@@ -89,11 +94,20 @@ export default function ClientsPage() {
   };
 
   return (
-    <div className="flex flex-col gap-6 p-4">
+    <div className="flex flex-col gap-3 p-4">
       {/* Card para agregar cliente */}
       <div className="bg-gray-800 p-4 rounded-lg shadow-md flex flex-col gap-3">
         <div className="flex justify-between items-center">
-          <p className="text-xl font-semibold text-white">Agregar cliente</p>
+          <div className="flex items-center gap-1">
+            <input
+              type="text"
+              placeholder="Buscar cliente..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="px-2 py-2 rounded bg-gray-700 text-white w-full max-w-xs focus:outline-none focus:ring-2 focus:ring-pink-400"
+            />
+          </div>
+
           {!showAdd && (
             <button
               onClick={() => setShowAdd(true)}
@@ -184,43 +198,36 @@ export default function ClientsPage() {
             <p className="text-gray-400">Cargando clientes...</p>
           ) : (
             <div className="space-y-3">
-              {clients.map((client) => {
-                const isExpanded = expandedClientId === client.id;
+              {filteredClients.map((client) => {
                 return (
                   <div
                     key={client.id}
-                    className="flex flex-col px-6 py-4 bg-gray-700 rounded-lg shadow-md"
+                    className="flex flex-col px-5 py-4 bg-gray-700 rounded-lg shadow-md"
                   >
-                    <div className="flex items-center">
-                      <div>
-                        <p className="text-2xl text-white">{client.name}</p>
-                        <p className="text-2xl text-white">{client.lastname}</p>
-                      </div>
-                      <button
-                        type="button"
+                    <div className="flex gap-1 items-center">
+                      <p className="text-xl text-white font-bold">
+                        {client.name}
+                      </p>
+                      <p className="text-xl text-white font-bold">
+                        {client.lastname}
+                      </p>
+
+                      <Link
+                        href={`/dashboard/clientes/info/${client.id}`}
                         className="ml-auto bg-pink-400 text-white px-3 py-1 rounded hover:bg-pink-500 transition-colors text-sm font-semibold"
-                        onClick={() =>
-                          setExpandedClientId(isExpanded ? null : client.id)
-                        }
                       >
-                        {isExpanded ? "Cerrar" : "Ver más"}
-                      </button>
+                        Ver más
+                      </Link>
                     </div>
 
-                    {isExpanded && (
-                      <div className="mt-3 text-gray-300">
-                        {client.email || client.phone ? (
-                          <ul className="space-y-1">
-                            {client.email && <li>Email: {client.email}</li>}
-                            {client.phone && <li>Teléfono: {client.phone}</li>}
-                          </ul>
-                        ) : (
-                          <p className="text-gray-400">
-                            No hay más info del cliente
-                          </p>
-                        )}
-                      </div>
-                    )}
+                    <div className="text-sm text-gray-300">
+                      {(client.email || client.phone) && (
+                        <ul className="space-y-1">
+                          {client.email && <li>{client.email}</li>}
+                          {client.phone && <li> {client.phone}</li>}
+                        </ul>
+                      )}
+                    </div>
                   </div>
                 );
               })}

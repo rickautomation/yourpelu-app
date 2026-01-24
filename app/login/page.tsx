@@ -49,21 +49,7 @@ export default function LoginPage({ setView }: Props) {
   }
 
   return (
-    <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-900 animate-slideIn px-4">
-      {/* Logo más arriba */}
-      <div className="absolute top-20 text-5xl font-bold">
-        <button
-          onClick={() => setView?.("home")}
-          className="hover:text-pink-400 transition-colors"
-        >
-          Your<span className="text-pink-400">Pelu</span>
-        </button>
-      </div>
-
-      {/* Texto de bienvenida */}
-      <h2 className="text-2xl font-bold mb-2 mt-24">
-        ¡Qué bueno tenerte de vuelta!
-      </h2>
+    <div className=" flex flex-col items-center justify-center bg-gray-950 animate-slideIn px-4">
       <p className="text-gray-300 mb-6 text-center max-w-md">
         Iniciá sesión para acceder a tu panel de gestión. Con Your
         <span className="text-pink-400">Pelu</span> podés organizar turnos,
@@ -102,16 +88,16 @@ export default function LoginPage({ setView }: Props) {
       {message && <p className="mt-4">{message}</p>}
 
       {/* Links inferiores */}
-      <div className="flex gap-4 mt-6">
+      <div className="flex gap-4 mt-6 text-lg">
         <button
           onClick={() => setView?.("register")}
-          className="text-sm text-gray-400 hover:text-pink-400"
+          className=" text-gray-400 hover:text-pink-400"
         >
           Ir a Registro →
         </button>
         <button
           onClick={() => setView?.("home")}
-          className="text-sm text-gray-400 hover:text-pink-400"
+          className=" text-gray-400 hover:text-pink-400"
         >
           ← Volver
         </button>

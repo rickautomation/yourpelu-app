@@ -32,7 +32,7 @@ export default function SetupAccountPage() {
 
       if (data.message.includes("correctamente")) {
         setTimeout(() => {
-          router.push("/login");
+          router.push("/login-setup");
         }, 2000);
       }
     } catch (err: any) {

@@ -41,7 +41,7 @@ export default function BarbershopInfoForm({
   };
 
   return (
-    <form className="flex flex-col gap-4 bg-gray-800 p-4 rounded-lg shadow-md text-start">
+    <form className="flex flex-col gap-4 p-4 rounded-lg shadow-md text-start">
       {/* Lema */}
       <div>
         <label className="block text-sm mb-1">Lema (opcional)</label>

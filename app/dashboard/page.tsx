@@ -1,8 +1,14 @@
 "use client";
+
+import BarbershopSetupWizard from "../components/dashboard/BarbershopSetupWizard";
 import { useAuth } from "../lib/useAuth";
+import { useUserBarbershops } from "../hooks/useUserBarbershops";
+import { useServices } from "../hooks/useServices";
 
 export default function DashboardPage() {
   const { user, loading, isUnauthorized, router } = useAuth();
+  const { activeBarbershop } = useUserBarbershops(user);
+  const { globalServices, ownServices } = useServices(activeBarbershop?.id);
 
   if (loading) return <p className="text-white">Cargando...</p>;
   if (isUnauthorized) {
@@ -10,25 +16,60 @@ export default function DashboardPage() {
     return null;
   }
 
-  console.log("user", user)
-
   return (
     <div className="flex flex-col space-y-4 p-4">
-      <h3 className="text-white text-2xl font-semibold mb-4">
-        ¡Bienvenido, {user?.name}!
-      </h3>
-      <h4 className="text-white text-lg mb-4">
-        1. Desde el menu lateral, accede a "Barbería" para gestionar los detalles de tu negocio.
-      </h4>
-      <h4 className="text-white text-lg mb-4">
-        2. Luego, dirígete a "Servicios" para añadir y personalizar los servicios que ofreces.
-      </h4>
-      <h4 className="text-white text-lg mb-4">
-        3. Agrega tus estilos de corte propios en la sección "Estilos".
-      </h4>
-      <h4 className="text-white text-lg mb-4">
-        4. Ya estás listo para empezar a gestionar tu barbería de manera eficiente. ¡Vamos allá!
-      </h4>
+      {activeBarbershop ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <section className="flex justify-between p-1 pr-3 items-center rounded-lg">
+            <div>
+              <h1 className="text-3xl font-bold">{activeBarbershop?.name}</h1>
+              <p className="text-sm text-gray-300">
+                {activeBarbershop?.address}
+              </p>
+              <p className="text-sm text-gray-300">
+                <span className="text-pink-600">Teléfono: </span>
+                {activeBarbershop?.phoneNumber}
+              </p>
+            </div>
+          </section>
+
+          <section className=" rounded-lg border-4 border-gray-900 bg-gray-800 p-2 ">
+            {ownServices.length === 0 ? (
+              <p className="text-gray-400">No hay servicios configurados.</p>
+            ) : (
+              <div>
+                {ownServices.map((service) => (
+                  <div
+                    key={service.id}
+                    className="py-2 px-2 flex justify-between items-center"
+                  >
+                    <p>{service.name}</p>
+                    <p className="text-pink-500 font-semibold">
+                      {service.price
+                        ? `$${service.price}`
+                        : "Precio no definido"}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
+              <div className="flex justify-end">
+                 <button className="bg-blue-500 px-3 py-2 rounded text-white mt-2" onClick={() => router.push("/dashboard/servicios")}>
+                Ir a Servicios
+              </button>
+              </div>
+          </section>
+        </div>
+      ) : (
+        <BarbershopSetupWizard
+          onFinish={() => {
+            router.push("/dashboard");
+            router.refresh(); // 👈 fuerza recarga del componente al montarse
+          }}
+          userName={user?.name || "Usuario"}
+          userId={user?.id || ""}
+        />
+      )}
     </div>
   );
 }
