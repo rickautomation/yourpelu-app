@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import EditableFieldPopup from "./EditableFieldPopup"; // 👈 importa tu componente
+import EditableFieldRow from "./EditableFieldRow";
 
 type BarberImage = { id: string; imageUrl: string };
 
@@ -31,19 +31,16 @@ export default function BarbershopProfileCardEditable({ barbershop }: Props) {
   const profile = barbershop.profile;
 
   return (
-    <div className="max-w-3xl mx-auto text-white overflow-hidden">
+    <div className="max-w-3xl mx-auto text-white overflow-hidden  bg-gray-900">
       {/* Header */}
-      <div className="flex flex-col items-center p-3 bg-gray-800">
-        <h2 className="mt-4 text-3xl font-bold">{barbershop.name}</h2>
-        <p className="text-gray-400">{barbershop.address || "📍 Dirección pendiente"}</p>
-        <p className="text-gray-400">📞 {barbershop.phoneNumber || "Teléfono pendiente"}</p>
-              {profile?.logoUrl ? (
+      <div className="flex flex-col items-center p-6 bg-gray-800">
+        {profile?.logoUrl ? (
           <Image
             src={`${process.env.NEXT_PUBLIC_API_URL}${profile.logoUrl}`}
             alt={`${barbershop.name} logo`}
             width={120}
             height={120}
-            className="rounded-full border-4 border-pink-500 shadow-md"
+            className=" border-4 border-pink-500 shadow-md"
             unoptimized
           />
         ) : (
@@ -51,21 +48,42 @@ export default function BarbershopProfileCardEditable({ barbershop }: Props) {
             Logo pendiente
           </div>
         )}
+        <h2 className="mt-4 text-3xl font-bold">{barbershop.name}</h2>
+        <p className="text-gray-400">
+          {barbershop.address || "📍 Dirección pendiente"}
+        </p>
+        <p className="text-gray-400">
+          📞 {barbershop.phoneNumber || "Teléfono pendiente"}
+        </p>
       </div>
 
-      {/* Campos editables con popup */}
-      <div className="px-3">
-        <h3 className="text-xl font-semibold mt-3 text-pink-400">Informacion general</h3>
-        <div className="flex flex-col items-start p-3 space-y-3">
-        <EditableFieldPopup label="Lema" value={profile?.lema} placeholder="Agrega un lema" />
-        <EditableFieldPopup label="Descripción" value={profile?.description} placeholder="Agrega una descripción" multiline />
-        <EditableFieldPopup label="Horario" value={profile?.openingHours} placeholder="Agrega un horario" />
-        <EditableFieldPopup label="Ubicación" value={profile?.adressCoordinates} placeholder="Agrega una ubicación" />
-      </div>
+      {/* Información general */}
+      <div className="flex flex-col space-y-2 px-4">
+        <EditableFieldRow
+          label="Lema"
+          value={profile?.lema}
+          placeholder="Agrega un lema"
+        />
+        <EditableFieldRow
+          label="Descripción"
+          value={profile?.description}
+          placeholder="Agrega una descripción"
+          multiline
+        />
+        <EditableFieldRow
+          label="Horario"
+          value={profile?.openingHours}
+          placeholder="Agrega un horario"
+        />
+        <EditableFieldRow
+          label="Ubicación"
+          value={profile?.adressCoordinates}
+          placeholder="Agrega una ubicación"
+        />
       </div>
 
-      {/* Galería editable */}
-      <div className="p-3">
+      {/* Galería */}
+      <div className="px-6 py-4">
         <h3 className="text-xl font-semibold mb-4 text-pink-400">Galería</h3>
         {profile?.images?.length ? (
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">

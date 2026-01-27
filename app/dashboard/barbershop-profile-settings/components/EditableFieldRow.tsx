@@ -1,18 +1,16 @@
-"use client";
 import { useState } from "react";
+import { FaEdit } from "react-icons/fa";
 
-function EditableFieldPopup({
+export default function EditableFieldRow({
   label,
   value,
   placeholder,
   multiline = false,
-  onSave,
 }: {
   label: string;
   value?: string;
   placeholder: string;
   multiline?: boolean;
-  onSave?: (newValue: string) => void;
 }) {
   const [editing, setEditing] = useState(false);
   const [tempValue, setTempValue] = useState(value || "");
@@ -21,41 +19,42 @@ function EditableFieldPopup({
 
   const handleSave = () => {
     setEditing(false);
-    if (onSave) onSave(tempValue);
-    console.log("Nuevo valor:", tempValue); // 👈 reemplazar con API
+    console.log("Nuevo valor:", tempValue); // luego API
+  };
+
+  const handleCancel = () => {
+    setEditing(false);
+    setTempValue(value || "");
   };
 
   return (
-    <div className="flex items-center gap-2">
-      <span className="font-semibold text-pink-400">{label}:</span>
-      <span
-        onClick={() => setEditing(true)}
-        className={`cursor-pointer ${
-          hasValue ? "text-white" : "italic text-gray-400"
-        } hover:text-pink-300`}
-      >
-        {hasValue ? tempValue : placeholder}
-      </span>
+    <div className="w-full">
+      {/* Título + icono */}
+      <div className="flex flex-col items-center justify-between mb-1">
+        <div className="flex items-center gap-2">
+          <span className="text-xl font-semibold text-pink-400">{label}</span>
+          <button
+            onClick={() => setEditing(true)}
+            className="text-pink-400 hover:text-pink-600"
+          >
+            <FaEdit />
+          </button>
+        </div>
+        <div>
+          <span
+            className={`text-lg ${
+              hasValue ? "text-white" : "italic text-gray-400"
+            }`}
+          >
+            {hasValue ? tempValue : placeholder}
+          </span>
+        </div>
+      </div>
 
-      {!editing && (
-        <button
-          onClick={() => setEditing(true)}
-          className="text-xs px-2 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
-        >
-          Editar
-        </button>
-      )}
-
+      {/* Popup modal */}
       {editing && (
-        <div
-          role="dialog"
-          aria-label={`Editar ${label}`}
-          className="fixed inset-0 flex items-center justify-center bg-black/30 backdrop-blur-sm z-50 p-2"
-        >
+        <div className="fixed inset-0 flex items-center justify-center bg-black/30 backdrop-blur-sm z-50 p-2">
           <div className="bg-gray-800 p-6 rounded-lg shadow-xl max-w-md w-full text-center">
-            <h3 className="text-xl font-semibold mb-2 text-white">{label}</h3>
-            <p className="text-gray-400 text-sm mb-4">{placeholder}</p>
-
             {multiline ? (
               <textarea
                 value={tempValue}
@@ -80,10 +79,7 @@ function EditableFieldPopup({
                 Guardar
               </button>
               <button
-                onClick={() => {
-                  setEditing(false);
-                  setTempValue(value || "");
-                }}
+                onClick={handleCancel}
                 className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 transition font-semibold"
               >
                 Cancelar
@@ -95,5 +91,3 @@ function EditableFieldPopup({
     </div>
   );
 }
-
-export default EditableFieldPopup;

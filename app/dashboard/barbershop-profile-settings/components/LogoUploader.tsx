@@ -1,5 +1,3 @@
-"use client";
-
 import { useRef } from "react";
 
 interface LogoUploaderProps {
@@ -17,7 +15,15 @@ export default function LogoUploader({ logo, setLogo }: LogoUploaderProps) {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 px-6 py-4">
+      {/* Título */}
+      <h3 className="text-xl font-bold mb-2 text-center">
+        Logo de tu barbería ✂️
+      </h3>
+      <p className="text-gray-400 text-sm text-center">
+        Este logo será la identidad visual que verán tus clientes en el feed.
+      </p>
+
       {/* Zona de drop */}
       <div
         onDragOver={(e) => e.preventDefault()}
@@ -54,20 +60,17 @@ export default function LogoUploader({ logo, setLogo }: LogoUploaderProps) {
         />
       </div>
 
-      {/* Botón Quitar */}
-      <div className="flex justify-center gap-4">
-        <button
-          onClick={() => setLogo(null)}
-          disabled={!logo}
-          className={`flex-1 px-4 py-2 rounded font-semibold ${
-            logo
-              ? "bg-red-500 text-white hover:bg-red-600"
-              : "bg-gray-500 text-gray-300 cursor-not-allowed"
-          }`}
-        >
-          Quitar
-        </button>
-      </div>
+      {/* Botón Quitar solo si hay logo */}
+      {logo && (
+        <div className="flex justify-center gap-4">
+          <button
+            onClick={() => setLogo(null)}
+            className="flex-1 px-4 py-2 rounded font-semibold bg-red-500 text-white hover:bg-red-600"
+          >
+            Quitar
+          </button>
+        </div>
+      )}
     </div>
   );
 }

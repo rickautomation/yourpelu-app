@@ -46,7 +46,7 @@ export default function HaircutsPage() {
   const { user } = useAuth();
   const { activeBarbershop } = useUserBarbershops(user);
 
-  console.log("activeBarbershop", activeBarbershop);
+
   console.log("user", user)
 
   const [ownTypes, setOwnTypes] = useState<HaircutType[] | null>(null);
@@ -105,6 +105,8 @@ export default function HaircutsPage() {
       setLoading(false);
     }
   }, [activeBarbershop]);
+
+    console.log("recentHaircuts", recentHaircuts);
 
   useEffect(() => {
     const fetchClients = async () => {
@@ -238,9 +240,9 @@ export default function HaircutsPage() {
                 >
                   <span className="truncate">
                     {selectedClient
-                      ? clients.find((c) => c.id === selectedClient)?.name +
+                      ? clients?.find((c) => c.id === selectedClient)?.name +
                         " " +
-                        clients.find((c) => c.id === selectedClient)?.lastname
+                        clients?.find((c) => c.id === selectedClient)?.lastname
                       : "Selecciona un cliente"}
                   </span>
                   <svg
@@ -271,7 +273,7 @@ export default function HaircutsPage() {
                     >
                       ➕ Agregar nuevo cliente
                     </li>
-                    {clients.map((c) => (
+                    {clients?.map((c) => (
                       <li
                         key={c.id}
                         onClick={() => {
@@ -433,7 +435,7 @@ export default function HaircutsPage() {
                 className="bg-gray-700 rounded-md p-3 flex justify-between items-center shadow"
               >
                 <div className="flex flex-col text-white font-medium">
-                  <span>{h.type.name}</span>
+                  <span>{h?.type?.name}</span>
                   {h.style && (
                     <span className="text-sm text-gray-300">
                       🎨 {h.style.name}
