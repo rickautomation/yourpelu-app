@@ -83,3 +83,7 @@ body {
   background-color: #4c1d95; /* purple-900 */
   color: #fff;
 }
+
+@import "swiper/css";
+@import "swiper/css/navigation";
+@import "swiper/css/pagination";

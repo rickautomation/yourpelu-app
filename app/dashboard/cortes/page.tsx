@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { apiGet } from "@/app/lib/apiGet";
 import { apiPost } from "@/app/lib/apiPost";
 import { useAuth } from "@/app/lib/useAuth";
+import { useUserBarbershops } from "@/app/hooks/useUserBarbershops";
 
 type Haircut = {
   id: string;
@@ -10,6 +11,12 @@ type Haircut = {
   type: HaircutType;
   style?: HaircutStyle;
   client?: BarberClient;
+  user?: Barber;
+};
+
+type Barber = {
+  name: string;
+  lastname: string;
 };
 
 type HaircutType = {
@@ -37,6 +44,11 @@ type BarberClient = {
 
 export default function HaircutsPage() {
   const { user } = useAuth();
+  const { activeBarbershop } = useUserBarbershops(user);
+
+
+  console.log("user", user)
+
   const [ownTypes, setOwnTypes] = useState<HaircutType[] | null>(null);
   const [styles, setStyles] = useState<HaircutStyle[]>([]);
   const [loading, setLoading] = useState(true);
@@ -61,6 +73,8 @@ export default function HaircutsPage() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
 
+  console.log("haircuts: ", recentHaircuts);
+
   const [message, setMessage] = useState<{
     type: "success" | "error";
     text: string;
@@ -70,12 +84,12 @@ export default function HaircutsPage() {
     const fetchData = async () => {
       try {
         const own = await apiGet<HaircutType[]>(
-          `/client-haircut-types/barbershop/${user?.barbershop?.id}`
+          `/client-haircut-types/barbershop/${activeBarbershop?.id}`,
         );
         setOwnTypes(own);
 
         const stylesData = await apiGet<HaircutStyle[]>(
-          `/haircut-styles/barbershop/${user?.barbershop?.id}`
+          `/haircut-styles/barbershop/${activeBarbershop?.id}`,
         );
         setStyles(stylesData);
       } catch (err) {
@@ -85,18 +99,20 @@ export default function HaircutsPage() {
       }
     };
 
-    if (user?.barbershop?.id) {
+    if (activeBarbershop) {
       fetchData();
     } else {
       setLoading(false);
     }
-  }, [user]);
+  }, [activeBarbershop]);
+
+    console.log("recentHaircuts", recentHaircuts);
 
   useEffect(() => {
     const fetchClients = async () => {
       try {
         const data = await apiGet<BarberClient[]>(
-          `/barber-clients/barbershop/${user?.barbershop?.id}`
+          `/barber-clients/barbershop/${activeBarbershop?.id}`,
         );
         setClients(data);
       } catch (err) {
@@ -104,22 +120,39 @@ export default function HaircutsPage() {
       }
     };
 
-    if (user?.barbershop?.id) {
+    if (activeBarbershop?.id) {
       fetchClients();
     }
   }, [user]);
 
-  useEffect(() => {
-    const fetchRecent = async () => {
-      try {
-        const data = await apiGet<Haircut[]>(`/haircuts/user/${user?.id}/last`);
-        setRecentHaircuts(data);
-      } catch (err) {
-        console.error("Error cargando últimos cortes", err);
+  console.log("clients: ", clients)
+
+  //debemos buscar los cortes recientes por barberia para admins y por user para barber
+ useEffect(() => {
+  const fetchRecent = async () => {
+    try {
+      let data: Haircut[] = [];
+
+      if (user?.rol === "admin") {
+        // Admin → últimos cortes de la barbería
+        data = await apiGet<Haircut[]>(
+          `/haircuts/barbershop/${activeBarbershop?.id}/last`
+        );
       }
-    };
-    if (user?.id) fetchRecent();
-  }, [user]);
+
+      if (user?.rol === "barber") {
+        // Barber → últimos cortes del barbero
+        data = await apiGet<Haircut[]>(`/haircuts/user/${user?.id}/last`);
+      }
+
+      setRecentHaircuts(data);
+    } catch (err) {
+      console.error("Error cargando últimos cortes", err);
+    }
+  };
+
+  if (user?.id && activeBarbershop) fetchRecent();
+}, [user, activeBarbershop]);
 
   const showTempMessage = (type: "success" | "error", text: string) => {
     setMessage({ type, text });
@@ -134,6 +167,7 @@ export default function HaircutsPage() {
         clientId: selectedClient || null,
         clientTypeId: selectedType,
         styleId: selectedStyle || null,
+        barbershopId: activeBarbershop?.id
       });
       setShowAdd(false);
       setSelectedType("");
@@ -149,7 +183,7 @@ export default function HaircutsPage() {
   const handleCreateClient = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await apiPost(`/barber-clients/barbershop/${user?.barbershop?.id}`, {
+      await apiPost(`/barber-clients/barbershop/${activeBarbershop?.id}`, {
         name,
         lastname,
         email,
@@ -163,7 +197,7 @@ export default function HaircutsPage() {
       setShowClientForm(false);
 
       const data = await apiGet<BarberClient[]>(
-        `/barber-clients/barbershop/${user?.barbershop?.id}`
+        `/barber-clients/barbershop/${activeBarbershop?.id}`,
       );
       setClients(data);
 
@@ -206,9 +240,9 @@ export default function HaircutsPage() {
                 >
                   <span className="truncate">
                     {selectedClient
-                      ? clients.find((c) => c.id === selectedClient)?.name +
+                      ? clients?.find((c) => c.id === selectedClient)?.name +
                         " " +
-                        clients.find((c) => c.id === selectedClient)?.lastname
+                        clients?.find((c) => c.id === selectedClient)?.lastname
                       : "Selecciona un cliente"}
                   </span>
                   <svg
@@ -239,7 +273,7 @@ export default function HaircutsPage() {
                     >
                       ➕ Agregar nuevo cliente
                     </li>
-                    {clients.map((c) => (
+                    {clients?.map((c) => (
                       <li
                         key={c.id}
                         onClick={() => {
@@ -401,12 +435,15 @@ export default function HaircutsPage() {
                 className="bg-gray-700 rounded-md p-3 flex justify-between items-center shadow"
               >
                 <div className="flex flex-col text-white font-medium">
-                  <span>{h.type.name}</span>
+                  <span>{h?.type?.name}</span>
                   {h.style && (
                     <span className="text-sm text-gray-300">
                       🎨 {h.style.name}
                     </span>
                   )}
+                  <span className="text-sm text-gray-300">
+                    💈 {h.user?.name + " " + h.user?.lastname}{" "}
+                  </span>
                 </div>
                 <span className="text-sm text-gray-400 flex flex-col items-end">
                   <span>{new Date(h.createdAt).toLocaleDateString()}</span>

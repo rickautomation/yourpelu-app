@@ -22,7 +22,18 @@ export default function CarouselUploader({
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 px-6 py-4">
+      {/* Título y descripción */}
+      <h3 className="text-xl font-bold text-pink-400 text-center">
+        Carrusel de imágenes 📸
+      </h3>
+      <p className="text-gray-400 text-sm text-center">
+        Sube fotos que representen tu barbería: 
+        trabajos, ambiente o estilo. Estas imágenes aparecerán en tu feed 
+        como una galería visual para tus clientes.
+      </p>
+
+      {/* Zona de drop */}
       <div
         onDragOver={(e) => e.preventDefault()}
         onDrop={handleDropCarousel}
@@ -76,20 +87,17 @@ export default function CarouselUploader({
         />
       </div>
 
-      {/* Botón Quitar todas */}
-      <div className="flex justify-center gap-4 mt-2">
-        <button
-          onClick={() => setCarouselImages([])}
-          disabled={carouselImages.length === 0}
-          className={`flex-1 px-4 py-2 rounded font-semibold ${
-            carouselImages.length > 0
-              ? "bg-red-500 text-white hover:bg-red-600"
-              : "bg-gray-500 text-gray-300 cursor-not-allowed"
-          }`}
-        >
-          Quitar todas
-        </button>
-      </div>
+      {/* Botón Quitar todas solo si hay imágenes */}
+      {carouselImages.length > 0 && (
+        <div className="flex justify-center gap-4 mt-2">
+          <button
+            onClick={() => setCarouselImages([])}
+            className="flex-1 px-4 py-2 rounded font-semibold bg-red-500 text-white hover:bg-red-600"
+          >
+            Quitar todas
+          </button>
+        </div>
+      )}
     </div>
   );
 }

@@ -6,8 +6,9 @@ interface BarbershopInfoFormProps {
   info: {
     lema?: string;
     descripcion?: string;
+    horario1?: string;
+    horario2?: string;
     contacto?: string;
-    horario?: string;
     name?: string;
     address?: string;
   };
@@ -15,8 +16,9 @@ interface BarbershopInfoFormProps {
     React.SetStateAction<{
       lema?: string;
       descripcion?: string;
+      horario1?: string;
+      horario2?: string;
       contacto?: string;
-      horario?: string;
       name?: string;
       address?: string;
     }>
@@ -29,7 +31,6 @@ export default function BarbershopInfoForm({
 }: BarbershopInfoFormProps) {
   const [localInfo, setLocalInfo] = useState(info);
 
-  // 👇 sincroniza localInfo cuando cambie el prop info
   useEffect(() => {
     setLocalInfo(info);
   }, [info]);
@@ -41,55 +42,73 @@ export default function BarbershopInfoForm({
   };
 
   return (
-    <form className="flex flex-col gap-4 bg-gray-800 p-4 rounded-lg shadow-md text-start">
+    <form className="flex flex-col gap-3 p-6 shadow-lg text-start text-white">
       {/* Lema */}
       <div>
-        <label className="block text-sm mb-1">Lema (opcional)</label>
+        <label className="block text-sm font-medium mb-2 text-pink-300">
+          Lema (opcional)
+        </label>
         <input
           type="text"
           value={localInfo.lema || ""}
           onChange={(e) => handleChange("lema", e.target.value)}
           placeholder="Ej: 'Tu estilo, nuestra pasión'"
-          className="px-3 py-2 rounded bg-gray-700 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
+          className="px-4 py-2 rounded-lg bg-gray-700 w-full focus:outline-none focus:ring-2 focus:ring-pink-400 placeholder-gray-400"
         />
       </div>
 
       {/* Descripción */}
       <div>
-        <label className="block text-sm mb-1">Descripción (opcional)</label>
+        <label className="block text-sm font-medium mb-2 text-pink-300">
+          Descripción (opcional)
+        </label>
         <textarea
           value={localInfo.descripcion || ""}
           onChange={(e) => handleChange("descripcion", e.target.value)}
           placeholder="Cuenta brevemente qué hace especial a tu barbería..."
-          className="px-3 py-2 rounded bg-gray-700 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400 h-24"
+          className="px-4 py-2 rounded-lg bg-gray-700 w-full focus:outline-none focus:ring-2 focus:ring-pink-400 h-28 placeholder-gray-400 resize-none"
         />
       </div>
 
       {/* Contacto */}
       <div>
-        <label className="block text-sm mb-1">Contacto</label>
+        <label className="block text-sm font-medium mb-2 text-pink-300">
+          Contacto
+        </label>
         <input
           type="text"
-          value={localInfo.contacto || ""}
+          value={localInfo.contacto || ""} // 👈 vacío por defecto
           onChange={(e) => handleChange("contacto", e.target.value)}
           placeholder="Teléfono, WhatsApp o email"
-          className="px-3 py-2 rounded bg-gray-700 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
+          className="px-4 py-2 rounded-lg bg-gray-700 w-full focus:outline-none focus:ring-2 focus:ring-pink-400 placeholder-gray-400"
         />
       </div>
 
-      {/* Horario */}
+      {/* Horarios */}
       <div>
-        <label className="block text-sm mb-1">Horario</label>
-        <select
-          value={localInfo.horario || ""}
-          onChange={(e) => handleChange("horario", e.target.value)}
-          className="px-3 py-2 rounded bg-gray-700 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
-        >
-          <option value="">Selecciona un horario</option>
-          <option value="Lun-Sáb 10:00 - 20:00">Lun-Sáb 10:00 - 20:00</option>
-          <option value="Lun-Vie 09:00 - 18:00">Lun-Vie 09:00 - 18:00</option>
-          <option value="Solo turnos con cita">Solo turnos con cita</option>
-        </select>
+        <label className="block text-sm font-medium mb-2 text-pink-300">
+          Horario principal
+        </label>
+        <input
+          type="text"
+          value={localInfo.horario1 || ""}
+          onChange={(e) => handleChange("horario1", e.target.value)}
+          placeholder="Ej: Lunes a Viernes 9:00 - 13:00 y 16:00 - 21:00"
+          className="px-4 py-2 rounded-lg bg-gray-700 w-full focus:outline-none focus:ring-2 focus:ring-pink-400 placeholder-gray-400"
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium mb-2 text-pink-300">
+          Horario adicional (opcional)
+        </label>
+        <input
+          type="text"
+          value={localInfo.horario2 || ""}
+          onChange={(e) => handleChange("horario2", e.target.value)}
+          placeholder="Ej: Sábados 9:00 - 16:00"
+          className="px-4 py-2 rounded-lg bg-gray-700 w-full focus:outline-none focus:ring-2 focus:ring-pink-400 placeholder-gray-400"
+        />
       </div>
     </form>
   );

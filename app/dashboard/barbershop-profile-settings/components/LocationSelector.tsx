@@ -31,7 +31,7 @@ export default function LocationSelector({ location, setLocation, defaultAddress
   };
 
   return (
-    <div className="p-6 bg-gray-800 text-white rounded-lg space-y-6">
+    <div className="px-6 py-4 text-white rounded-lg space-y-6 mb-7">
       <h2 className="text-xl font-bold">📍 Seleccionar ubicación</h2>
 
       {/* Dirección */}
@@ -41,7 +41,7 @@ export default function LocationSelector({ location, setLocation, defaultAddress
           value={address}
           onChange={(e) => setAddress(e.target.value)}
           placeholder="Escribe una dirección..."
-          className="px-4 py-2 rounded-lg text-black shadow focus:outline-none focus:ring-2 focus:ring-pink-400"
+          className="px-4 py-2 rounded-lg border shadow focus:outline-none focus:ring-2 focus:ring-pink-400"
         />
         <button
           onClick={handleSearchAddress}

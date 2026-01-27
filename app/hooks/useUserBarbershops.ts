@@ -1,3 +1,4 @@
+// 
 "use client";
 import { useEffect, useState } from "react";
 import { apiGet } from "../lib/apiGet";
@@ -7,13 +8,10 @@ type Barbershop = {
   name: string;
   address?: string;
   phoneNumber?: string;
-  profile?: ProfileData
+  profile?: ProfileData;
 };
 
-type BarberImage = {
-  id: string;
-  imageUrl: string;
-};
+type BarberImage = { id: string; imageUrl: string };
 
 type ProfileData = {
   id: string;
@@ -23,7 +21,7 @@ type ProfileData = {
   adressCoordinates?: string;
   logoUrl?: string;
   websiteUrl?: string | null;
-  images?: BarberImage[]; // 👈 incluir imágenes
+  images?: BarberImage[];
 };
 
 interface User {
@@ -46,20 +44,13 @@ export function useUserBarbershops(user: User | null) {
           const current = await apiGet<{ barbershop: Barbershop }>(
             `/current-barbershops/user/${user.id}/last`
           );
-          console.log("current barbershop in useUserBarbershop", current)
           if (current?.barbershop) setActiveBarbershop(current.barbershop);
 
           const all = await apiGet<Barbershop[]>(`/barbershops/user/${user.id}/all`);
           setBarbershops(all);
         }
 
-        if (user.rol === "barber") {
-          const all = await apiGet<Barbershop[]>(`/barbershops/user/${user.id}/all`);
-          setBarbershops(all);
-          setActiveBarbershop(all.length > 0 ? all[0] : null);
-        }
-
-        if (user.rol === "client") {
+        if (user.rol === "barber" || user.rol === "client") {
           const all = await apiGet<Barbershop[]>(`/barbershops/user/${user.id}/all`);
           setBarbershops(all);
           setActiveBarbershop(all.length > 0 ? all[0] : null);
@@ -72,6 +63,12 @@ export function useUserBarbershops(user: User | null) {
     };
 
     load();
+
+    // 👇 escuchar cambios de barbería
+    const handler = () => load();
+    window.addEventListener("barbershop-changed", handler);
+
+    return () => window.removeEventListener("barbershop-changed", handler);
   }, [user]);
 
   return { activeBarbershop, barbershops, setActiveBarbershop, loading };
