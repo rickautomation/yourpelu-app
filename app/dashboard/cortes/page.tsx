@@ -46,7 +46,6 @@ export default function HaircutsPage() {
   const { user } = useAuth();
   const { activeBarbershop } = useUserBarbershops(user);
 
-
   console.log("user", user)
 
   const [ownTypes, setOwnTypes] = useState<HaircutType[] | null>(null);

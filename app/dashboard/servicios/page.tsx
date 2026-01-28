@@ -15,7 +15,7 @@ export default function ServicesPage({
   render,
   onServicesChange,
 }: ServicesPageProps) {
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
   const { activeBarbershop } = useUserBarbershops(user);
   const router = useRouter();
 
@@ -49,6 +49,10 @@ export default function ServicesPage({
     type: "success" | "error";
     text: string;
   } | null>(null);
+
+  useEffect(() => {
+    refreshUser?.();
+  }, []);
 
   useEffect(() => {
     onServicesChange?.(ownServices.length);
@@ -146,7 +150,7 @@ export default function ServicesPage({
           {/* Popup de creación */}
           {showPopup && (
             <div
-              className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50"
+              className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50 px-2"
               onClick={() => setShowPopup(false)}
             >
               <div
