@@ -6,7 +6,7 @@ import { useUserBarbershops } from "../hooks/useUserBarbershops";
 import { useServices } from "../hooks/useServices";
 
 export default function DashboardPage() {
-  const { user, loading, isUnauthorized, router } = useAuth();
+  const { user, loading, isUnauthorized, router, refreshUser } = useAuth();
   const { activeBarbershop } = useUserBarbershops(user);
   const { globalServices, ownServices } = useServices(activeBarbershop?.id);
 
@@ -53,18 +53,21 @@ export default function DashboardPage() {
                 ))}
               </div>
             )}
-              <div className="flex justify-end">
-                 <button className="bg-blue-500 px-3 py-2 rounded text-white mt-2" onClick={() => router.push("/dashboard/servicios")}>
+            <div className="flex justify-end">
+              <button
+                className="bg-blue-500 px-3 py-2 rounded text-white mt-2"
+                onClick={() => router.push("/dashboard/servicios")}
+              >
                 Ir a Servicios
               </button>
-              </div>
+            </div>
           </section>
         </div>
       ) : (
         <BarbershopSetupWizard
-          onFinish={() => {
+          onFinish={async () => {
+            await refreshUser();
             router.push("/dashboard");
-            router.refresh(); // 👈 fuerza recarga del componente al montarse
           }}
           userName={user?.name || "Usuario"}
           userId={user?.id || ""}
