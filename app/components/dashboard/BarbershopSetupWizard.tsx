@@ -47,7 +47,7 @@ export default function BarbershopSetupWizard({
         sessionId,
       });
       console.log("Barbería creada:", barberia);
-      onFinish();
+      // onFinish();
     } catch (error) {
       console.error("Error creando barbería:", error);
     }
