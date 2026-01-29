@@ -31,10 +31,12 @@ export function useAuth() {
     } catch (err: any) {
       if (!isRefreshing) {
         isRefreshing = true;
-        refreshPromise = apiPost<{ ok: boolean }>("/auth/refresh", {}).finally(() => {
-          isRefreshing = false;
-          refreshPromise = null;
-        });
+        refreshPromise = apiPost<{ ok: boolean }>("/auth/refresh", {}).finally(
+          () => {
+            isRefreshing = false;
+            refreshPromise = null;
+          },
+        );
       }
       try {
         const refreshRes = await refreshPromise;
@@ -71,8 +73,13 @@ export function useAuth() {
     }
   };
 
-  const refreshUser = async () => {
-    await fetchUser();
+  const refreshUser = async (updatedUser?: User) => {
+    if (updatedUser) {
+      setUser(updatedUser); // 👈 actualiza el estado sin recargar
+      setError(null);
+      return;
+    }
+    await fetchUser(); // fallback normal
   };
 
   const isAuthenticated = !!user && !error;
@@ -87,6 +94,6 @@ export function useAuth() {
     fetchUser,
     refreshUser,
     logout,
-    router
+    router,
   };
 }
