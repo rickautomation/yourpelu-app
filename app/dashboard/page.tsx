@@ -12,9 +12,7 @@ export default function DashboardPage() {
   const { globalServices, ownServices } = useServices(activeBarbershop?.id);
 
   useEffect(() => {
-    if (activeBarbershop && user?.rol !== "admin") {
       refreshUser();
-    }
   }, [activeBarbershop]);
 
   if (loading) return <p className="text-white">Cargando...</p>;

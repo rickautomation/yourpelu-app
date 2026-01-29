@@ -51,7 +51,7 @@ export default function ServicesPage({
   } | null>(null);
 
   useEffect(() => {
-    refreshUser?.();
+    refreshUser();
   }, []);
 
   useEffect(() => {
