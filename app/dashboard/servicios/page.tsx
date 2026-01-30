@@ -1,19 +1,21 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { useAuth } from "@/app/lib/useAuth";
 import { useServices } from "@/app/hooks/useServices";
 import { useUserBarbershops } from "@/app/hooks/useUserBarbershops";
 import { useRouter } from "next/navigation";
+import TemplateServicesPage from "./new/page";
 
 interface ServicesPageProps {
-  render?: string;
-  onServicesChange?: (count: number) => void;
+  render?: string; // porque le pasás "true" como string
+  setHasServices?: React.Dispatch<React.SetStateAction<boolean | null>>;
+  hasServices?: boolean | null;
 }
-
 export default function ServicesPage({
   render,
-  onServicesChange,
+  setHasServices,
+  hasServices,
 }: ServicesPageProps) {
   const { user, refreshUser } = useAuth();
   const { activeBarbershop } = useUserBarbershops(user);
@@ -45,18 +47,14 @@ export default function ServicesPage({
   // Estado para el popup de acciones del botón +
   const [showPopup, setShowPopup] = useState(false);
 
+  const [showTemplate, setShowTemplate] = useState(false);
+
+  const [change, setChange] = useState(0);
+
   const [message, setMessage] = useState<{
     type: "success" | "error";
     text: string;
   } | null>(null);
-
-  useEffect(() => {
-    refreshUser();
-  }, []);
-
-  useEffect(() => {
-    onServicesChange?.(ownServices.length);
-  }, [ownServices, onServicesChange]);
 
   const showTempMessage = (type: "success" | "error", text: string) => {
     setMessage({ type, text });
@@ -68,7 +66,7 @@ export default function ServicesPage({
 
   return (
     <div
-      className={`flex flex-col space-y-4 ${render === "true" ? "p-0" : "p-4"}`}
+      className={`flex flex-col space-y-2 ${render === "true" ? "p-0" : "p-4"}`}
     >
       {/* Botón + para admins */}
       {user?.rol === "admin" && (
@@ -163,8 +161,12 @@ export default function ServicesPage({
                   </p>
                   <button
                     onClick={() => {
-                      router.push("/dashboard/servicios/new");
-                      setShowPopup(false);
+                      if (render === "true") {
+                        setShowTemplate(true);
+                        setShowPopup(false);
+                      } else {
+                        router.push("/dashboard/servicios/new");
+                      }
                     }}
                     className="w-full bg-pink-500 text-white px-3 py-2 rounded hover:bg-gray-700 transition-colors"
                   >
@@ -184,6 +186,15 @@ export default function ServicesPage({
             </div>
           )}
         </div>
+      )}
+
+      {/* Página de plantilla de servicios */}
+      {showTemplate && (
+        <TemplateServicesPage
+          render="true"
+          setHasServices={setHasServices}
+          hasServices={hasServices}
+        />
       )}
 
       {/* Popup para crear servicio propio */}

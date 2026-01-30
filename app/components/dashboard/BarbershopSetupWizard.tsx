@@ -4,6 +4,7 @@ import { apiPost } from "@/app/lib/apiPost";
 import { Barbershop } from "@/app/interfaces";
 import { useRouter } from "next/navigation";
 import ServicesPage from "@/app/dashboard/servicios/page";
+import { useServices } from "@/app/hooks/useServices";
 
 interface WizardProps {
   onFinish: () => void;
@@ -12,7 +13,6 @@ interface WizardProps {
 }
 
 export default function BarbershopSetupWizard({
-  onFinish,
   userName,
   userId,
 }: WizardProps) {
@@ -23,7 +23,9 @@ export default function BarbershopSetupWizard({
     phoneNumber: "",
   });
   const [success, setSuccess] = useState(false);
-  const [hasServices, setHasServices] = useState(false);
+const [hasServices, setHasServices] = useState<boolean | null>(null);
+
+  const { ownServices } = useServices();
 
   const router = useRouter();
 
@@ -149,7 +151,8 @@ export default function BarbershopSetupWizard({
         <div>
           <ServicesPage
             render="true"
-            onServicesChange={(count) => setHasServices(count > 0)}
+            setHasServices={setHasServices}
+            hasServices={hasServices}
           />
           <div className="flex justify-end">
             <button
@@ -177,13 +180,13 @@ export default function BarbershopSetupWizard({
           </p>
           <p>
             ya puedes agregar barberos y gestionar tu barbería desde el
-            dashboard.
+            menú de navegación.
           </p>
           <button
             onClick={() => window.location.reload()}
             className="mt-4 bg-pink-400 text-white px-4 py-2 rounded hover:bg-pink-500 transition-colors font-semibold"
           >
-            Ir al Dashboard
+            Terminar
           </button>
         </div>
       )}

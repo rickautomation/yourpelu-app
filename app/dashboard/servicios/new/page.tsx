@@ -5,14 +5,22 @@ import { useAuth } from "@/app/lib/useAuth";
 import { useServices } from "@/app/hooks/useServices";
 import { useUserBarbershops } from "@/app/hooks/useUserBarbershops";
 
-export default function TemplateServicesPage() {
+interface ServicesPageProps {
+  render?: string; 
+  setHasServices?: React.Dispatch<React.SetStateAction<boolean | null>>;
+  hasServices?: boolean | null;
+}
+
+export default function TemplateServicesPage({
+  render,
+  hasServices,
+  setHasServices,
+}: ServicesPageProps) {
   const { user } = useAuth();
   const { activeBarbershop } = useUserBarbershops(user);
 
   const { globalServices, ownServices, addGlobalService, loading, error } =
     useServices(activeBarbershop?.id);
-
-  console.log("services", globalServices);
 
   const [openPriceInput, setOpenPriceInput] = useState<string | null>(null);
   const [price, setPrice] = useState<string>("");
@@ -30,14 +38,16 @@ export default function TemplateServicesPage() {
   if (loading) return <p>Cargando...</p>;
   if (error) return <p>Error cargando servicios</p>;
 
-  // Filtrar plantillas que no estén ya en ownServices
-  // Filtrar plantillas que no estén ya en ownServices
   const availableTemplates = globalServices.filter(
     (g) => !ownServices.some((o) => o.baseType?.id === g.id),
   );
 
   return (
-    <div className="flex flex-col space-y-4 p-4">
+    <div
+      className={`flex flex-col ${
+        render === "true" ? "space-y-2 p-2" : "space-y-4 p-4"
+      }`}
+    >
       {availableTemplates.length === 0 && (
         <p className="text-gray-400 italic">
           Todas las plantillas ya fueron utilizadas en tu barbería
@@ -88,6 +98,7 @@ export default function TemplateServicesPage() {
                       "success",
                       "Servicio añadido a tu barbería",
                     );
+                    setHasServices?.(true);
                   }}
                   className="flex-1 bg-pink-400 text-white px-3 py-2 rounded hover:bg-pink-500 transition-colors text-sm font-semibold"
                 >
