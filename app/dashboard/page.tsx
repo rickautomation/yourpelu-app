@@ -4,16 +4,11 @@ import BarbershopSetupWizard from "../components/dashboard/BarbershopSetupWizard
 import { useAuth } from "../lib/useAuth";
 import { useUserBarbershops } from "../hooks/useUserBarbershops";
 import { useServices } from "../hooks/useServices";
-import { useEffect } from "react";
 
 export default function DashboardPage() {
   const { user, loading, isUnauthorized, router, refreshUser } = useAuth();
   const { activeBarbershop } = useUserBarbershops(user);
   const { globalServices, ownServices } = useServices(activeBarbershop?.id);
-
-  useEffect(() => {
-      refreshUser();
-  }, [activeBarbershop]);
 
   if (loading) return <p className="text-white">Cargando...</p>;
   if (isUnauthorized) {
