@@ -416,7 +416,7 @@ export default function HaircutsPage() {
       )}
 
       {/* Últimos cortes */}
-      {recentHaircuts.length > 0 && (
+      {recentHaircuts.length > 0 && !showAdd && (
         <div className="bg-gray-800 p-4 rounded-lg shadow-md flex flex-col gap-3">
           <p className="text-xl font-semibold text-white">Últimos cortes</p>
           <div className="flex flex-col gap-3">
