@@ -103,7 +103,7 @@ export default function ClientsPage() {
               type="text"
               placeholder="Buscar cliente..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => setSearchTerm(e.target.value.trim())}
               className="px-2 py-2 rounded bg-gray-700 text-white w-full max-w-xs focus:outline-none focus:ring-2 focus:ring-pink-400"
             />
           </div>
@@ -125,7 +125,7 @@ export default function ClientsPage() {
               <input
                 type="text"
                 value={name}
-                onChange={(e) => setName(e.target.value)}
+                onChange={(e) => setName(e.target.value.trim())}
                 placeholder="Nombre del cliente"
                 required
                 className="px-3 py-2 rounded bg-gray-800 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
@@ -137,7 +137,7 @@ export default function ClientsPage() {
               <input
                 type="text"
                 value={lastname}
-                onChange={(e) => setLastname(e.target.value)}
+                onChange={(e) => setLastname(e.target.value.trim())}
                 placeholder="Apellido del cliente"
                 required
                 className="px-3 py-2 rounded bg-gray-800 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
@@ -149,7 +149,7 @@ export default function ClientsPage() {
               <input
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => setEmail(e.target.value.trim())}
                 placeholder="Correo electrónico"
                 className="px-3 py-2 rounded bg-gray-800 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
               />
@@ -160,7 +160,7 @@ export default function ClientsPage() {
               <input
                 type="text"
                 value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                onChange={(e) => setPhone(e.target.value.trim())}
                 placeholder="Número de contacto"
                 className="px-3 py-2 rounded bg-gray-800 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
               />
