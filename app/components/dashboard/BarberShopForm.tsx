@@ -40,7 +40,7 @@ export default function BarbershopForm({ barbershop, userId, onSave }: Barbersho
         <input
           type="text"
           value={name}
-          onChange={(e) => setName(e.target.value)}
+          onChange={(e) => setName(e.target.value.trim())}
           placeholder="Nombre de la barbería"
           required
           className="px-3 py-2 rounded bg-gray-800 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
@@ -52,7 +52,7 @@ export default function BarbershopForm({ barbershop, userId, onSave }: Barbersho
         <input
           type="text"
           value={phoneNumber}
-          onChange={(e) => setPhoneNumber(e.target.value)}
+          onChange={(e) => setPhoneNumber(e.target.value.trim())}
           placeholder="Número de contacto"
           required
           className="px-3 py-2 rounded bg-gray-800 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
@@ -64,7 +64,7 @@ export default function BarbershopForm({ barbershop, userId, onSave }: Barbersho
         <input
           type="text"
           value={address}
-          onChange={(e) => setAddress(e.target.value)}
+          onChange={(e) => setAddress(e.target.value.trim())}
           placeholder="Dirección o ciudad"
           required
           className="px-3 py-2 rounded bg-gray-800 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"

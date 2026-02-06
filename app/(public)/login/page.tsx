@@ -66,7 +66,7 @@ export default function LoginPage({ setView }: Props) {
           type="text"
           placeholder="Teléfono o Email" // 👈 ahora puede ser cualquiera
           value={form.identifier}
-          onChange={(e) => setForm({ ...form, identifier: e.target.value })}
+          onChange={(e) => setForm({ ...form, identifier: e.target.value.trim() })}
           className="px-3 py-2 rounded bg-gray-800 text-white"
           required
         />
@@ -74,7 +74,7 @@ export default function LoginPage({ setView }: Props) {
           type="password"
           placeholder="Contraseña"
           value={form.password}
-          onChange={(e) => setForm({ ...form, password: e.target.value })}
+          onChange={(e) => setForm({ ...form, password: e.target.value.trim() })}
           className="px-3 py-2 rounded bg-gray-800 text-white"
           required
         />

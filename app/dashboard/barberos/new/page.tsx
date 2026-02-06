@@ -18,7 +18,6 @@ export default function NewBarberPage() {
 
   useEffect(() => {
     if (copied) {
-      // esperar un poco para que se vea el toast
       const timer = setTimeout(() => {
         router.push("/dashboard/barberos");
       }, 2000);
@@ -94,8 +93,8 @@ export default function NewBarberPage() {
                     "fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-4 py-2 rounded shadow-lg";
                   document.body.appendChild(toast);
                   setTimeout(() => toast.remove(), 2000);
-                  setActivationLink(null); // 👈 cerrar popup inmediatamente
-                  setCopied(true); // 👈 volver al dashboard
+                  setActivationLink(null);
+                  setCopied(true);
                 }}
                 className="bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600 transition-colors font-semibold"
               >
@@ -141,7 +140,7 @@ Si tenés dudas, escribinos por WhatsApp o respondé este mail.`;
             <input
               type="text"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => setName(e.target.value.trim())}
               required
               className="px-3 py-2 rounded bg-gray-700 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
             />
@@ -152,7 +151,7 @@ Si tenés dudas, escribinos por WhatsApp o respondé este mail.`;
             <input
               type="text"
               value={lastname}
-              onChange={(e) => setLastname(e.target.value)}
+              onChange={(e) => setLastname(e.target.value.trim())}
               required
               className="px-3 py-2 rounded bg-gray-700 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
             />
@@ -163,7 +162,7 @@ Si tenés dudas, escribinos por WhatsApp o respondé este mail.`;
             <input
               type="text"
               value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
+              onChange={(e) => setPhoneNumber(e.target.value.trim())}
               required
               className="px-3 py-2 rounded bg-gray-700 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
             />
@@ -174,7 +173,7 @@ Si tenés dudas, escribinos por WhatsApp o respondé este mail.`;
             <input
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => setEmail(e.target.value.trim())}
               required
               className="px-3 py-2 rounded bg-gray-700 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
             />
@@ -183,7 +182,7 @@ Si tenés dudas, escribinos por WhatsApp o respondé este mail.`;
           <div className="flex gap-2">
             <button
               type="button"
-              onClick={() => router.push("/dashboard/barberos")}
+              onClick={() => router.back()}
               className="flex-1 bg-rose-500 text-white px-4 py-2 rounded hover:bg-gray-700 transition-colors font-semibold"
             >
               Cancelar
@@ -192,7 +191,7 @@ Si tenés dudas, escribinos por WhatsApp o respondé este mail.`;
               type="submit"
               className="flex-1 bg-pink-400 text-white px-4 py-2 rounded hover:bg-pink-500 transition-colors font-semibold"
             >
-              Crear Barbero
+              Agregar
             </button>
           </div>
         </form>

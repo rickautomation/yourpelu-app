@@ -46,8 +46,6 @@ export default function HaircutsPage() {
   const { user } = useAuth();
   const { activeBarbershop } = useUserBarbershops(user);
 
-  console.log("user", user)
-
   const [ownTypes, setOwnTypes] = useState<HaircutType[] | null>(null);
   const [styles, setStyles] = useState<HaircutStyle[]>([]);
   const [loading, setLoading] = useState(true);
@@ -71,8 +69,6 @@ export default function HaircutsPage() {
   const [lastname, setLastname] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-
-  console.log("haircuts: ", recentHaircuts);
 
   const [message, setMessage] = useState<{
     type: "success" | "error";
@@ -105,8 +101,6 @@ export default function HaircutsPage() {
     }
   }, [activeBarbershop]);
 
-    console.log("recentHaircuts", recentHaircuts);
-
   useEffect(() => {
     const fetchClients = async () => {
       try {
@@ -122,36 +116,34 @@ export default function HaircutsPage() {
     if (activeBarbershop?.id) {
       fetchClients();
     }
-  }, [user]);
-
-  console.log("clients: ", clients)
+  }, [activeBarbershop]);
 
   //debemos buscar los cortes recientes por barberia para admins y por user para barber
- useEffect(() => {
-  const fetchRecent = async () => {
-    try {
-      let data: Haircut[] = [];
+  useEffect(() => {
+    const fetchRecent = async () => {
+      try {
+        let data: Haircut[] = [];
 
-      if (user?.rol === "admin") {
-        // Admin → últimos cortes de la barbería
-        data = await apiGet<Haircut[]>(
-          `/haircuts/barbershop/${activeBarbershop?.id}/last`
-        );
+        if (user?.rol === "admin") {
+          // Admin → últimos cortes de la barbería
+          data = await apiGet<Haircut[]>(
+            `/haircuts/barbershop/${activeBarbershop?.id}/last`,
+          );
+        }
+
+        if (user?.rol === "barber") {
+          // Barber → últimos cortes del barbero
+          data = await apiGet<Haircut[]>(`/haircuts/user/${user?.id}/last`);
+        }
+
+        setRecentHaircuts(data);
+      } catch (err) {
+        console.error("Error cargando últimos cortes", err);
       }
+    };
 
-      if (user?.rol === "barber") {
-        // Barber → últimos cortes del barbero
-        data = await apiGet<Haircut[]>(`/haircuts/user/${user?.id}/last`);
-      }
-
-      setRecentHaircuts(data);
-    } catch (err) {
-      console.error("Error cargando últimos cortes", err);
-    }
-  };
-
-  if (user?.id && activeBarbershop) fetchRecent();
-}, [user, activeBarbershop]);
+    if (user?.id && activeBarbershop) fetchRecent();
+  }, [user, activeBarbershop]);
 
   const showTempMessage = (type: "success" | "error", text: string) => {
     setMessage({ type, text });
@@ -166,7 +158,7 @@ export default function HaircutsPage() {
         clientId: selectedClient || null,
         clientTypeId: selectedType,
         styleId: selectedStyle || null,
-        barbershopId: activeBarbershop?.id
+        barbershopId: activeBarbershop?.id,
       });
       setShowAdd(false);
       setSelectedType("");
@@ -209,6 +201,8 @@ export default function HaircutsPage() {
 
   if (loading) return <p>Cargando...</p>;
 
+  console.log("clients: ", clients);
+
   return (
     <div className="flex flex-col space-y-4 p-4">
       {ownTypes === null ? (
@@ -232,61 +226,63 @@ export default function HaircutsPage() {
           {showAdd && (
             <div className="flex flex-col gap-2">
               {/* Select de clientes */}
-              <div className="relative">
-                <button
-                  onClick={() => setShowClientDropdown(!showClientDropdown)}
-                  className="w-full px-3 py-2 rounded bg-gray-700 text-white flex justify-between items-center truncate"
-                >
-                  <span className="truncate">
-                    {selectedClient
-                      ? clients?.find((c) => c.id === selectedClient)?.name +
-                        " " +
-                        clients?.find((c) => c.id === selectedClient)?.lastname
-                      : "Selecciona un cliente"}
-                  </span>
-                  <svg
-                    className={`w-4 h-4 ml-2 transition-transform ${
-                      showClientDropdown ? "rotate-180" : "rotate-0"
-                    }`}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+              {clients && clients.length > 0 && (
+                <div className="relative">
+                  <button
+                    onClick={() => setShowClientDropdown(!showClientDropdown)}
+                    className="w-full px-3 py-2 rounded bg-gray-700 text-white flex justify-between items-center truncate"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </svg>
-                </button>
-
-                {showClientDropdown && (
-                  <ul className="absolute mt-1 w-full max-h-40 overflow-y-auto bg-gray-800 rounded shadow-lg z-10">
-                    <li
-                      onClick={() => {
-                        setShowClientForm(true); // 👈 abre popup
-                        setShowClientDropdown(false);
-                      }}
-                      className="px-3 py-2 text-white hover:bg-gray-600 cursor-pointer"
+                    <span className="truncate">
+                      {selectedClient
+                        ? clients.find((c) => c.id === selectedClient)?.name +
+                          " " +
+                          clients.find((c) => c.id === selectedClient)?.lastname
+                        : "Selecciona un cliente"}
+                    </span>
+                    <svg
+                      className={`w-4 h-4 ml-2 transition-transform ${
+                        showClientDropdown ? "rotate-180" : "rotate-0"
+                      }`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
                     >
-                      ➕ Agregar nuevo cliente
-                    </li>
-                    {clients?.map((c) => (
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </button>
+
+                  {showClientDropdown && (
+                    <ul className="absolute mt-1 w-full max-h-40 overflow-y-auto bg-gray-800 rounded shadow-lg z-10">
                       <li
-                        key={c.id}
                         onClick={() => {
-                          setSelectedClient(c.id);
+                          setShowClientForm(true); // 👈 abre popup
                           setShowClientDropdown(false);
                         }}
-                        className="px-3 py-2 text-white hover:bg-gray-600 cursor-pointer truncate"
+                        className="px-3 py-2 text-white hover:bg-gray-600 cursor-pointer"
                       >
-                        {c.name} {c.lastname}
+                        ➕ Agregar nuevo cliente
                       </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
+                      {clients.map((c) => (
+                        <li
+                          key={c.id}
+                          onClick={() => {
+                            setSelectedClient(c.id);
+                            setShowClientDropdown(false);
+                          }}
+                          className="px-3 py-2 text-white hover:bg-gray-600 cursor-pointer truncate"
+                        >
+                          {c.name} {c.lastname}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              )}
 
               {/* Select de tipos */}
               <div className="relative">
@@ -386,13 +382,9 @@ export default function HaircutsPage() {
                               setShowDropdown(false);
                             }}
                             className="px-3 py-2 text-white hover:bg-gray-600 cursor-pointer truncate"
-                            title={`${s.name}${
-                              s.description ? ` — ${s.description}` : ""
-                            }`}
+                            title={`${s.name}${s.description ? ` — ${s.description}` : ""}`}
                           >
-                            {`${s.name}${
-                              s.description ? ` — ${s.description}` : ""
-                            }`}
+                            {`${s.name}${s.description ? ` — ${s.description}` : ""}`}
                           </li>
                         ))}
                       </ul>
@@ -424,7 +416,7 @@ export default function HaircutsPage() {
       )}
 
       {/* Últimos cortes */}
-      {recentHaircuts.length > 0 && (
+      {recentHaircuts.length > 0 && !showAdd && (
         <div className="bg-gray-800 p-4 rounded-lg shadow-md flex flex-col gap-3">
           <p className="text-xl font-semibold text-white">Últimos cortes</p>
           <div className="flex flex-col gap-3">

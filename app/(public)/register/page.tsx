@@ -16,7 +16,7 @@ export default function RegisterPage({ setView }: Props) {
     name: "",
     lastname: "",
     phoneNumber: "",
-    email: "", // 👈 agregado
+    email: "",
     password: "",
   });
   const [message, setMessage] = useState("");
@@ -54,7 +54,7 @@ export default function RegisterPage({ setView }: Props) {
           type="text"
           placeholder="Nombre"
           value={form.name}
-          onChange={(e) => setForm({ ...form, name: e.target.value })}
+          onChange={(e) => setForm({ ...form, name: e.target.value.trim() })}
           className="px-3 py-2 rounded bg-gray-800 text-white"
           required
         />
@@ -62,7 +62,7 @@ export default function RegisterPage({ setView }: Props) {
           type="text"
           placeholder="Apellido"
           value={form.lastname}
-          onChange={(e) => setForm({ ...form, lastname: e.target.value })}
+          onChange={(e) => setForm({ ...form, lastname: e.target.value.trim() })}
           className="px-3 py-2 rounded bg-gray-800 text-white"
           required
         />
@@ -70,7 +70,7 @@ export default function RegisterPage({ setView }: Props) {
           type="tel"
           placeholder="Teléfono"
           value={form.phoneNumber}
-          onChange={(e) => setForm({ ...form, phoneNumber: e.target.value })}
+          onChange={(e) => setForm({ ...form, phoneNumber: e.target.value.trim() })}
           className="px-3 py-2 rounded bg-gray-800 text-white"
           required
         />
@@ -78,7 +78,7 @@ export default function RegisterPage({ setView }: Props) {
           type="email"
           placeholder="Email" // 👈 nuevo campo
           value={form.email}
-          onChange={(e) => setForm({ ...form, email: e.target.value })}
+          onChange={(e) => setForm({ ...form, email: e.target.value.trim() })}
           className="px-3 py-2 rounded bg-gray-800 text-white"
           required
         />
@@ -86,7 +86,7 @@ export default function RegisterPage({ setView }: Props) {
           type="password"
           placeholder="Contraseña"
           value={form.password}
-          onChange={(e) => setForm({ ...form, password: e.target.value })}
+          onChange={(e) => setForm({ ...form, password: e.target.value.trim() })}
           className="px-3 py-2 rounded bg-gray-800 text-white"
           required
         />

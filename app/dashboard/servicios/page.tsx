@@ -233,21 +233,21 @@ export default function ServicesPage({
                 type="text"
                 placeholder="Nombre del servicio"
                 value={newName}
-                onChange={(e) => setNewName(e.target.value)}
+                onChange={(e) => setNewName(e.target.value.trim())}
                 className="px-3 py-2 rounded bg-gray-700 text-white"
                 required
               />
               <textarea
                 placeholder="Descripción"
                 value={newDescription}
-                onChange={(e) => setNewDescription(e.target.value)}
+                onChange={(e) => setNewDescription(e.target.value.trim())}
                 className="px-3 py-2 rounded bg-gray-700 text-white"
               />
               <input
                 type="number"
                 placeholder="Precio"
                 value={newPrice}
-                onChange={(e) => setNewPrice(Number(e.target.value))}
+                onChange={(e) => setNewPrice(Number(e.target.value.trim()))}
                 className="px-3 py-2 rounded bg-gray-700 text-white"
                 required
               />
