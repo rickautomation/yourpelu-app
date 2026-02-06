@@ -4,6 +4,7 @@ import BarbershopSetupWizard from "../components/dashboard/BarbershopSetupWizard
 import { useAuth } from "../lib/useAuth";
 import { useUserBarbershops } from "../hooks/useUserBarbershops";
 import { useServices } from "../hooks/useServices";
+import { FaUserPlus } from "react-icons/fa";
 
 export default function DashboardPage() {
   const { user, loading, isUnauthorized, router, refreshUser } = useAuth();
@@ -31,6 +32,10 @@ export default function DashboardPage() {
                 {activeBarbershop?.phoneNumber}
               </p>
             </div>
+            <button className="border-2 border-pink-300 hover:bg-pink-700 text-white p-3 rounded-md text-xl flex items-center gap-2">
+              <FaUserPlus />
+              <span className="text-xs">Agregar Miembro</span>
+            </button>
           </section>
 
           <section className=" rounded-lg border-4 border-gray-900 bg-gray-800 p-2 ">

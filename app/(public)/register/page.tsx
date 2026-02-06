@@ -2,8 +2,9 @@
 
 import { View } from "@/app/types";
 import { useState } from "react";
-import { apiPost } from "../lib/apiPost";
+import { apiPost } from "../../lib/apiPost";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 interface Props {
   setView: React.Dispatch<React.SetStateAction<View>>;
@@ -38,7 +39,7 @@ export default function RegisterPage({ setView }: Props) {
 
   return (
     <div className="flex flex-col items-center justify-center bg-gray-950 animate-slideIn px-4">
-      <p className="text-gray-300 mb-6 text-center max-w-md">
+      <p className="text-gray-500 text-center max-w-md">
         Registrate para empezar a gestionar tu peluquería. Vas a poder organizar
         turnos, clientes y cortes de manera simple y rápida, todo desde tu
         celular.
@@ -47,7 +48,7 @@ export default function RegisterPage({ setView }: Props) {
       {/* Formulario */}
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-sm flex flex-col gap-3"
+        className="w-full max-w-sm flex flex-col gap-3 px-4"
       >
         <input
           type="text"
@@ -95,25 +96,17 @@ export default function RegisterPage({ setView }: Props) {
         >
           Registrarse
         </button>
+        <div className="py-3 flex justify-center">
+          <Link
+            href="/login"
+            className="text-sm text-blue-400 hover:underline mb-2"
+          >
+            <p className="text-lg">¿Ya tenés cuenta? Iniciá sesión aquí.</p>
+          </Link>
+        </div>
       </form>
 
       {message && <p className="mt-4">{message}</p>}
-
-      {/* Links inferiores */}
-      <div className="flex gap-4 mt-6">
-        <button
-          onClick={() => setView?.("login")}
-          className="text-lg text-gray-400 hover:text-pink-400"
-        >
-          Ir a Login →
-        </button>
-        <button
-          onClick={() => setView?.("home")}
-          className="text-lg text-gray-400 hover:text-pink-400"
-        >
-          ← Volver
-        </button>
-      </div>
     </div>
   );
 }

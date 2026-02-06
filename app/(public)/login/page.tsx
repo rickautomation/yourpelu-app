@@ -2,8 +2,9 @@
 
 import { View } from "@/app/types";
 import { useState } from "react";
-import { apiPost } from "../lib/apiPost";
+import { apiPost } from "@/app/lib/apiPost";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 interface Props {
   setView: React.Dispatch<React.SetStateAction<View>>;
@@ -37,7 +38,7 @@ export default function LoginPage({ setView }: Props) {
     try {
       const data = await apiPost<{ ok: boolean; token?: string }>(
         "/auth/login",
-        form
+        form,
       );
       if (data.ok) {
         setMessage("Login exitoso ✅");
@@ -49,8 +50,8 @@ export default function LoginPage({ setView }: Props) {
   }
 
   return (
-    <div className=" flex flex-col items-center justify-center bg-gray-950 animate-slideIn px-4">
-      <p className="text-gray-300 mb-6 text-center max-w-md">
+    <div className="h-full flex flex-col items-center justify-center bg-gray-950 animate-slideIn px-4">
+      <p className="text-gray-500 mb-6 text-center max-w-md">
         Iniciá sesión para acceder a tu panel de gestión. Con Your
         <span className="text-pink-400">Pelu</span> podés organizar turnos,
         clientes y cortes de manera simple y rápida, todo desde tu celular.
@@ -59,7 +60,7 @@ export default function LoginPage({ setView }: Props) {
       {/* Formulario */}
       <form
         onSubmit={handleFakeSubmit}
-        className="w-full max-w-sm flex flex-col gap-4"
+        className="w-full max-w-sm flex flex-col gap-4 px-4"
       >
         <input
           type="text"
@@ -83,25 +84,16 @@ export default function LoginPage({ setView }: Props) {
         >
           Entrar
         </button>
+        <div className="py-3 flex justify-center">
+          <Link href="/register" className="hover:underline mb-2">
+            <p className="text-lg text-blue-400">
+              ¿No tenés cuenta? Registrate aquí.
+            </p>
+          </Link>
+        </div>
       </form>
 
       {message && <p className="mt-4">{message}</p>}
-
-      {/* Links inferiores */}
-      <div className="flex gap-4 mt-6 text-lg">
-        <button
-          onClick={() => setView?.("register")}
-          className=" text-gray-400 hover:text-pink-400"
-        >
-          Ir a Registro →
-        </button>
-        <button
-          onClick={() => setView?.("home")}
-          className=" text-gray-400 hover:text-pink-400"
-        >
-          ← Volver
-        </button>
-      </div>
     </div>
   );
 }
