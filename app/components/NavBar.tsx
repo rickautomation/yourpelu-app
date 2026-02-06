@@ -112,7 +112,7 @@ export default function Navbar({
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setShowSelector(!showSelector)}
-                className="p-1 border border-pink-600 rounded-md text-sm text-pink-400 font-semibold flex items-center gap-2 hover:bg-pink-600 hover:text-white transition"
+                className="p-1 border border-pink-300 rounded-md text-sm text-pink-300 font-semibold flex items-center gap-2 hover:bg-pink-600 hover:text-white transition"
               >
                 {activeBarbershop.name}
                 <svg

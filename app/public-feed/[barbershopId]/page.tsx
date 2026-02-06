@@ -7,8 +7,6 @@ export default function PublicFeedPage({ params }: { params: Promise<{ barbersho
   const { barbershopId } = React.use(params); // 👈 unwrap del Promise
   const { barbershop, loading, error } = usePublicBarbershopFeed(barbershopId);
 
-  console.log("barbershop: ", barbershop)
-
   if (loading) return <p>Cargando...</p>;
   if (error) return <p>Error: {error}</p>;
   if (!barbershop) return <p>No se encontró la barbería</p>;
