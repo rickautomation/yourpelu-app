@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { apiPost } from "../lib/apiPost";
+import { apiPost } from "../../lib/apiPost";
 
 export default function SetupAccountPage() {
   const [password, setPassword] = useState("");
@@ -41,10 +41,7 @@ export default function SetupAccountPage() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 gap-4 p-4">
-      <div className="text-5xl font-bold">
-        Your<span className="text-pink-400">Pelu</span>
-      </div>
+    <div className="flex flex-col items-center justify-center bg-gray-950 gap-4 p-4">
       <div className="text-center max-w-md">
         <h1 className="text-2xl text-white mb-2">¡Bienvenido!</h1>
         <p className="text-gray-300">

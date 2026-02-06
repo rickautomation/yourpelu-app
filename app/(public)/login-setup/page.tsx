@@ -2,9 +2,8 @@
 
 import { View } from "@/app/types";
 import { useState } from "react";
-import { apiPost } from "../lib/apiPost";
+import { apiPost } from "../../lib/apiPost";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 
 interface Props {
   setView: React.Dispatch<React.SetStateAction<View>>;
@@ -35,15 +34,6 @@ export default function LoginPage({ setView }: Props) {
     <div className="flex flex-col items-center justify-center min-h-screen px-4">
       {/* Sección superior con fondo gris */}
       <div className="bg-gray-950 w-full flex flex-col items-center pb-10">
-        <div className="pt-10">
-          <Image
-            src="/yourpelu-logo.png"
-            alt="Yourpelu Logo"
-            width={150}
-            height={150}
-            className="mx-auto h-24 w-auto"
-          />
-        </div>
         <p className="text-gray-300 mb-6 text-center max-w-md">
           Iniciá sesión para acceder a tu panel de gestión. Con Your
           <span className="text-pink-400">Pelu</span> podés organizar turnos,
