@@ -4,6 +4,8 @@ import { useAuth } from "@/app/hooks/useAuth";
 import { useUserBarbershops } from "@/app/hooks/useUserBarbershops";
 import { apiPost } from "@/app/lib/apiPost";
 
+import { FaWhatsapp } from "react-icons/fa";
+
 export default function NewBarberPage() {
   const { user, loading, isUnauthorized, router } = useAuth();
   const { activeBarbershop } = useUserBarbershops(user);
@@ -14,7 +16,8 @@ export default function NewBarberPage() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState<string | null>(null);
   const [activationLink, setActivationLink] = useState<string | null>(null);
-  const [copied, setCopied] = useState(false); // 👈 nuevo estado
+  const [copied, setCopied] = useState(false);
+  const [newBarberPhone, setNewBarberPhone] = useState<string | null>(null);
 
   useEffect(() => {
     if (copied) {
@@ -33,7 +36,10 @@ export default function NewBarberPage() {
         return;
       }
 
-      const res = await apiPost<{ activationLink: string }>("/user/barber", {
+      const res = await apiPost<{
+        activationLink: string;
+        phoneNumber: string;
+      }>("/user/barber", {
         name,
         lastname,
         phoneNumber,
@@ -41,8 +47,12 @@ export default function NewBarberPage() {
         barbershopId: activeBarbershop.id,
       });
 
+      console.log("res user: ", res);
+
       setMessage(`Barbero creado ✅ Enlace: ${res.activationLink}`);
       setActivationLink(res.activationLink);
+
+      setNewBarberPhone(res.phoneNumber);
 
       setName("");
       setLastname("");
@@ -61,6 +71,31 @@ export default function NewBarberPage() {
     }
   };
 
+  const formatArgPhone = (phone: string) => {
+    // eliminar todo lo que no sea dígito
+    console.log("phoneNume=ber : ", phone);
+    let clean = phone.replace(/\D/g, "");
+
+    // quitar prefijo 0
+    if (clean.startsWith("0")) {
+      clean = clean.slice(1);
+    }
+
+    // quitar prefijo 15
+    if (clean.startsWith("15")) {
+      clean = clean.slice(2);
+    }
+
+    // si ya empieza con 549, lo dejamos
+    if (clean.startsWith("549")) return clean;
+
+    // si empieza con 9 (ej: 9261...), lo reemplazamos por 549
+    if (clean.startsWith("9")) return "549" + clean.slice(1);
+
+    // por defecto, agregamos 549 adelante
+    return "549" + clean;
+  };
+
   if (loading) return <p>Cargando...</p>;
   if (isUnauthorized) {
     router.push("/login");
@@ -69,63 +104,29 @@ export default function NewBarberPage() {
 
   return (
     <div className="flex flex-col space-y-2 p-4">
-      {activationLink && (
+      {activationLink && newBarberPhone && (
         <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm z-50 px-4">
           <div className="bg-gray-800 p-6 rounded-lg shadow-xl text-center max-w-md w-full">
-            <h3 className="text-xl font-semibold mb-4 text-white">
-              Barbero creado ✅
+            <h3 className="text-xl font-semibold mb-6 text-white">
+              Invitación creada ✅
             </h3>
-            <h4 className="text-lg text-white">
-              Tenés dos opciones para compartir la cuenta: <br />
-              • Copiar solo el enlace de activación. <br />• Copiar una
-              plantilla completa lista para enviar por WhatsApp o correo.
-            </h4>
 
-            <p className="mb-4 text-pink-500 break-all">{activationLink}</p>
-
-            <div className="flex justify-center gap-3">
-              <button
-                onClick={() => {
-                  navigator.clipboard.writeText(activationLink);
-                  const toast = document.createElement("div");
-                  toast.innerText = "Enlace copiado ✅";
-                  toast.className =
-                    "fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-4 py-2 rounded shadow-lg";
-                  document.body.appendChild(toast);
-                  setTimeout(() => toast.remove(), 2000);
-                  setActivationLink(null);
-                  setCopied(true);
-                }}
-                className="bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600 transition-colors font-semibold"
-              >
-                Copiar enlace
-              </button>
-
-              <button
-                onClick={() => {
-                  const plantilla = `Hola 👋, ${activeBarbershop?.name} te invita a unirte a YourPelu. 
+            <button
+              onClick={() => {
+                const formattedPhone = formatArgPhone(newBarberPhone!);
+                const message = `Hola 👋, ${activeBarbershop?.name} te invita a unirte a YourPelu. 
 Para activarla y configurar tu contraseña, ingresá al siguiente enlace: 
 ${activationLink}
 
-⚠️ Recordá que este enlace es único y solo funciona una vez. 
-Si tenés dudas, escribinos por WhatsApp o respondé este mail.`;
-
-                  navigator.clipboard.writeText(plantilla);
-
-                  const toast = document.createElement("div");
-                  toast.innerText = "Plantilla copiada ✅";
-                  toast.className =
-                    "fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white px-4 py-2 rounded shadow-lg";
-                  document.body.appendChild(toast);
-                  setTimeout(() => toast.remove(), 2000);
-                   setActivationLink(null); // 👈 cerrar popup inmediatamente
-                  setCopied(true);
-                }}
-                className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 transition-colors font-semibold"
-              >
-                Copiar plantilla
-              </button>
-            </div>
+⚠️ Recordá que este enlace es único y solo funciona una vez.`;
+                const whatsappUrl = `https://api.whatsapp.com/send?phone=${formattedPhone}&text=${encodeURIComponent(message)}`;
+                window.open(whatsappUrl, "_blank");
+              }}
+              className="flex items-center justify-center gap-3 bg-green-500 text-white px-6 py-3 rounded hover:bg-green-600 transition-colors font-semibold text-lg"
+            >
+              <FaWhatsapp className="w-7 h-7" /> {/* Ícono más grande */}
+              Enviar por WhatsApp
+            </button>
           </div>
         </div>
       )}
