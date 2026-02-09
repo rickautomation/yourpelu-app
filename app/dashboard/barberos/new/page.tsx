@@ -47,8 +47,6 @@ export default function NewBarberPage() {
         barbershopId: activeBarbershop.id,
       });
 
-      console.log("res user: ", res);
-
       setMessage(`Barbero creado ✅ Enlace: ${res.activationLink}`);
       setActivationLink(res.activationLink);
 
@@ -72,27 +70,20 @@ export default function NewBarberPage() {
   };
 
   const formatArgPhone = (phone: string) => {
-    // eliminar todo lo que no sea dígito
-    console.log("phoneNume=ber : ", phone);
     let clean = phone.replace(/\D/g, "");
 
-    // quitar prefijo 0
     if (clean.startsWith("0")) {
       clean = clean.slice(1);
     }
 
-    // quitar prefijo 15
     if (clean.startsWith("15")) {
       clean = clean.slice(2);
     }
 
-    // si ya empieza con 549, lo dejamos
     if (clean.startsWith("549")) return clean;
 
-    // si empieza con 9 (ej: 9261...), lo reemplazamos por 549
     if (clean.startsWith("9")) return "549" + clean.slice(1);
 
-    // por defecto, agregamos 549 adelante
     return "549" + clean;
   };
 
@@ -111,22 +102,24 @@ export default function NewBarberPage() {
               Invitación creada ✅
             </h3>
 
-            <button
-              onClick={() => {
-                const formattedPhone = formatArgPhone(newBarberPhone!);
-                const message = `Hola 👋, ${activeBarbershop?.name} te invita a unirte a YourPelu. 
+            <div className="flex flex-col justify-center">
+              <button
+                onClick={() => {
+                  const formattedPhone = formatArgPhone(newBarberPhone!);
+                  const message = `Hola 👋, ${activeBarbershop?.name} te invita a unirte a YourPelu. 
 Para activarla y configurar tu contraseña, ingresá al siguiente enlace: 
 ${activationLink}
 
 ⚠️ Recordá que este enlace es único y solo funciona una vez.`;
-                const whatsappUrl = `https://api.whatsapp.com/send?phone=${formattedPhone}&text=${encodeURIComponent(message)}`;
-                window.open(whatsappUrl, "_blank");
-              }}
-              className="flex items-center justify-center gap-3 bg-green-500 text-white px-6 py-3 rounded hover:bg-green-600 transition-colors font-semibold text-lg"
-            >
-              <FaWhatsapp className="w-7 h-7" /> {/* Ícono más grande */}
-              Enviar por WhatsApp
-            </button>
+                  const whatsappUrl = `https://api.whatsapp.com/send?phone=${formattedPhone}&text=${encodeURIComponent(message)}`;
+                  window.open(whatsappUrl, "_blank");
+                }}
+                className="flex items-center justify-center gap-3 bg-green-500 text-white px-6 py-3 rounded hover:bg-green-600 transition-colors font-semibold text-lg"
+              >
+                <FaWhatsapp className="w-7 h-7" />
+                Enviar por WhatsApp
+              </button>
+            </div>
           </div>
         </div>
       )}
