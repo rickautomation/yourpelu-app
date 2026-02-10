@@ -21,24 +21,6 @@ export const metadata: Metadata = {
   },
 };
 
-// export default function RootLayout({
-//   children,
-// }: {
-//   children: React.ReactNode;
-// }) {
-//   return (
-//     <html lang="es" className="min-h-screen overflow-x-hidden bg-gray-950">
-//       <body
-//         className={`${geistSans.variable} ${geistMono.variable} antialiased h-full w-full overflow-x-hidden bg-gray-950`}
-//       >
-
-//         {/* Main content */}
-//         <main className="relative z-20 bg-gray-950 h-full">{children}</main>
-//       </body>
-//     </html>
-//   );
-// }
-
 export default function RootLayout({
   children,
 }: {
