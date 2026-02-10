@@ -150,26 +150,34 @@ export default function HaircutsPage() {
     setTimeout(() => setMessage(null), 3000);
   };
 
-  const handleAddHaircut = async () => {
-    if (!selectedType) return;
-    try {
-      await apiPost(`/haircuts`, {
-        userId: user?.id,
-        clientId: selectedClient || null,
-        clientTypeId: selectedType,
-        styleId: selectedStyle || null,
-        barbershopId: activeBarbershop?.id,
-      });
-      setShowAdd(false);
-      setSelectedType("");
-      setSelectedStyle("");
-      setSelectedClient("");
-      showTempMessage("success", "Corte agregado exitosamente");
-    } catch (err) {
-      console.error("Error agregando corte", err);
-      showTempMessage("error", "Error al agregar corte");
+ const handleAddHaircut = async () => {
+  if (!selectedType) return;
+  try {
+    const payload: any = {
+      userId: user?.id,
+      clientTypeId: selectedType,
+      styleId: selectedStyle || null,
+      barbershopId: activeBarbershop?.id,
+    };
+
+    if (selectedClient) {
+      payload.clientId = selectedClient;
     }
-  };
+
+    console.log("haircut payload: ", payload);
+
+    await apiPost(`/haircuts`, payload);
+
+    setShowAdd(false);
+    setSelectedType("");
+    setSelectedStyle("");
+    setSelectedClient("");
+    showTempMessage("success", "Corte agregado exitosamente");
+  } catch (err) {
+    console.error("Error agregando corte", err);
+    showTempMessage("error", "Error al agregar corte");
+  }
+};
 
   const handleCreateClient = async (e: React.FormEvent) => {
     e.preventDefault();
