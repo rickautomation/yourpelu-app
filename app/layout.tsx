@@ -62,7 +62,8 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased h-full w-full overflow-x-hidden bg-gray-950`}
       >
         <main className="relative z-20 bg-gray-950 h-full">
-          {children} <ServiceWorkerRegister />
+          {children} 
+          <ServiceWorkerRegister />
         </main>
       </body>
     </html>
