@@ -14,7 +14,7 @@ export default function DashboardPage() {
 
   if (loading) return <p className="text-white">Cargando...</p>;
   if (isUnauthorized) {
-    router.push("/login");
+    router.push("/");
     return null;
   }
 

@@ -1,7 +1,7 @@
 {
   "name": "YourPelu",
   "short_name": "YourPelu",
-  "start_url": "/",
+  "start_url": "/dashboard",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#16a34a",
