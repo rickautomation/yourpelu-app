@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   title: "YourPelu",
   description: "Gestión de peluquería",
   icons: {
-    icon: [{ url: "/favicon-32x32.png", type: "image/png", sizes: "32x32" }],
+    icon: [{ url: "/Your.png", type: "image/png" }],
   },
 };
 
