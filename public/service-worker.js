@@ -47,10 +47,11 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   const req = event.request;
 
-  // Ignorar la raíz para que el navegador maneje la redirección
-  if (req.url.endsWith("/")) {
-    return;
-  }
+  // Ignorar la raíz
+  if (req.url.endsWith("/")) return;
+
+  // Solo manejar GET requests
+  if (req.method !== "GET") return;
 
   // API → network-first
   if (req.url.includes("/api/")) {
