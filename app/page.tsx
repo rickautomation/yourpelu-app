@@ -1,13 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useAuth } from "../hooks/useAuth";
 
 export default function Home() {
-  const {isAuthenticated} = useAuth();
   const router = useRouter();
-
-  console.log("Autenticado:", isAuthenticated);
 
   return (
     <section className="min-h-screen flex flex-col bg-gray-950 text-white relative overflow-hidden">
