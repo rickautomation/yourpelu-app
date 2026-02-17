@@ -5,10 +5,18 @@ import { Barbershop } from "@/app/interfaces";
 interface BarbershopFormProps {
   barbershop?: Barbershop | null;
   userId?: string;
-  onSave: (data: { name: string; phoneNumber: string; address: string }) => Promise<void>;
+  onSave: (data: {
+    name: string;
+    phoneNumber: string;
+    address: string;
+  }) => Promise<void>;
 }
 
-export default function BarbershopForm({ barbershop, userId, onSave }: BarbershopFormProps) {
+export default function BarbershopForm({
+  barbershop,
+  userId,
+  onSave,
+}: BarbershopFormProps) {
   const [name, setName] = useState(barbershop?.name || "");
   const [phoneNumber, setPhoneNumber] = useState(barbershop?.phoneNumber || "");
   const [address, setAddress] = useState(barbershop?.address || "");
@@ -17,7 +25,12 @@ export default function BarbershopForm({ barbershop, userId, onSave }: Barbersho
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await onSave({ name, phoneNumber, address });
+      await onSave({
+        name: name.trim(),
+        phoneNumber: phoneNumber.trim(),
+        address: address.trim(),
+      });
+
       setMessage("Barbería guardada ✅");
       setTimeout(() => setMessage(null), 2000);
     } catch (err: any) {
@@ -40,7 +53,7 @@ export default function BarbershopForm({ barbershop, userId, onSave }: Barbersho
         <input
           type="text"
           value={name}
-          onChange={(e) => setName(e.target.value.trim())}
+          onChange={(e) => setName(e.target.value)}
           placeholder="Nombre de la barbería"
           required
           className="px-3 py-2 rounded bg-gray-800 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
@@ -52,7 +65,7 @@ export default function BarbershopForm({ barbershop, userId, onSave }: Barbersho
         <input
           type="text"
           value={phoneNumber}
-          onChange={(e) => setPhoneNumber(e.target.value.trim())}
+          onChange={(e) => setPhoneNumber(e.target.value)}
           placeholder="Número de contacto"
           required
           className="px-3 py-2 rounded bg-gray-800 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
@@ -64,7 +77,7 @@ export default function BarbershopForm({ barbershop, userId, onSave }: Barbersho
         <input
           type="text"
           value={address}
-          onChange={(e) => setAddress(e.target.value.trim())}
+          onChange={(e) => setAddress(e.target.value)}
           placeholder="Dirección o ciudad"
           required
           className="px-3 py-2 rounded bg-gray-800 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
