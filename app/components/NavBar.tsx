@@ -42,6 +42,8 @@ export default function Navbar({
     }
   };
 
+  console.log("barbershops quantity: ", barbershops?.length)
+
   // 👇 cerrar dropdown al hacer click fuera
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -108,7 +110,7 @@ export default function Navbar({
       {/* Lado derecho: barbería activa + avatar */}
       {isAuthenticated && (
         <div className="flex items-center gap-3 relative">
-          {activeBarbershop && !sidebarOpen && (
+          {activeBarbershop && !sidebarOpen && (barbershops?.length ?? 0) > 1 && (
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setShowSelector(!showSelector)}

@@ -289,9 +289,10 @@ export default function ServicesPage({
                 <>
                   <input
                     type="number"
+                    step="1"
                     value={price}
                     onChange={(e) => setPrice(e.target.value)}
-                    className="w-24 px-2 py-1 rounded text-black"
+                    className="w-42 px-2 py-1 rounded bg-gray-700 text-white text-lg"
                   />
                   <div className="flex gap-2 mt-2">
                     <button
