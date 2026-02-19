@@ -30,7 +30,7 @@ export default function RootLayout({
     <html lang="es" className="min-h-screen overflow-x-hidden bg-gray-950">
       <head>
         <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#16a34a" />
+        <meta name="theme-color" content="#1800ad" />
 
         {/* iOS support */}
         <meta name="apple-mobile-web-app-capable" content="yes" />
