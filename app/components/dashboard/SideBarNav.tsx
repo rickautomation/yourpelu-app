@@ -17,6 +17,7 @@ import {
   FiLayers,
 } from "react-icons/fi";
 import SidebarLink from "./SidebarLink";
+import Image from "next/image";
 
 type Barbershop = {
   id: string;
@@ -78,6 +79,21 @@ export default function SidebarNav({
     >
       <nav className="flex flex-col gap-2 px-3">
         <div className="text-center">
+          <div className="text-xl font-bold w-full flex items-center justify-center gap-1 pb-2">
+            <Link
+              href="/dashboard"
+              onClick={() => setSidebarOpen(false)}
+              className="hover:text-pink-400 transition-colors"
+            >
+              <Image
+                src="/yourpelu-logo.png"
+                alt="Yourpelu Logo"
+                width={68}
+                height={68}
+                className="h-10 w-auto"
+              />
+            </Link>
+          </div>
           {(userRole === "admin" || userRole === "user") &&
             (barbershops.length > 0 ? (
               <>
