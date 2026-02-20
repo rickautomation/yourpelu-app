@@ -85,6 +85,7 @@ export default function DashboardLayout({
       <ButtonNav
         onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
         sessionId={sessionId}
+        setSidebarOpen={setSidebarOpen}
       />
     </div>
   );

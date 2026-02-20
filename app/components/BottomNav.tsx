@@ -8,9 +8,11 @@ import { apiPost } from "../lib/apiPost";
 export default function BottomNav({
   onToggleSidebar,
   sessionId,
+  setSidebarOpen,
 }: {
   onToggleSidebar?: () => void;
   sessionId?: string;
+  setSidebarOpen?: (open: boolean) => void;
 }) {
   const { user } = useAuth();
   const { activeBarbershop, barbershops, setActiveBarbershop } = useUserBarbershops(user);
@@ -26,6 +28,7 @@ export default function BottomNav({
 
       <Link
         href="/dashboard/clientes"
+        onClick={() => setSidebarOpen?.(false)}
         className="flex items-center justify-center text-pink-600"
       >
         <FiUsers className="w-10 h-10" />
@@ -33,6 +36,7 @@ export default function BottomNav({
 
       <Link
         href="/dashboard/cortes"
+        onClick={() => setSidebarOpen?.(false)}
         className="flex items-center justify-center text-white"
       >
         <FiPlusCircle className="w-10 h-10 text-pink-600" />
@@ -40,6 +44,7 @@ export default function BottomNav({
 
       <Link
         href="/dashboard/turnos"
+        onClick={() => setSidebarOpen?.(false)}
         className="flex items-center justify-center text-pink-600"
       >
         <FiCalendar className="w-10 h-10" />
@@ -47,6 +52,7 @@ export default function BottomNav({
 
       <Link
         href="/dashboard/perfil"
+        onClick={() => setSidebarOpen?.(false)}
         className="flex flex-col items-center text-white"
       >
         {user?.avatarUrl ? (
