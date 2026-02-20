@@ -63,13 +63,13 @@ export default function Navbar({
   }, [showSelector]);
 
   return (
-    <header className="w-full flex items-center justify-between bg-gray-900 text-white px-4 py-2 relative">
+    <header className="w-full flex items-center justify-between bg-gray-900 text-white px-4 py-2 relative border-b border-gray-700 z-50">
       {/* Lado izquierdo: menú + logo */}
       <div className="flex items-center gap-1">
         {isAuthenticated && onToggleSidebar && (
           <button
             onClick={onToggleSidebar}
-            className="p-1 border border-gray-700 rounded-md hover:bg-gray-800 focus:outline-none"
+            className="p-2 border border-gray-700 rounded-md hover:bg-gray-800 focus:outline-none"
           >
             <svg
               className="w-6 h-6"
@@ -99,9 +99,9 @@ export default function Navbar({
             <Image
               src="/yourpelu-logo.png"
               alt="Yourpelu Logo"
-              width={64}
-              height={64}
-              className="h-7 w-auto"
+              width={68}
+              height={68}
+              className="h-10 w-auto"
             />
           </Link>
         </div>
@@ -114,7 +114,7 @@ export default function Navbar({
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setShowSelector(!showSelector)}
-                className="p-1 border border-pink-300 rounded-md text-sm text-pink-300 font-semibold flex items-center gap-2 hover:bg-pink-600 hover:text-white transition"
+                className="px-1 py-2 border border-pink-300 rounded-md text-sm text-pink-300 font-semibold flex items-center gap-2 hover:bg-pink-600 hover:text-white transition"
               >
                 {activeBarbershop.name}
                 <svg
@@ -159,10 +159,10 @@ export default function Navbar({
             <img
               src={user.avatarUrl}
               alt="User Avatar"
-              className="w-6 h-6 rounded-full border border-gray-700"
+              className="w-10 h-10 rounded-full border border-gray-700"
             />
           ) : (
-            <div className="w-8 h-8 flex items-center justify-center rounded-full bg-pink-500 text-white font-bold">
+            <div className="w-10 h-10 flex items-center justify-center rounded-full bg-pink-500 text-white font-bold">
               {user?.name && user?.lastname
                 ? `${user.name.charAt(0)}${user.lastname.charAt(0)}`
                 : "U"}

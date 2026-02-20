@@ -4,6 +4,8 @@ import { apiGet } from "@/app/lib/apiGet";
 import { apiPost } from "@/app/lib/apiPost";
 import { useAuth } from "@/app/lib/useAuth";
 import Link from "next/link";
+import { apiDelete } from "@/app/lib/apiDelete";
+import { apiUpdate } from "@/app/lib/apiUpdate";
 
 type BarberClient = {
   id: string;
@@ -53,6 +55,20 @@ export default function ClientsPage() {
       setLoading(false);
     }
   }, [user]);
+
+  const handleSoftDelete = async (clientId: string) => {
+    try {
+      await apiDelete(`/barber-clients/client/${clientId}`);
+      const data = await apiGet<BarberClient[]>(
+        `/barber-clients/barbershop/${user?.barbershop?.id}`,
+      );
+      setClients(data);
+      showTempMessage("success", "Cliente eliminado");
+    } catch (err) {
+      console.error("Error eliminando cliente", err);
+      showTempMessage("error", "Error al eliminar cliente");
+    }
+  };
 
   const filteredClients = clients.filter((client) =>
     `${client.name} ${client.lastname} ${client.email ?? ""} ${client.phone ?? ""}`
@@ -204,29 +220,54 @@ export default function ClientsPage() {
                     key={client.id}
                     className="flex flex-col px-5 py-4 bg-gray-700 rounded-lg shadow-md"
                   >
-                    <div className="flex gap-1 items-center">
-                      <p className="text-xl text-white font-bold">
+                    {/* Nombre centrado */}
+                    <div className="flex justify-center items-center mb-2">
+                      <p className="text-xl text-white font-bold mr-2">
                         {client.name}
                       </p>
                       <p className="text-xl text-white font-bold">
                         {client.lastname}
                       </p>
+                    </div>
 
+                    {/* Email y teléfono más bonitos */}
+                    <div className="flex justify-between items-center text-sm text-gray-300 mb-3">
+                      {client.email && (
+                        <p className="flex items-center gap-1">
+                          <span className="font-semibold">📧</span>{" "}
+                          {client.email}
+                        </p>
+                      )}
+                      {client.phone && (
+                        <p className="flex items-center gap-1">
+                          <span className="font-semibold">📞</span>{" "}
+                          {client.phone}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Botones ocupando todo el ancho */}
+                    <div className="flex w-full gap-2">
                       <Link
                         href={`/dashboard/clientes/info/${client.id}`}
-                        className="ml-auto bg-pink-400 text-white px-3 py-1 rounded hover:bg-pink-500 transition-colors text-sm font-semibold"
+                        className="flex-1 text-center bg-pink-400 text-white px-3 py-2 rounded hover:bg-pink-500 transition-colors text-sm font-semibold"
                       >
                         Ver más
                       </Link>
-                    </div>
 
-                    <div className="text-sm text-gray-300">
-                      {(client.email || client.phone) && (
-                        <ul className="space-y-1">
-                          {client.email && <li>{client.email}</li>}
-                          {client.phone && <li> {client.phone}</li>}
-                        </ul>
-                      )}
+                      <Link
+                        href={`/dashboard/clientes/edit/${client.id}`}
+                        className="flex-1 text-center bg-blue-400 text-white px-3 py-2 rounded hover:bg-blue-500 transition-colors text-sm font-semibold"
+                      >
+                        Editar
+                      </Link>
+
+                      <button
+                        onClick={() => handleSoftDelete(client.id)}
+                        className="flex-1 bg-red-400 text-white px-3 py-2 rounded hover:bg-red-500 transition-colors text-sm font-semibold"
+                      >
+                        Eliminar
+                      </button>
                     </div>
                   </div>
                 );

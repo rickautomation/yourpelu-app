@@ -164,8 +164,6 @@ export default function HaircutsPage() {
       payload.clientId = selectedClient;
     }
 
-    console.log("haircut payload: ", payload);
-
     await apiPost(`/haircuts`, payload);
 
     setShowAdd(false);

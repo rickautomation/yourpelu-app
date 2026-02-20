@@ -1,7 +1,8 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { apiPost } from "@/app/lib/apiPost"; // 👈 importar helper
+import { apiPost } from "@/app/lib/apiPost";
+import { useServices } from "@/app/hooks/useServices";
 
 type Barbershop = {
   id: string;
@@ -17,8 +18,8 @@ export default function SidebarNav({
   setActiveBarbershop,
   setSidebarOpen,
   userRole,
-  userId, 
-  sessionId, 
+  userId,
+  sessionId,
 }: {
   barbershops: Barbershop[];
   activeBarbershop: Barbershop | null;
@@ -28,6 +29,8 @@ export default function SidebarNav({
   userId: string;
   sessionId: string;
 }) {
+  const { globalServices, ownServices } = useServices(activeBarbershop?.id);
+
   const [showSelector, setShowSelector] = useState(false);
 
   const handleSelectBarbershop = async (shop: Barbershop) => {
@@ -50,11 +53,13 @@ export default function SidebarNav({
     }
   };
 
+  console.log("own service: ", ownServices.length);
+
   return (
     <aside
       className="
         fixed top-14 left-0 h-[calc(100%-56px)] w-full
-        bg-gray-900 px-6 py-2 flex flex-col gap-4 z-40
+        bg-gray-900 px-6 py-4 flex flex-col gap-4 z-40
         transform transition-transform duration-300 delay-200
         translate-x-0
       "
@@ -117,7 +122,9 @@ export default function SidebarNav({
                         onClick={() => setSidebarOpen(false)}
                         className="flex items-center justify-start gap-2 w-full px-4 py-1 border border-pink-600 rounded-md text-xl font-semibold text-white hover:bg-pink-600 hover:text-white transition"
                       >
-                        <span className="text-3xl text-pink-600 font-semibold">+</span>
+                        <span className="text-3xl text-pink-600 font-semibold">
+                          +
+                        </span>
                         Nueva Barbería
                       </Link>
                     </div>
@@ -137,13 +144,25 @@ export default function SidebarNav({
             ))}
         </div>
 
+        {ownServices.length < 1 && (
+          <div className="flex flex-col gap-2 mt-4 text-white text-center py-2 rounded">
+            <Link
+              href="/dashboard/initial-setup"
+              onClick={() => setSidebarOpen(false)}
+              className="bg-green-500 px-6 py-2 rounded font-semibold"
+            >
+              Empezar la configuración
+            </Link>
+          </div>
+        )}
+
         {/* Links del sidebar */}
-        {!showSelector && (
+        {!showSelector && ownServices.length > 0 && (
           <>
             {/* Solo admin */}
             {userRole === "admin" && (
               <>
-              <Link
+                <Link
                   href="/dashboard/panel"
                   onClick={() => setSidebarOpen(false)}
                 >
@@ -166,7 +185,9 @@ export default function SidebarNav({
             )}
 
             {/* Admin y barber */}
-            {(userRole === "admin" || userRole === "barber" || userRole === "user") && (
+            {(userRole === "admin" ||
+              userRole === "barber" ||
+              userRole === "user") && (
               <>
                 <Link
                   href="/dashboard/servicios"
@@ -219,7 +240,7 @@ export default function SidebarNav({
                   📊 Reportes
                 </Link>
                 <hr className="border-gray-700 my-2" />
-                 <Link
+                <Link
                   href="/dashboard/settings"
                   onClick={() => setSidebarOpen(false)}
                 >

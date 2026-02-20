@@ -21,30 +21,39 @@ export default function DashboardPage() {
   return (
     <div className="flex flex-col space-y-4 p-4">
       {activeBarbershop ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <section className="flex justify-between p-1 pr-3 items-center rounded-lg">
-            <div>
-              <h1 className="text-3xl font-bold">{activeBarbershop?.name}</h1>
-              <p className="text-sm text-gray-300">
-                {activeBarbershop?.address}
-              </p>
-              <p className="text-sm text-gray-300">
-                <span className="text-pink-600">Teléfono: </span>
-                {activeBarbershop?.phoneNumber}
-              </p>
-            </div>
-            <Link href="/dashboard/barberos/new">
-              <button className="border-2 border-pink-300 hover:bg-pink-700 text-white p-3 rounded-md text-xl flex items-center gap-2">
-                <FaUserPlus />
-                <span className="text-xs">Agregar Miembro</span>
-              </button>
-            </Link>
-          </section>
+        ownServices.length === 0 ? (
+          // 👇 si no hay servicios, renderizamos el wizard
+          <BarbershopSetupWizard
+            onFinish={async () => {
+              await refreshUser();
+              router.push("/dashboard");
+            }}
+            userName={user?.name || "Usuario"}
+            userId={user?.id || ""}
+          />
+        ) : (
+          // 👇 si hay servicios, renderizamos el dashboard normal
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <section className="flex justify-between p-1 pr-3 items-center rounded-lg">
+              <div>
+                <h1 className="text-3xl font-bold">{activeBarbershop?.name}</h1>
+                <p className="text-sm text-gray-300">
+                  {activeBarbershop?.address}
+                </p>
+                <p className="text-sm text-gray-300">
+                  <span className="text-pink-600">Teléfono: </span>
+                  {activeBarbershop?.phoneNumber}
+                </p>
+              </div>
+              <Link href="/dashboard/barberos/new">
+                <button className="border-2 border-pink-300 hover:bg-pink-700 text-white p-3 rounded-md text-xl flex items-center gap-2">
+                  <FaUserPlus />
+                  <span className="text-xs">Agregar Miembro</span>
+                </button>
+              </Link>
+            </section>
 
-          <section className=" rounded-lg border-4 border-gray-900 bg-gray-800 p-2 ">
-            {ownServices.length === 0 ? (
-              <p className="text-gray-400">No hay servicios configurados.</p>
-            ) : (
+            <section className="rounded-lg border-4 border-gray-900 bg-gray-800 p-2">
               <div>
                 {ownServices.map((service) => (
                   <div
@@ -60,18 +69,19 @@ export default function DashboardPage() {
                   </div>
                 ))}
               </div>
-            )}
-            <div className="flex justify-end">
-              <button
-                className="bg-blue-500 px-3 py-2 rounded text-white mt-2"
-                onClick={() => router.push("/dashboard/servicios")}
-              >
-                Ir a Servicios
-              </button>
-            </div>
-          </section>
-        </div>
+              <div className="flex justify-end">
+                <button
+                  className="bg-blue-500 px-3 py-2 rounded text-white mt-2"
+                  onClick={() => router.push("/dashboard/servicios")}
+                >
+                  Ir a Servicios
+                </button>
+              </div>
+            </section>
+          </div>
+        )
       ) : (
+        // 👇 si no hay barbería activa, también mostramos el wizard
         <BarbershopSetupWizard
           onFinish={async () => {
             await refreshUser();
