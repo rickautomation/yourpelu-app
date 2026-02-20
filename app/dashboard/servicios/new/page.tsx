@@ -62,7 +62,7 @@ export default function TemplateServicesPage({
             <div>
               <p className="text-lg font-semibold">{service.name}</p>
               {service.description && (
-                <p className="text-sm text-gray-300">{service.description}</p>
+                <p className="text-xs text-gray-300">{service.description}</p>
               )}
             </div>
             {openPriceInput !== service.id && (

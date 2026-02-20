@@ -78,7 +78,7 @@ export default function BarbersPage() {
 
       <div className="flex flex-col space-y-2 mt-2">
         {barbers.length === 0 ? (
-          <p className="text-gray-400 text-center">No hay barberos aún.</p>
+          <p className="text-gray-400 text-center"></p>
         ) : (
           barbers.map((barber) => (
             <div

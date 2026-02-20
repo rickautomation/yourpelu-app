@@ -115,7 +115,7 @@ export default function Navbar({
               </button>
 
               {showSelector && barbershops && (
-                <div className="absolute mt-2 w-40 bg-gray-800 border border-gray-700 rounded-md shadow-lg z-50 left-0">
+                <div className="absolute mt-2 w-40 bg-gray-800 border border-gray-700 rounded-md shadow-lg z-50 right-0">
                   {barbershops.map((shop) => (
                     <button
                       key={shop.id}
