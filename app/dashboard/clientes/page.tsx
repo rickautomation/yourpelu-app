@@ -5,7 +5,6 @@ import { apiPost } from "@/app/lib/apiPost";
 import { useAuth } from "@/app/lib/useAuth";
 import Link from "next/link";
 import { apiDelete } from "@/app/lib/apiDelete";
-import { apiUpdate } from "@/app/lib/apiUpdate";
 
 type BarberClient = {
   id: string;
@@ -114,15 +113,17 @@ export default function ClientsPage() {
       {/* Card para agregar cliente */}
       <div className="bg-gray-800 p-4 rounded-lg shadow-md flex flex-col gap-3">
         <div className="flex justify-between items-center">
-          <div className="flex items-center gap-1">
-            <input
-              type="text"
-              placeholder="Buscar cliente..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value.trim())}
-              className="px-2 py-2 rounded bg-gray-700 text-white w-full max-w-xs focus:outline-none focus:ring-2 focus:ring-pink-400"
-            />
-          </div>
+          {!showAdd && (
+            <div className="flex items-center gap-1">
+              <input
+                type="text"
+                placeholder="Buscar cliente..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value.trim())}
+                className="px-2 py-2 rounded bg-gray-700 text-white w-full max-w-xs focus:outline-none focus:ring-2 focus:ring-pink-400"
+              />
+            </div>
+          )}
 
           {!showAdd && (
             <button
@@ -144,7 +145,7 @@ export default function ClientsPage() {
                 onChange={(e) => setName(e.target.value.trim())}
                 placeholder="Nombre del cliente"
                 required
-                className="px-3 py-2 rounded bg-gray-800 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
+                className="px-3 py-2 rounded bg-gray-700 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
               />
             </div>
 
@@ -156,39 +157,33 @@ export default function ClientsPage() {
                 onChange={(e) => setLastname(e.target.value.trim())}
                 placeholder="Apellido del cliente"
                 required
-                className="px-3 py-2 rounded bg-gray-800 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
+                className="px-3 py-2 rounded bg-gray-700 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
               />
             </div>
 
             <div>
-              <label className="block text-sm mb-1 text-white">Email</label>
+              <label className="block text-sm mb-1 text-white">Email (opcional)</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value.trim())}
                 placeholder="Correo electrónico"
-                className="px-3 py-2 rounded bg-gray-800 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
+                className="px-3 py-2 rounded bg-gray-700 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
               />
             </div>
 
             <div>
-              <label className="block text-sm mb-1 text-white">Teléfono</label>
+              <label className="block text-sm mb-1 text-white">Teléfono (opcional)</label>
               <input
                 type="text"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value.trim())}
                 placeholder="Número de contacto"
-                className="px-3 py-2 rounded bg-gray-800 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
+                className="px-3 py-2 rounded bg-gray-700 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
               />
             </div>
 
-            <div className="flex gap-3">
-              <button
-                type="submit"
-                className="bg-pink-400 text-white px-4 py-2 rounded hover:bg-pink-500 transition-colors font-semibold"
-              >
-                Guardar Cliente
-              </button>
+            <div className="flex gap-2 mt-2">
               <button
                 type="button"
                 onClick={() => {
@@ -198,9 +193,16 @@ export default function ClientsPage() {
                   setEmail("");
                   setPhone("");
                 }}
-                className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-500 transition-colors font-semibold"
+                className="flex-1 bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-500 transition-colors font-semibold"
               >
                 Cancelar
+              </button>
+
+              <button
+                type="submit"
+                className="flex-1 bg-pink-400 text-white px-4 py-2 rounded hover:bg-pink-500 transition-colors font-semibold"
+              >
+                Guardar
               </button>
             </div>
           </form>
@@ -264,7 +266,7 @@ export default function ClientsPage() {
 
                       <button
                         onClick={() => handleSoftDelete(client.id)}
-                        className="flex-1 bg-red-400 text-white px-3 py-2 rounded hover:bg-red-500 transition-colors text-sm font-semibold"
+                        className="flex-1 bg-red-500 text-white px-3 py-2 rounded hover:bg-red-700 transition-colors text-sm font-semibold"
                       >
                         Eliminar
                       </button>

@@ -172,13 +172,15 @@ export default function SidebarNav({
         </div>
 
         {ownServices.length < 1 && (
-          <div className="flex flex-col gap-2 mt-4 text-white text-center py-2 rounded">
-            <SidebarLink
-              href="/dashboard/initial-setup"
-              setSidebarOpen={setSidebarOpen}
-            >
-              Empezar la configuración
-            </SidebarLink>
+          <div className="flex flex-col gap-2 mt-4">
+            <div className="px-4 py-2 bg-pink-600 text-center text-white font-semibold rounded-md shadow hover:bg-pink-700 transition">
+              <Link
+                href="/dashboard/initial-setup"
+                onClick={() => setSidebarOpen(false)}
+              >
+                Configura tu barbería
+              </Link>
+            </div>
           </div>
         )}
 

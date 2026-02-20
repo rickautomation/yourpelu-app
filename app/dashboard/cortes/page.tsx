@@ -4,6 +4,7 @@ import { apiGet } from "@/app/lib/apiGet";
 import { apiPost } from "@/app/lib/apiPost";
 import { useAuth } from "@/app/lib/useAuth";
 import { useUserBarbershops } from "@/app/hooks/useUserBarbershops";
+import Link from "next/link";
 
 type Haircut = {
   id: string;
@@ -150,32 +151,32 @@ export default function HaircutsPage() {
     setTimeout(() => setMessage(null), 3000);
   };
 
- const handleAddHaircut = async () => {
-  if (!selectedType) return;
-  try {
-    const payload: any = {
-      userId: user?.id,
-      clientTypeId: selectedType,
-      styleId: selectedStyle || null,
-      barbershopId: activeBarbershop?.id,
-    };
+  const handleAddHaircut = async () => {
+    if (!selectedType) return;
+    try {
+      const payload: any = {
+        userId: user?.id,
+        clientTypeId: selectedType,
+        styleId: selectedStyle || null,
+        barbershopId: activeBarbershop?.id,
+      };
 
-    if (selectedClient) {
-      payload.clientId = selectedClient;
+      if (selectedClient) {
+        payload.clientId = selectedClient;
+      }
+
+      await apiPost(`/haircuts`, payload);
+
+      setShowAdd(false);
+      setSelectedType("");
+      setSelectedStyle("");
+      setSelectedClient("");
+      showTempMessage("success", "Corte agregado exitosamente");
+    } catch (err) {
+      console.error("Error agregando corte", err);
+      showTempMessage("error", "Error al agregar corte");
     }
-
-    await apiPost(`/haircuts`, payload);
-
-    setShowAdd(false);
-    setSelectedType("");
-    setSelectedStyle("");
-    setSelectedClient("");
-    showTempMessage("success", "Corte agregado exitosamente");
-  } catch (err) {
-    console.error("Error agregando corte", err);
-    showTempMessage("error", "Error al agregar corte");
-  }
-};
+  };
 
   const handleCreateClient = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -207,14 +208,19 @@ export default function HaircutsPage() {
 
   if (loading) return <p>Cargando...</p>;
 
-  console.log("clients: ", clients);
-
   return (
     <div className="flex flex-col space-y-4 p-4">
       {ownTypes === null ? (
         <p>...</p>
       ) : ownTypes.length === 0 ? (
-        <p className="text-sm text-red-400">No tienes servicios…</p>
+        <div className="flex flex-col gap-2 mt-4">
+          <p className="text-lg text-white">
+            Debes configurar tu barbería primero
+          </p>
+          <div className="px-4 py-2 bg-pink-600 text-center text-white font-semibold rounded-md shadow hover:bg-pink-700 transition">
+            <Link href="/dashboard/initial-setup">Empezar</Link>
+          </div>
+        </div>
       ) : (
         <div className="bg-gray-800 p-4 rounded-lg shadow-md flex flex-col gap-3">
           <div className="flex justify-between items-center">
@@ -418,42 +424,6 @@ export default function HaircutsPage() {
               </div>
             </div>
           )}
-        </div>
-      )}
-
-      {/* Últimos cortes */}
-      {recentHaircuts.length > 0 && !showAdd && (
-        <div className="bg-gray-800 p-4 rounded-lg shadow-md flex flex-col gap-3">
-          <p className="text-xl font-semibold text-white">Últimos cortes</p>
-          <div className="flex flex-col gap-3">
-            {recentHaircuts.map((h) => (
-              <div
-                key={h.id}
-                className="bg-gray-700 rounded-md p-3 flex justify-between items-center shadow"
-              >
-                <div className="flex flex-col text-white font-medium">
-                  <span>{h?.type?.name}</span>
-                  {h.style && (
-                    <span className="text-sm text-gray-300">
-                      🎨 {h.style.name}
-                    </span>
-                  )}
-                  <span className="text-sm text-gray-300">
-                    💈 {h.user?.name + " " + h.user?.lastname}{" "}
-                  </span>
-                </div>
-                <span className="text-sm text-gray-400 flex flex-col items-end">
-                  <span>{new Date(h.createdAt).toLocaleDateString()}</span>
-                  <span>
-                    {new Date(h.createdAt).toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </span>
-                </span>
-              </div>
-            ))}
-          </div>
         </div>
       )}
 
