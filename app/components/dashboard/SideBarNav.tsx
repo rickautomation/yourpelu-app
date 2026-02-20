@@ -3,6 +3,20 @@ import { useState } from "react";
 import Link from "next/link";
 import { apiPost } from "@/app/lib/apiPost";
 import { useServices } from "@/app/hooks/useServices";
+import {
+  FiHome,
+  FiUsers,
+  FiScissors,
+  FiImage,
+  FiSettings,
+  FiCalendar,
+  FiBarChart2,
+  FiDroplet,
+  FiBox,
+  FiList,
+  FiLayers,
+} from "react-icons/fi";
+import SidebarLink from "./SidebarLink";
 
 type Barbershop = {
   id: string;
@@ -53,16 +67,14 @@ export default function SidebarNav({
     }
   };
 
-  console.log("own service: ", ownServices.length);
-
   return (
     <aside
       className="
-        fixed top-14 left-0 h-[calc(100%-56px)] w-full
-        bg-gray-900 px-6 py-4 flex flex-col gap-4 z-40
-        transform transition-transform duration-300 delay-200
-        translate-x-0
-      "
+    fixed top-0 left-0 h-full w-full
+    bg-gray-900 px-3 py-4 flex flex-col gap-3 z-40
+    transform transition-transform duration-300
+    translate-x-0
+  "
     >
       <nav className="flex flex-col gap-2 px-3">
         <div className="text-center">
@@ -92,7 +104,6 @@ export default function SidebarNav({
                   </svg>
                 </button>
 
-                {/* Dropdown solo si showSelector está activo */}
                 {/* Dropdown selector */}
                 {showSelector && (
                   <>
@@ -146,106 +157,100 @@ export default function SidebarNav({
 
         {ownServices.length < 1 && (
           <div className="flex flex-col gap-2 mt-4 text-white text-center py-2 rounded">
-            <Link
+            <SidebarLink
               href="/dashboard/initial-setup"
-              onClick={() => setSidebarOpen(false)}
-              className="bg-green-500 px-6 py-2 rounded font-semibold"
+              setSidebarOpen={setSidebarOpen}
             >
               Empezar la configuración
-            </Link>
+            </SidebarLink>
           </div>
         )}
 
         {/* Links del sidebar */}
         {!showSelector && ownServices.length > 0 && (
           <>
-            {/* Solo admin */}
             {userRole === "admin" && (
               <>
-                <Link
-                  href="/dashboard/panel"
-                  onClick={() => setSidebarOpen(false)}
-                >
-                  🏠 Panel
-                </Link>
-                <Link
+                <SidebarLink href="/dashboard" setSidebarOpen={setSidebarOpen}>
+                  <FiHome className="inline w-5 h-5 mr-2" /> Home
+                </SidebarLink>
+                <SidebarLink
                   href="/dashboard/barberos"
-                  onClick={() => setSidebarOpen(false)}
+                  setSidebarOpen={setSidebarOpen}
                 >
-                  💈 Barberos
-                </Link>
-                <Link
+                  <FiUsers className="inline w-5 h-5 mr-2" /> Barberos
+                </SidebarLink>
+                <SidebarLink
                   href="/dashboard/barbershop-profile-settings"
-                  onClick={() => setSidebarOpen(false)}
+                  setSidebarOpen={setSidebarOpen}
                 >
-                  🖼️ Feed
-                </Link>
+                  <FiImage className="inline w-5 h-5 mr-2" /> Feed
+                </SidebarLink>
                 <hr className="border-gray-700 my-2" />
               </>
             )}
 
-            {/* Admin y barber */}
             {(userRole === "admin" ||
               userRole === "barber" ||
               userRole === "user") && (
               <>
-                <Link
+                <SidebarLink
                   href="/dashboard/servicios"
-                  onClick={() => setSidebarOpen(false)}
+                  setSidebarOpen={setSidebarOpen}
                 >
-                  💇 Servicios
-                </Link>
-                <Link
+                  <FiList className="inline w-5 h-5 mr-2" /> Servicios
+                </SidebarLink>
+                <SidebarLink
                   href="/dashboard/cortes"
-                  onClick={() => setSidebarOpen(false)}
+                  setSidebarOpen={setSidebarOpen}
                 >
-                  ✂️ Cortes
-                </Link>
-                <Link
+                  <FiScissors className="inline w-5 h-5 mr-2" /> Cortes
+                </SidebarLink>
+                <SidebarLink
                   href="/dashboard/haircut-styles"
-                  onClick={() => setSidebarOpen(false)}
+                  setSidebarOpen={setSidebarOpen}
                 >
-                  💇‍♂️ Estilos
-                </Link>
-                <Link
+                  <FiLayers className="inline w-5 h-5 mr-2" /> Estilos
+                </SidebarLink>
+                <SidebarLink
                   href="/dashboard/coloraciones"
-                  onClick={() => setSidebarOpen(false)}
+                  setSidebarOpen={setSidebarOpen}
                 >
-                  🎨 Coloraciones
-                </Link>
-                <Link
+                  <FiDroplet className="inline w-5 h-5 mr-2" /> Coloraciones
+                </SidebarLink>
+                <SidebarLink
                   href="/dashboard/insumos"
-                  onClick={() => setSidebarOpen(false)}
+                  setSidebarOpen={setSidebarOpen}
                 >
-                  🧴 Insumos
-                </Link>
+                  <FiBox className="inline w-5 h-5 mr-2" /> Insumos
+                </SidebarLink>
                 <hr className="border-gray-700 my-2" />
-                <Link
+                <SidebarLink
                   href="/dashboard/turnos"
-                  onClick={() => setSidebarOpen(false)}
+                  setSidebarOpen={setSidebarOpen}
                 >
-                  📅 Turnos
-                </Link>
-                <Link
+                  <FiCalendar className="inline w-5 h-5 mr-2" /> Turnos
+                </SidebarLink>
+                <SidebarLink
                   href="/dashboard/clientes"
-                  onClick={() => setSidebarOpen(false)}
+                  setSidebarOpen={setSidebarOpen}
                 >
-                  👥 Clientes
-                </Link>
+                  <FiUsers className="inline w-5 h-5 mr-2" /> Clientes
+                </SidebarLink>
                 <hr className="border-gray-700 my-2" />
-                <Link
+                <SidebarLink
                   href="/dashboard/reportes"
-                  onClick={() => setSidebarOpen(false)}
+                  setSidebarOpen={setSidebarOpen}
                 >
-                  📊 Reportes
-                </Link>
+                  <FiBarChart2 className="inline w-5 h-5 mr-2" /> Reportes
+                </SidebarLink>
                 <hr className="border-gray-700 my-2" />
-                <Link
+                <SidebarLink
                   href="/dashboard/settings"
-                  onClick={() => setSidebarOpen(false)}
+                  setSidebarOpen={setSidebarOpen}
                 >
-                  ⚙️ Configuración
-                </Link>
+                  <FiSettings className="inline w-5 h-5 mr-2" /> Configuración
+                </SidebarLink>
               </>
             )}
           </>

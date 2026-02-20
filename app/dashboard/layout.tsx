@@ -1,5 +1,6 @@
 "use client";
 import Navbar from "../components/NavBar";
+import ButtonNav from "../components/BottomNav";
 import SidebarNav from "../components/dashboard/SideBarNav";
 import { useState, useMemo } from "react";
 import { useAuth } from "../hooks/useAuth";
@@ -7,15 +8,26 @@ import { useUserBarbershops } from "../hooks/useUserBarbershops";
 
 type UserRole = "admin" | "barber" | "client" | "user";
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const { user, loading } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const { activeBarbershop, barbershops, setActiveBarbershop, loading: shopsLoading } =
-    useUserBarbershops(user);
+  const {
+    activeBarbershop,
+    barbershops,
+    setActiveBarbershop,
+    loading: shopsLoading,
+  } = useUserBarbershops(user);
 
   const role: UserRole =
-    user?.rol === "admin" || user?.rol === "barber" || user?.rol === "client" || user?.rol === "user"
+    user?.rol === "admin" ||
+    user?.rol === "barber" ||
+    user?.rol === "client" ||
+    user?.rol === "user"
       ? user.rol
       : "client";
 
@@ -35,15 +47,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-950 text-white relative">
-      <Navbar
-        onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
-        activeBarbershop={activeBarbershop}
-        setActiveBarbershop={setActiveBarbershop}
-        barbershops={barbershops}
-        userId={user.id}
-        sessionId={sessionId}
-        sidebarOpen={sidebarOpen}
-      />
+      {!sidebarOpen && (
+        <Navbar
+          onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+          activeBarbershop={activeBarbershop}
+          setActiveBarbershop={setActiveBarbershop}
+          barbershops={barbershops}
+          userId={user.id}
+          sessionId={sessionId}
+          sidebarOpen={sidebarOpen}
+        />
+      )}
 
       <div className="flex-1 relative">
         {sidebarOpen && (
@@ -67,6 +81,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
         <main className="relative z-20">{children}</main>
       </div>
+
+      <ButtonNav
+        onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+        sessionId={sessionId}
+      />
     </div>
   );
 }
