@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { Barbershop } from "@/app/interfaces";
+import { useRouter } from "next/navigation";
 
 interface BarbershopFormProps {
   barbershop?: Barbershop | null;
@@ -21,24 +22,27 @@ export default function BarbershopForm({
   const [phoneNumber, setPhoneNumber] = useState(barbershop?.phoneNumber || "");
   const [address, setAddress] = useState(barbershop?.address || "");
   const [message, setMessage] = useState<string | null>(null);
+  const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      await onSave({
-        name: name.trim(),
-        phoneNumber: phoneNumber.trim(),
-        address: address.trim(),
-      });
+ const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  try {
+    await onSave({
+      name: name.trim(),
+      phoneNumber: phoneNumber.trim(),
+      address: address.trim(),
+    });
 
-      setMessage("Barbería guardada ✅");
-      setTimeout(() => setMessage(null), 2000);
-    } catch (err: any) {
-      console.error(err);
-      setMessage(err.message || "Error al guardar barbería ❌");
-      setTimeout(() => setMessage(null), 2000);
-    }
-  };
+    setMessage("Barbería guardada ✅");
+    setTimeout(() => setMessage(null), 2000);
+
+    router.push("/dashboard"); // 👈 redirigir al dashboard
+  } catch (err: any) {
+    console.error(err);
+    setMessage(err.message || "Error al guardar barbería ❌");
+    setTimeout(() => setMessage(null), 2000);
+  }
+};
 
   return (
     <form className="flex flex-col gap-4" onSubmit={handleSubmit}>

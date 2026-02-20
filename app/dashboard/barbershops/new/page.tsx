@@ -1,7 +1,6 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { apiPost } from "@/app/lib/apiPost";
-import { apiGet } from "@/app/lib/apiGet";
 import { useAuth } from "@/app/lib/useAuth";
 import { Barbershop } from "@/app/interfaces";
 import { apiUpdate } from "@/app/lib/apiUpdate";
@@ -45,7 +44,7 @@ export default function BarbershopPage() {
           phoneNumber,
           address,
           userId: user.id,
-          sessionId, // 👈 importante
+          sessionId,
         });
       }
 
@@ -97,7 +96,7 @@ export default function BarbershopPage() {
                   await apiPost<Barbershop>("/barbershops", {
                     ...data,
                     userId: user.id,
-                    sessionId, // 👈 agregado aquí también
+                    sessionId,
                   });
                   if (typeof refreshUser === "function") {
                     await refreshUser();

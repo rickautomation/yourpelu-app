@@ -10,13 +10,15 @@ interface WizardProps {
   onFinish: () => void;
   userName: string;
   userId: string;
+  isRendering?: boolean;
 }
 
 export default function BarbershopSetupWizard({
   userName,
   userId,
+  isRendering,
 }: WizardProps) {
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(isRendering ? 2 : 0); // Si ya se está renderizando, salta al paso 2
   const [formData, setFormData] = useState({
     name: "",
     address: "",
