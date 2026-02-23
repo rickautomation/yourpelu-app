@@ -18,11 +18,11 @@ export default function BarbersPage() {
       email?: string;
       needsSetup?: boolean;
       activationLink?: string;
+      userProfile?: { avatarUrl?: string };
     }[]
   >([]);
   const [expandedBarberId, setExpandedBarberId] = useState<string | null>(null);
 
-  // 👇 nuevo estado para popup
   const [showPopup, setShowPopup] = useState(false);
 
   const fetchBarbers = async (shopId: string) => {
@@ -55,7 +55,6 @@ export default function BarbersPage() {
 
   return (
     <div className="flex flex-col space-y-2 p-4">
-      {/* Popup modal */}
       {showPopup && (
         <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm z-50">
           <div className="bg-gray-800 p-6 rounded-lg shadow-xl text-center">
@@ -66,7 +65,7 @@ export default function BarbersPage() {
         </div>
       )}
 
-      <div className="flex text-center items-center px-6 py-4 bg-gray-800 rounded-lg shadow-md">
+      <div className="flex text-center items-center px-3 py-4">
         <p className="text-2xl">Barberos</p>
         <button
           onClick={() => router.push("/dashboard/barberos/new")}
@@ -83,12 +82,27 @@ export default function BarbersPage() {
           barbers.map((barber) => (
             <div
               key={barber.id}
-              className="flex flex-col px-6 py-4 bg-gray-700 rounded-lg shadow-md"
+              className="flex flex-col px-2 py-2 rounded-lg shadow-md"
             >
-              <div className="flex items-center">
+              <div className="flex items-center gap-3">
+                {/* Avatar o iniciales */}
+                {barber.userProfile?.avatarUrl ? (
+                  <img
+                    src={`${process.env.NEXT_PUBLIC_API_URL}${barber.userProfile.avatarUrl}`}
+                    alt={`${barber.name} ${barber.lastname}`}
+                    className="w-10 h-10 rounded-full border border-gray-600"
+                  />
+                ) : (
+                  <div className="w-10 h-10 flex items-center justify-center rounded-full bg-pink-500 text-white font-bold">
+                    {barber.name.charAt(0)}
+                    {barber.lastname.charAt(0)}
+                  </div>
+                )}
+
                 <p className="text-2xl">
                   {barber.name} {barber.lastname}
                 </p>
+
                 <button
                   type="button"
                   onClick={() =>
@@ -99,37 +113,33 @@ export default function BarbersPage() {
                   className="ml-auto flex items-center gap-1 bg-pink-400 text-white px-3 py-1 rounded hover:bg-gray-700 transition-colors text-sm font-semibold"
                 >
                   {expandedBarberId === barber.id ? (
-                    <>
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M5 15l7-7 7 7"
-                        />
-                      </svg>
-                    </>
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 15l7-7 7 7"
+                      />
+                    </svg>
                   ) : (
-                    <>
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M19 9l-7 7-7-7"
-                        />
-                      </svg>
-                    </>
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
                   )}
                 </button>
               </div>
@@ -145,7 +155,6 @@ export default function BarbersPage() {
                   )}
 
                   <div className="flex gap-2 mt-2">
-                    {/* Copiar enlace solo si existe */}
                     {barber.activationLink && (
                       <button
                         onClick={() => {
@@ -159,7 +168,6 @@ export default function BarbersPage() {
                       </button>
                     )}
 
-                    {/* Cancelar o eliminar */}
                     {barber.needsSetup ? (
                       <button
                         onClick={async () => {

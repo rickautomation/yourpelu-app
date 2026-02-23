@@ -79,7 +79,7 @@ export default function DashboardLayout({
           />
         )}
 
-        <main className="relative z-20">{children}</main>
+        <main className="relative z-20 pb-16">{children}</main>
       </div>
 
       <ButtonNav
