@@ -1,6 +1,5 @@
 "use client";
 
-import BarbershopSetupWizard from "../components/dashboard/BarbershopSetupWizard";
 import { useAuth } from "../lib/useAuth";
 import { useUserBarbershops } from "../hooks/useUserBarbershops";
 import { useServices } from "../hooks/useServices";
@@ -8,9 +7,11 @@ import { FaUserPlus } from "react-icons/fa";
 import Link from "next/link";
 
 export default function DashboardPage() {
-  const { user, loading, isUnauthorized, router, refreshUser } = useAuth();
+  const { user, loading, isUnauthorized, router } = useAuth();
   const { activeBarbershop } = useUserBarbershops(user);
-  const { globalServices, ownServices } = useServices(activeBarbershop?.id);
+  const { ownServices } = useServices(activeBarbershop?.id);
+
+  const userName = user?.name || "Usuario";
 
   if (loading) return <p className="text-white">Cargando...</p>;
   if (isUnauthorized) {
@@ -20,76 +21,59 @@ export default function DashboardPage() {
 
   return (
     <div className="flex flex-col space-y-4 p-4">
-      {activeBarbershop ? (
-        ownServices.length === 0 ? (
-          // 👇 si no hay servicios, renderizamos el wizard
-          <BarbershopSetupWizard
-            onFinish={async () => {
-              await refreshUser();
-              router.push("/dashboard");
-            }}
-            userName={user?.name || "Usuario"}
-            userId={user?.id || ""}
-          />
-        ) : (
-          // 👇 si hay servicios, renderizamos el dashboard normal
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <section className="flex justify-between p-1 pr-3 items-center rounded-lg">
-              <div>
-                <h1 className="text-3xl font-bold">{activeBarbershop?.name}</h1>
-                <p className="text-sm text-gray-300">
-                  {activeBarbershop?.address}
-                </p>
-                <p className="text-sm text-gray-300">
-                  <span className="text-pink-600">Teléfono: </span>
-                  {activeBarbershop?.phoneNumber}
-                </p>
-              </div>
-              <Link href="/dashboard/barberos/new">
-                <button className="border-2 border-pink-300 hover:bg-pink-700 text-white p-3 rounded-md text-xl flex items-center gap-2">
-                  <FaUserPlus />
-                  <span className="text-xs">Agregar Miembro</span>
-                </button>
-              </Link>
-            </section>
+      {/* Caso 1: sin barbería activa */}
+      {!activeBarbershop && (
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-4">Hola {userName}!</h2>
+          <p className="mb-6">
+            Vamos a configurar tu barbería completa. Completa los datos y la
+            crearemos en el sistema.
+          </p>
+          <button
+            onClick={() => router.push("/dashboard/initial-setup?step=1")}
+            className="bg-pink-600 px-6 py-2 text-white rounded"
+          >
+            Empezar
+          </button>
+        </div>
+      )}
 
-            <section className="rounded-lg border-4 border-gray-900 bg-gray-800 p-2">
-              <div>
-                {ownServices.map((service) => (
-                  <div
-                    key={service.id}
-                    className="py-2 px-2 flex justify-between items-center"
-                  >
-                    <p>{service.name}</p>
-                    <p className="text-pink-500 font-semibold">
-                      {service.price
-                        ? `$${service.price}`
-                        : "Precio no definido"}
-                    </p>
-                  </div>
-                ))}
-              </div>
-              <div className="flex justify-end">
-                <button
-                  className="bg-blue-500 px-3 py-2 rounded text-white mt-2"
-                  onClick={() => router.push("/dashboard/servicios")}
-                >
-                  Ir a Servicios
-                </button>
-              </div>
-            </section>
+      {/* Caso 2: barbería activa pero sin servicios */}
+      {activeBarbershop && ownServices.length === 0 && (
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-4">Hola {userName}!</h2>
+          <p className="mb-6">
+            Tu barbería ya está creada, pero todavía no configuraste los
+            servicios que ofrecerás. Vamos a completar ese paso para que puedas
+            empezar a trabajar.
+          </p>
+          <button
+            onClick={() => router.push("/dashboard/initial-setup?step=2")}
+            className="bg-blue-600 px-6 py-2 text-white rounded"
+          >
+            Seguir configurando
+          </button>
+        </div>
+      )}
+
+      {/* Caso 3: barbería activa con servicios */}
+      {activeBarbershop && ownServices.length > 0 && (
+        <section className="flex justify-between p-1 pr-3 items-center rounded-lg">
+          <div>
+            <h1 className="text-3xl font-bold">{activeBarbershop?.name}</h1>
+            <p className="text-sm text-gray-300">{activeBarbershop?.address}</p>
+            <p className="text-sm text-gray-300">
+              <span className="text-pink-600">Teléfono: </span>
+              {activeBarbershop?.phoneNumber}
+            </p>
           </div>
-        )
-      ) : (
-        // 👇 si no hay barbería activa, también mostramos el wizard
-        <BarbershopSetupWizard
-          onFinish={async () => {
-            await refreshUser();
-            router.push("/dashboard");
-          }}
-          userName={user?.name || "Usuario"}
-          userId={user?.id || ""}
-        />
+          <Link href="/dashboard/barberos/new">
+            <button className="border-2 border-pink-300 hover:bg-pink-700 text-white p-3 rounded-md text-xl flex items-center gap-2">
+              <FaUserPlus />
+              <span className="text-xs">Agregar Miembro</span>
+            </button>
+          </Link>
+        </section>
       )}
     </div>
   );

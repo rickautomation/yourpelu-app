@@ -4,7 +4,7 @@ import { apiGet } from "@/app/lib/apiGet";
 import { apiPost } from "@/app/lib/apiPost";
 import { useAuth } from "@/app/lib/useAuth";
 import { useUserBarbershops } from "@/app/hooks/useUserBarbershops";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 type Haircut = {
   id: string;
@@ -75,6 +75,8 @@ export default function HaircutsPage() {
     type: "success" | "error";
     text: string;
   } | null>(null);
+
+  const router = useRouter()
 
   useEffect(() => {
     const fetchData = async () => {
@@ -217,9 +219,14 @@ export default function HaircutsPage() {
           <p className="text-lg text-white">
             Debes configurar tu barbería primero
           </p>
-          <div className="px-4 py-2 bg-pink-600 text-center text-white font-semibold rounded-md shadow hover:bg-pink-700 transition">
-            <Link href="/dashboard/initial-setup">Empezar</Link>
-          </div>
+           <button
+              onClick={() => {
+                router.push("/dashboard/initial-setup?step=2");
+              }}
+              className="px-4 py-2 bg-pink-600 text-white rounded-md shadow hover:bg-pink-700 transition"
+            >
+              Configura tu barbería
+            </button>
         </div>
       ) : (
         <div className="bg-gray-800 p-4 rounded-lg shadow-md flex flex-col gap-3">

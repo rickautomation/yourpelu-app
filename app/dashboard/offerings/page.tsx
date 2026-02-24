@@ -100,9 +100,9 @@ export default function OfferingPage({
           )}
         </div>
         <div>
-            <button className="bg-pink-400 text-2xl font-bold text-white px-5 py-3 rounded hover:bg-pink-500 transition-colors">
-          +
-        </button>
+          <button className="bg-pink-400 text-2xl font-bold text-white px-5 py-3 rounded hover:bg-pink-500 transition-colors">
+            +
+          </button>
         </div>
       </div>
 
