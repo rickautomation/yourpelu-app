@@ -7,18 +7,18 @@ import ServicesPage from "@/app/dashboard/servicios/page";
 import { useServices } from "@/app/hooks/useServices";
 
 interface WizardProps {
-  onFinish: () => void;
+  onFinish?: () => void;
   userName: string;
   userId: string;
-  isRendering?: boolean;
+  step?: number; // 👈 nuevo prop
 }
 
 export default function BarbershopSetupWizard({
   userName,
   userId,
-  isRendering,
+  step: initialStep = 0,
 }: WizardProps) {
-  const [step, setStep] = useState(isRendering ? 2 : 0); // Si ya se está renderizando, salta al paso 2
+   const [step, setStep] = useState(initialStep); // Si ya se está renderizando, salta al paso 2
   const [formData, setFormData] = useState({
     name: "",
     address: "",
@@ -27,7 +27,7 @@ export default function BarbershopSetupWizard({
   const [success, setSuccess] = useState(false);
 const [hasServices, setHasServices] = useState<boolean | null>(null);
 
-  const { ownServices } = useServices();
+  // const { ownServices } = useServices();
 
   const router = useRouter();
 
@@ -167,7 +167,7 @@ const [hasServices, setHasServices] = useState<boolean | null>(null);
             : "bg-gray-500 text-gray-300 cursor-not-allowed"
         }`}
             >
-              Finalizar Configuración
+              Listo
             </button>
           </div>
         </div>

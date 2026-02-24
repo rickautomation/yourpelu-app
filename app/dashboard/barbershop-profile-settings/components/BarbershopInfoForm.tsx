@@ -42,10 +42,10 @@ export default function BarbershopInfoForm({
   };
 
   return (
-    <form className="flex flex-col gap-3 p-6 shadow-lg text-start text-white">
+    <form className="flex flex-col gap-2 px-6 py-2 shadow-lg text-start text-white">
       {/* Lema */}
       <div>
-        <label className="block text-sm font-medium mb-2 text-pink-300">
+        <label className="block text-sm font-medium mb-2">
           Lema (opcional)
         </label>
         <input
@@ -59,7 +59,7 @@ export default function BarbershopInfoForm({
 
       {/* Descripción */}
       <div>
-        <label className="block text-sm font-medium mb-2 text-pink-300">
+        <label className="block text-sm font-medium mb-2 ">
           Descripción (opcional)
         </label>
         <textarea
@@ -72,7 +72,7 @@ export default function BarbershopInfoForm({
 
       {/* Contacto */}
       <div>
-        <label className="block text-sm font-medium mb-2 text-pink-300">
+        <label className="block text-sm font-medium mb-2 ">
           Contacto
         </label>
         <input
@@ -86,7 +86,7 @@ export default function BarbershopInfoForm({
 
       {/* Horarios */}
       <div>
-        <label className="block text-sm font-medium mb-2 text-pink-300">
+        <label className="block text-sm font-medium mb-2 ">
           Horario principal
         </label>
         <input
@@ -99,7 +99,7 @@ export default function BarbershopInfoForm({
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-2 text-pink-300">
+        <label className="block text-sm font-medium mb-2 ">
           Horario adicional (opcional)
         </label>
         <input

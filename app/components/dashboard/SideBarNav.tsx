@@ -1,8 +1,11 @@
 "use client";
+
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { apiPost } from "@/app/lib/apiPost";
 import { useServices } from "@/app/hooks/useServices";
+
 import {
   FiHome,
   FiUsers,
@@ -47,6 +50,8 @@ export default function SidebarNav({
   const { globalServices, ownServices } = useServices(activeBarbershop?.id);
 
   const [showSelector, setShowSelector] = useState(false);
+
+  const router = useRouter();
 
   const handleSelectBarbershop = async (shop: Barbershop) => {
     try {
@@ -171,16 +176,17 @@ export default function SidebarNav({
             ))}
         </div>
 
-        {ownServices.length < 1 && (
+        {ownServices.length < 1 && barbershops.length > 0 && (
           <div className="flex flex-col gap-2 mt-4">
-            <div className="px-4 py-2 bg-pink-600 text-center text-white font-semibold rounded-md shadow hover:bg-pink-700 transition">
-              <Link
-                href="/dashboard/initial-setup"
-                onClick={() => setSidebarOpen(false)}
-              >
-                Configura tu barbería
-              </Link>
-            </div>
+            <button
+              onClick={() => {
+                setSidebarOpen(false);
+                router.push("/dashboard/initial-setup?step=2");
+              }}
+              className="px-4 py-2 bg-pink-600 text-white rounded-md shadow hover:bg-pink-700 transition"
+            >
+              Configura tu barbería
+            </button>
           </div>
         )}
 

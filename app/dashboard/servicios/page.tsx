@@ -21,6 +21,9 @@ export default function ServicesPage({
   const { activeBarbershop } = useUserBarbershops(user);
   const router = useRouter();
 
+  console.log("usr in service: ", user )
+  console.log("barbershop: ", activeBarbershop)
+
   const {
     ownServices,
     loading,
