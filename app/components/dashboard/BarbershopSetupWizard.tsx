@@ -167,7 +167,7 @@ const [hasServices, setHasServices] = useState<boolean | null>(null);
             : "bg-gray-500 text-gray-300 cursor-not-allowed"
         }`}
             >
-              Finalizar Configuración
+              Listo
             </button>
           </div>
         </div>
