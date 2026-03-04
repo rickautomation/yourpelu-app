@@ -4,7 +4,6 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { apiPost } from "@/app/lib/apiPost";
-import { useServices } from "@/app/hooks/useServices";
 
 import {
   FiHome,
@@ -18,9 +17,12 @@ import {
   FiBox,
   FiList,
   FiLayers,
+  FiPlusCircle,
+  FiEdit,
 } from "react-icons/fi";
 import SidebarLink from "./SidebarLink";
 import Image from "next/image";
+import { useOfferings } from "@/app/hooks/useOfferings";
 
 type Barbershop = {
   id: string;
@@ -47,7 +49,7 @@ export default function SidebarNav({
   userId: string;
   sessionId: string;
 }) {
-  const { globalServices, ownServices } = useServices(activeBarbershop?.id);
+  const { clientOfferings } = useOfferings(activeBarbershop?.id);
 
   const [showSelector, setShowSelector] = useState(false);
 
@@ -176,7 +178,7 @@ export default function SidebarNav({
             ))}
         </div>
 
-        {ownServices.length < 1 && barbershops.length > 0 && (
+        {clientOfferings.length < 1 && barbershops.length > 0 && (
           <div className="flex flex-col gap-2 mt-4">
             <button
               onClick={() => {
@@ -191,7 +193,7 @@ export default function SidebarNav({
         )}
 
         {/* Links del sidebar */}
-        {!showSelector && ownServices.length > 0 && (
+        {!showSelector && clientOfferings.length > 0 && (
           <>
             {userRole === "admin" && (
               <>
@@ -219,34 +221,18 @@ export default function SidebarNav({
               userRole === "user") && (
               <>
                 <SidebarLink
-                  href="/dashboard/servicios"
+                  href="/dashboard/offerings"
                   setSidebarOpen={setSidebarOpen}
                 >
                   <FiList className="inline w-5 h-5 mr-2" /> Servicios
                 </SidebarLink>
+
                 <SidebarLink
-                  href="/dashboard/cortes"
+                  href="/dashboard/offerings/add"
                   setSidebarOpen={setSidebarOpen}
                 >
-                  <FiScissors className="inline w-5 h-5 mr-2" /> Cortes
-                </SidebarLink>
-                <SidebarLink
-                  href="/dashboard/haircut-styles"
-                  setSidebarOpen={setSidebarOpen}
-                >
-                  <FiLayers className="inline w-5 h-5 mr-2" /> Estilos
-                </SidebarLink>
-                <SidebarLink
-                  href="/dashboard/coloraciones"
-                  setSidebarOpen={setSidebarOpen}
-                >
-                  <FiDroplet className="inline w-5 h-5 mr-2" /> Coloraciones
-                </SidebarLink>
-                <SidebarLink
-                  href="/dashboard/insumos"
-                  setSidebarOpen={setSidebarOpen}
-                >
-                  <FiBox className="inline w-5 h-5 mr-2" /> Insumos
+                  <FiPlusCircle className="inline w-5 h-5 mr-2" />
+                  Registrar Servicio 
                 </SidebarLink>
                 <hr className="border-gray-700 my-2" />
                 <SidebarLink
@@ -260,6 +246,13 @@ export default function SidebarNav({
                   setSidebarOpen={setSidebarOpen}
                 >
                   <FiUsers className="inline w-5 h-5 mr-2" /> Clientes
+                </SidebarLink>
+                <hr className="border-gray-700 my-2" />
+                <SidebarLink
+                  href="/dashboard/insumos"
+                  setSidebarOpen={setSidebarOpen}
+                >
+                  <FiBox className="inline w-5 h-5 mr-2" /> Insumos
                 </SidebarLink>
                 <hr className="border-gray-700 my-2" />
                 <SidebarLink

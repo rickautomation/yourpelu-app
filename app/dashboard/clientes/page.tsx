@@ -111,8 +111,8 @@ export default function ClientsPage() {
   return (
     <div className="flex flex-col gap-3 p-4">
       {/* Card para agregar cliente */}
-      <div className="bg-gray-800 p-4 rounded-lg shadow-md flex flex-col gap-3">
-        <div className="flex justify-between items-center">
+      <div className="flex flex-col gap-3">
+        <div className="flex justify-between items-center border border-pink-700 rounded-lg p-4">
           {!showAdd && (
             <div className="flex items-center gap-1">
               <input
@@ -120,7 +120,7 @@ export default function ClientsPage() {
                 placeholder="Buscar cliente..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value.trim())}
-                className="px-2 py-2 rounded bg-gray-700 text-white w-full max-w-xs focus:outline-none focus:ring-2 focus:ring-pink-400"
+                className="px-2 py-2 rounded bg-gray-800 text-white w-full max-w-xs focus:outline-none focus:ring-2 focus:ring-pink-400"
               />
             </div>
           )}
@@ -138,48 +138,44 @@ export default function ClientsPage() {
         {showAdd && (
           <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
             <div>
-              <label className="block text-sm mb-1 text-white">Nombre</label>
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value.trim())}
                 placeholder="Nombre del cliente"
                 required
-                className="px-3 py-2 rounded bg-gray-700 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
+                className="px-3 py-2 rounded bg-gray-800 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
               />
             </div>
 
             <div>
-              <label className="block text-sm mb-1 text-white">Apellido</label>
               <input
                 type="text"
                 value={lastname}
                 onChange={(e) => setLastname(e.target.value.trim())}
                 placeholder="Apellido del cliente"
                 required
-                className="px-3 py-2 rounded bg-gray-700 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
+                className="px-3 py-2 rounded bg-gray-800 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
               />
             </div>
 
             <div>
-              <label className="block text-sm mb-1 text-white">Email (opcional)</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value.trim())}
-                placeholder="Correo electrónico"
-                className="px-3 py-2 rounded bg-gray-700 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
+                placeholder="Correo electrónico (opcional)"
+                className="px-3 py-2 rounded bg-gray-800 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
               />
             </div>
 
             <div>
-              <label className="block text-sm mb-1 text-white">Teléfono (opcional)</label>
               <input
                 type="text"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value.trim())}
-                placeholder="Número de contacto"
-                className="px-3 py-2 rounded bg-gray-700 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
+                placeholder="Número de contacto (opcional)"
+                className="px-3 py-2 rounded bg-gray-800 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
               />
             </div>
 
@@ -200,7 +196,7 @@ export default function ClientsPage() {
 
               <button
                 type="submit"
-                className="flex-1 bg-pink-400 text-white px-4 py-2 rounded hover:bg-pink-500 transition-colors font-semibold"
+                className="flex-1 bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600 transition-colors font-semibold"
               >
                 Guardar
               </button>

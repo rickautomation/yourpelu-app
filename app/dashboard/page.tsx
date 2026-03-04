@@ -2,14 +2,14 @@
 
 import { useAuth } from "../lib/useAuth";
 import { useUserBarbershops } from "../hooks/useUserBarbershops";
-import { useServices } from "../hooks/useServices";
 import { FaUserPlus } from "react-icons/fa";
 import Link from "next/link";
+import { useOfferings } from "../hooks/useOfferings";
 
 export default function DashboardPage() {
   const { user, loading, isUnauthorized, router } = useAuth();
   const { activeBarbershop } = useUserBarbershops(user);
-  const { ownServices } = useServices(activeBarbershop?.id);
+  const { clientOfferings } = useOfferings(activeBarbershop?.id);
 
   const userName = user?.name || "Usuario";
 
@@ -39,7 +39,7 @@ export default function DashboardPage() {
       )}
 
       {/* Caso 2: barbería activa pero sin servicios */}
-      {activeBarbershop && ownServices.length === 0 && (
+      {activeBarbershop && clientOfferings.length === 0 && (
         <div className="text-center">
           <h2 className="text-2xl font-bold mb-4">Hola {userName}!</h2>
           <p className="mb-6">
@@ -57,7 +57,7 @@ export default function DashboardPage() {
       )}
 
       {/* Caso 3: barbería activa con servicios */}
-      {activeBarbershop && ownServices.length > 0 && (
+      {activeBarbershop && clientOfferings.length > 0 && (
         <section className="flex justify-between p-1 pr-3 items-center rounded-lg">
           <div>
             <h1 className="text-3xl font-bold">{activeBarbershop?.name}</h1>

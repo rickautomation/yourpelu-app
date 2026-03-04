@@ -5,6 +5,7 @@ import { apiPost } from "@/app/lib/apiPost";
 import { useAuth } from "@/app/lib/useAuth";
 import { useUserBarbershops } from "@/app/hooks/useUserBarbershops";
 import { useRouter } from "next/navigation";
+import { useOfferings } from "@/app/hooks/useOfferings";
 
 type Haircut = {
   id: string;
@@ -46,6 +47,7 @@ type BarberClient = {
 export default function HaircutsPage() {
   const { user } = useAuth();
   const { activeBarbershop } = useUserBarbershops(user);
+  const { clientOfferings } = useOfferings(activeBarbershop?.id);
 
   const [ownTypes, setOwnTypes] = useState<HaircutType[] | null>(null);
   const [styles, setStyles] = useState<HaircutStyle[]>([]);
@@ -214,7 +216,7 @@ export default function HaircutsPage() {
     <div className="flex flex-col space-y-4 p-4">
       {ownTypes === null ? (
         <p>...</p>
-      ) : ownTypes.length === 0 ? (
+      ) : clientOfferings.length === 0 ? (
         <div className="flex flex-col gap-2 mt-4">
           <p className="text-lg text-white">
             Debes configurar tu barbería primero
