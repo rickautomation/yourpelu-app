@@ -65,7 +65,7 @@ export default function BarbersPage() {
         </div>
       )}
 
-      <div className="flex text-center items-center px-3 py-4">
+      <div className="flex text-center border border-pink-700 rounded-lg items-center px-5 py-4">
         <p className="text-2xl">Barberos</p>
         <button
           onClick={() => router.push("/dashboard/barberos/new")}

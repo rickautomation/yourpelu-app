@@ -17,24 +17,43 @@ export default function OfferingPage() {
 
   const [showDropdown, setShowDropdown] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<any | null>(null);
+  const [showModal, setShowModal] = useState(false);
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [newPrice, setNewPrice] = useState<string>("");
 
+  // Construimos lista de categorías únicas
   const categories = Array.from(
     new Map(
-      clientOfferings.map((co) => [
-        co.baseType?.category?.id,
-        co.baseType?.category,
-      ]),
+      clientOfferings.map((co) => {
+        // si tiene baseType, usamos esa categoría
+        if (co.baseType?.category) {
+          return [co.baseType.category.id, co.baseType.category];
+        }
+        // si no, usamos globalCategory
+        if (co.globalCategory) {
+          return [co.globalCategory.id, co.globalCategory];
+        }
+        // si no, usamos clientCategory
+        if (co.clientCategory) {
+          return [co.clientCategory.id, co.clientCategory];
+        }
+        return [null, null];
+      }),
     ).values(),
   ).filter(Boolean);
 
   const offeringsToShow = selectedCategory
-    ? clientOfferings.filter(
-        (co) => co.baseType?.category?.id === selectedCategory?.id,
-      )
+    ? clientOfferings.filter((co) => {
+        const categoryId =
+          co.baseType?.category?.id ||
+          co.globalCategory?.id ||
+          co.clientCategory?.id;
+        return categoryId === selectedCategory?.id;
+      })
     : clientOfferings;
+
+  console.log("offerings: ", clientOfferings);
 
   return (
     <div className="px-4 py-2">
@@ -76,14 +95,42 @@ export default function OfferingPage() {
           </ul>
         )}
 
-        {/* 👇 botón de navegación */}
-        <Link
-          href="/dashboard/offerings/new"
+        <button
+          onClick={() => setShowModal(true)}
           className="bg-pink-500 text-white text-xl font-bold px-4 py-2 rounded hover:bg-pink-600 transition-colors"
         >
           +
-        </Link>
+        </button>
       </div>
+
+      {showModal && (
+        <div
+          className="fixed inset-0 bg-opacity-50 backdrop-blur-lg flex items-center justify-center z-20 p-4"
+          onClick={() => setShowModal(false)} // 👈 cierra al hacer click fuera
+        >
+          <div
+            className="bg-gray-800 p-6 rounded-lg shadow-lg w-96"
+            onClick={(e) => e.stopPropagation()} // 👈 evita que se cierre al hacer click dentro
+          >
+            <div className="flex flex-col gap-3">
+              <Link
+                href="/dashboard/offerings/new/from-template"
+                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors text-center"
+                onClick={() => setShowModal(false)}
+              >
+                Crear desde plantilla
+              </Link>
+              <Link
+                href="/dashboard/offerings/new/from-custom"
+                className="bg-pink-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-colors text-center"
+                onClick={() => setShowModal(false)}
+              >
+                Crear desde cero
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="flex flex-col gap-2">
         {offeringsToShow.map((co) => (
@@ -107,7 +154,9 @@ export default function OfferingPage() {
                   className="w-24 px-2 py-1 rounded bg-gray-600 text-white text-lg"
                 />
               ) : (
-                <p className="text-xl text-pink-400 font-bold">${co.price}</p>
+                <p className="text-2xl text-pink-400">
+                  ${Number(co.price).toLocaleString("es-AR")}
+                </p>
               )}
             </div>
 
@@ -129,13 +178,21 @@ export default function OfferingPage() {
                       setEditingId(null);
                       setNewPrice("");
                     }}
-                    className="flex-1 bg-green-600 text-white px-3 py-2 rounded hover:bg-green-700 transition-colors text-sm font-semibold"
+                    className="flex-1 bg-pink-500 text-white px-3 py-2 rounded hover:bg-green-700 transition-colors text-sm font-semibold"
                   >
                     Guardar
                   </button>
                 </>
               ) : (
                 <>
+                  <button
+                    onClick={async () => {
+                      await deleteOffering(co.id);
+                    }}
+                    className="flex-1 bg-red-500 text-white px-3 py-2 rounded hover:bg-red-700 transition-colors text-sm font-semibold"
+                  >
+                    Borrar
+                  </button>
                   <button
                     onClick={() => {
                       setEditingId(co.id);
@@ -144,14 +201,6 @@ export default function OfferingPage() {
                     className="flex-1 bg-blue-600 text-white px-3 py-2 rounded hover:bg-yellow-600 transition-colors text-sm font-semibold"
                   >
                     Editar
-                  </button>
-                  <button
-                    onClick={async () => {
-                      await deleteOffering(co.id);
-                    }}
-                    className="flex-1 bg-red-500 text-white px-3 py-2 rounded hover:bg-red-700 transition-colors text-sm font-semibold"
-                  >
-                    Borrar
                   </button>
                 </>
               )}

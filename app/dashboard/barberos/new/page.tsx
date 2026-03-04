@@ -127,7 +127,7 @@ ${activationLink}
       {!copied && (
         <form
           onSubmit={handleSubmit}
-          className="flex flex-col gap-4 bg-gray-800 p-4 rounded-lg shadow-md"
+          className="flex flex-col gap-4 px-2 rounded-lg shadow-md"
         >
           <div>
             <label className="block text-sm mb-1">Nombre</label>

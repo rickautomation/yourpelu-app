@@ -13,15 +13,15 @@ import {
 } from "react-icons/fi";
 import { useState, useRef, useEffect } from "react";
 import { useUserBarbershops } from "../hooks/useUserBarbershops";
-import { useServices } from "../hooks/useServices";
 import { useRouter } from "next/navigation";
+import { useOfferings } from "../hooks/useOfferings";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function BottomNav({ onToggleSidebar, setSidebarOpen }: any) {
   const { user, logout } = useAuth();
   const { activeBarbershop } = useUserBarbershops(user);
-  const { ownServices } = useServices(activeBarbershop?.id);
+  const { clientOfferings } = useOfferings(activeBarbershop?.id);
 
   const router = useRouter();
 
@@ -29,6 +29,7 @@ export default function BottomNav({ onToggleSidebar, setSidebarOpen }: any) {
   const [showPopup, setShowPopup] = useState(false);
   const [popupStep, setPopupStep] = useState<number | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const popupRef = useRef<HTMLDivElement>(null); 
 
   // cerrar menú si se hace click fuera
   useEffect(() => {
@@ -47,6 +48,22 @@ export default function BottomNav({ onToggleSidebar, setSidebarOpen }: any) {
     };
   }, [menuOpen]);
 
+  useEffect(() => {
+  function handleClickOutside(event: MouseEvent) {
+    if (popupRef.current && !popupRef.current.contains(event.target as Node)) {
+      setShowPopup(false);
+    }
+  }
+  if (showPopup) {
+    document.addEventListener("mousedown", handleClickOutside);
+  } else {
+    document.removeEventListener("mousedown", handleClickOutside);
+  }
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, [showPopup]);
+
   // interceptar click en links protegidos
   // interceptar click en links protegidos
   const handleProtectedClick = (e: React.MouseEvent, href: string) => {
@@ -54,7 +71,7 @@ export default function BottomNav({ onToggleSidebar, setSidebarOpen }: any) {
       e.preventDefault();
       setShowPopup(true);
       setPopupStep(1); // 👈 barbería no configurada
-    } else if (ownServices.length === 0) {
+    } else if (clientOfferings.length === 0) {
       e.preventDefault();
       setShowPopup(true);
       setPopupStep(2); // 👈 barbería existe pero sin servicios
@@ -85,8 +102,8 @@ export default function BottomNav({ onToggleSidebar, setSidebarOpen }: any) {
 
         {/* Cortes */}
         <Link
-          href="/dashboard/cortes"
-          onClick={(e) => handleProtectedClick(e, "/dashboard/cortes")}
+          href="/dashboard/offerings/add"
+          onClick={(e) => handleProtectedClick(e, "/dashboard/offerings/add")}
           className="flex items-center justify-center text-pink-600"
         >
           <FiPlusCircle className="w-10 h-10" />
@@ -162,7 +179,10 @@ export default function BottomNav({ onToggleSidebar, setSidebarOpen }: any) {
       {/* Popup */}
       {showPopup && (
         <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm z-50 px-4">
-          <div className="bg-gray-800 text-white p-6 rounded shadow-lg w-80 text-center">
+          <div
+            ref={popupRef}
+            className="bg-gray-800 text-white p-6 rounded shadow-lg w-80 text-center"
+          >
             <p className="mb-4">
               Es necesario configurar una barbería y servicios antes de acceder.
             </p>

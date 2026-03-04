@@ -10,7 +10,7 @@ export default function BarbershopWizard() {
   const initialStep = stepParam ? parseInt(stepParam, 10) : 0;
 
   return (
-   <div className="px-4">
+   <div className="">
      <BarbershopSetupWizard
       onFinish={async () => {
         await refreshUser();

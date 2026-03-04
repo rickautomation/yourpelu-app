@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { apiGet } from "../lib/apiGet";
 import { apiPost } from "../lib/apiPost";
 import { apiPatch } from "../lib/apiPatch";
-import { apiDelete } from "../lib/apiDelete"; // 👈 helper para DELETE
+import { apiDelete } from "../lib/apiDelete";
 
 type OfferingCategory = {
   id: string;
@@ -20,37 +20,70 @@ type OfferingType = {
   category?: OfferingCategory;
 };
 
-type ClientOfferingType = {
+export type ClientOfferingType = {
   id: string;
   name: string;
   description?: string;
   price: number;
   isActive: boolean;
-  baseType?: OfferingType;
+  baseType?: OfferingType | null; // si viene de plantilla
+  clientCategory?: {
+    id: string;
+    name: string;
+    description?: string;
+  } | null;
+  globalCategory?: {
+    id: string;
+    name: string;
+    description?: string;
+  } | null;
 };
 
+export type ClientOfferingCategory = {
+  id: string;
+  name: string;
+  description?: string;
+  barbershop: {
+    id: string;
+    name: string;
+    address?: string;
+    phoneNumber?: string;
+    bookingEnabled?: boolean;
+    deletedAt?: string | null;
+  };
+  clientTypes?: ClientOfferingType[]; // servicios asociados a esta categoría
+  deletedAt?: string | null;
+};
+
+
 export function useOfferings(barbershopId?: string) {
-  const [categories, setCategories] = useState<OfferingCategory[]>([]);
-  const [selectedCategory, setSelectedCategory] =
-    useState<OfferingCategory | null>(null);
+const [categories, setCategories] = useState<(OfferingCategory | ClientOfferingCategory)[]>([]);
+const [selectedCategory, setSelectedCategory] = useState<OfferingCategory | ClientOfferingCategory | null>(null);
 
   const [clientOfferings, setClientOfferings] = useState<ClientOfferingType[]>([]);
 
-  // cargar categorías base
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const catData = await apiGet<OfferingCategory[]>("/offering-categories");
-        setCategories(catData);
-        if (catData.length > 0) {
-          setSelectedCategory(catData[0]);
-        }
-      } catch (err) {
-        console.error("Error cargando categorías:", err);
+useEffect(() => {
+  const fetchCategories = async () => {
+    try {
+      const globalCats = await apiGet<OfferingCategory[]>("/offering-categories");
+      let clientCats: ClientOfferingCategory[] = [];
+      if (barbershopId) {
+        clientCats = await apiGet<ClientOfferingCategory[]>(
+          `/client-offering-categories/barbershop/${barbershopId}`
+        );
       }
-    };
-    fetchCategories();
-  }, []);
+
+      const allCats = [...globalCats, ...clientCats];
+      setCategories(allCats);
+      if (allCats.length > 0) {
+        setSelectedCategory(allCats[0]);
+      }
+    } catch (err) {
+      console.error("Error cargando categorías:", err);
+    }
+  };
+  fetchCategories();
+}, [barbershopId]);
 
   // cargar servicios propios de la barbería
   useEffect(() => {
@@ -74,6 +107,7 @@ export function useOfferings(barbershopId?: string) {
     description?: string;
     price: number;
     baseTypeId?: string;
+      categoryId?: string;
   }) => {
     if (!barbershopId) throw new Error("No barbershopId provided");
 
@@ -92,6 +126,31 @@ export function useOfferings(barbershopId?: string) {
       throw err;
     }
   };
+
+  const addClientCategory = async (data: {
+  barbershopId: string;
+  name: string;
+  description?: string;
+}) => {
+  try {
+    const newCategory = await apiPost<ClientOfferingCategory>(
+      "/client-offering-categories",
+      data
+    );
+    setCategories((prev) => [...prev, newCategory]);
+    return newCategory;
+  } catch (err) {
+    console.error("Error creando categoría de cliente:", err);
+    throw err;
+  }
+};
+
+// helper para discriminar
+function isOfferingCategory(
+  cat: OfferingCategory | ClientOfferingCategory
+): cat is OfferingCategory {
+  return (cat as OfferingCategory).types !== undefined;
+}
 
   // actualizar precio
   const updatePrice = async (id: string, price: number) => {
@@ -126,8 +185,11 @@ export function useOfferings(barbershopId?: string) {
     selectedCategory,
     setSelectedCategory,
     clientOfferings,
+    setClientOfferings,
     addOffering,
-    updatePrice,   // 👈 nuevo
-    deleteOffering // 👈 nuevo
+    updatePrice, 
+    deleteOffering,
+    addClientCategory, 
+    isOfferingCategory
   };
 }
