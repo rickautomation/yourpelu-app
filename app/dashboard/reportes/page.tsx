@@ -1,382 +1,248 @@
 "use client";
 import { useState } from "react";
-import { apiGet } from "@/app/lib/apiGet";
+import { FiChevronDown } from "react-icons/fi";
 import { useAuth } from "@/app/lib/useAuth";
-import DarkDatePicker from "@/app/components/DarkDatePicker";
+import { useUserBarbershops } from "@/app/hooks/useUserBarbershops";
+import { useAnalytics } from "@/app/hooks/useAnalytics";
 
-type BalanceItem = { label: string; totalIncome: number };
-type CloseDayResponse = {
-  byBarber: BalanceItem[];
-  byType: BalanceItem[];
-  byStyle: BalanceItem[];
-  total: number;
-};
-type BalanceResponse = { items: BalanceItem[]; total: number };
+import {
+  getDayRangeLocal,
+  getTomorrowRangeLocal,
+  getWeekRangeLocal,
+  getMonthRangeLocal,
+  getYearRangeLocal,
+} from "@/app/lib/dateRanges";
 
 export default function ReportsPage() {
   const { user } = useAuth();
+  const { activeBarbershop } = useUserBarbershops(user);
 
-  const [filter, setFilter] = useState<"barber" | "style" | "type" | "month">(
-    "month"
+  // Estado para el tipo de reporte (Resumen o Detalle)
+  const [reportType, setReportType] = useState<"summary" | "detail">("summary");
+
+  // Estado para mostrar/ocultar el dropdown de tipo de reporte
+  const [showReportDropdown, setShowReportDropdown] = useState(false);
+
+  // Estado para dropdown
+  const [rangeType, setRangeType] = useState<"day" | "week" | "month" | "year">(
+    "day",
   );
-  const [balance, setBalance] = useState<BalanceResponse | null>(null);
-  const [loadingBalance, setLoadingBalance] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
 
-  const [closeDay, setCloseDay] = useState<CloseDayResponse | null>(null);
-  const [loadingDay, setLoadingDay] = useState(false);
+  const ranges = [
+    {
+      id: "day",
+      label: "Día actual",
+      fn: () => getDayRangeLocal("America/Argentina/Buenos_Aires"),
+    },
+    {
+      id: "tomorrow",
+      label: "Mañana",
+      fn: () => getTomorrowRangeLocal("America/Argentina/Buenos_Aires"),
+    },
+    {
+      id: "week",
+      label: "Semana",
+      fn: () => getWeekRangeLocal("America/Argentina/Buenos_Aires"),
+    },
+    {
+      id: "month",
+      label: "Mes",
+      fn: () => getMonthRangeLocal("America/Argentina/Buenos_Aires"),
+    },
+    {
+      id: "year",
+      label: "Año",
+      fn: () => getYearRangeLocal("America/Argentina/Buenos_Aires"),
+    },
+  ];
 
-  const [dailyBalance, setDailyBalance] = useState<CloseDayResponse | null>(
-    null
+  const selectedRange = ranges.find((r) => r.id === rangeType)!;
+  const dayRange = selectedRange.fn();
+
+  const { summary, paymentMethods, categories, loading, error } = useAnalytics(
+    activeBarbershop?.id,
+    dayRange,
   );
-  const [loadingDaily, setLoadingDaily] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<string>(
-    new Date().toISOString().split("T")[0]
-  );
 
-  const [view, setView] = useState<"none" | "balance" | "closeDay" | "daily">(
-    "none"
-  );
+  console.log("paymenthMetods: ", paymentMethods);
+  console.log("categories: ", categories);
 
-  // Balance anual
-  const fetchBalance = async (
-    selectedFilter?: "barber" | "style" | "type" | "month"
-  ) => {
-    const effectiveFilter = selectedFilter ?? filter;
-    if (!user?.barbershop?.id) return;
-    setLoadingBalance(true);
-    try {
-      const year = new Date().getFullYear();
-      const data = await apiGet<BalanceResponse>(
-        `/reports/barbershop/${user.barbershop.id}/balance?year=${year}&filter=${effectiveFilter}`
-      );
-      setBalance(data);
-      setView("balance");
-    } catch (err) {
-      console.error("Error al obtener el balance", err);
-    } finally {
-      setLoadingBalance(false);
-    }
-  };
-
-  // Cierre de caja del día actual
-  const fetchCloseDay = async () => {
-    if (!user?.barbershop?.id) return;
-    setLoadingDay(true);
-    try {
-      const data = await apiGet<CloseDayResponse>(
-        `/reports/barbershop/${user.barbershop.id}/close-today`
-      );
-      setCloseDay(data);
-      setView("closeDay");
-    } catch (err) {
-      console.error("Error al obtener cierre de caja", err);
-    } finally {
-      setLoadingDay(false);
-    }
-  };
-
-  // Balance diario por fecha
-  const fetchDailyBalance = async () => {
-    if (!user?.barbershop?.id) return;
-    setLoadingDaily(true);
-    try {
-      const data = await apiGet<CloseDayResponse>(
-        `/reports/barbershop/${user.barbershop.id}/daily-balance?date=${selectedDate}`
-      );
-      setDailyBalance(data);
-      setView("daily");
-    } catch (err) {
-      console.error("Error al obtener balance diario", err);
-    } finally {
-      setLoadingDaily(false);
-    }
-  };
+  if (loading) return <p>Cargando reportes...</p>;
+  if (error) return <p>Error: {error}</p>;
 
   return (
-    <div className="space-y-4 p-4">
-      {/* Menú inicial */}
-      {view === "none" && (
-        <div className="space-y-4">
-          <div className="bg-gray-900 p-4 rounded-lg flex items-center justify-between">
-            <span className="text-lg font-bold text-white">Cierre de Caja</span>
-            <button
-              onClick={fetchCloseDay}
-              className="bg-blue-600 hover:bg-blue-700 text-white text-lg px-4 py-3 rounded"
-            >
-              Cerrar día
-            </button>
-          </div>
-
-          <div className="bg-gray-900 p-4 rounded-lg flex items-center justify-between">
-            <span className="text-lg font-bold text-white">Balance Anual</span>
-            <button
-              onClick={() => fetchBalance()} // ahora sí coincide con MouseEventHandler
-              className="bg-green-600 hover:bg-green-700 text-white text-lg px-4 py-3 rounded"
-            >
-              Ver balance
-            </button>
-          </div>
-
-          <div className="bg-gray-900 p-4 rounded-lg flex items-center justify-between">
-            <span className="text-lg font-bold text-white">Balance Diario</span>
-            <button
-              onClick={() => setView("daily")}
-              className="bg-purple-600 hover:bg-purple-700 text-white text-lg px-4 py-3 rounded"
-            >
-              Ver balance
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Balance anual */}
-      {view === "balance" && balance && (
-        <div className="bg-gray-800 p-4 rounded-lg shadow-md">
-          <div className="mb-4">
-            <label className="text-white mr-2">Filtrar por:</label>
-            <select
-              value={filter}
-              onChange={(e) => {
-                const newFilter = e.target.value as
-                  | "barber"
-                  | "style"
-                  | "type"
-                  | "month";
-                setFilter(newFilter);
-                fetchBalance(newFilter); // aquí sí pasás el argumento explícito
-              }}
-              className="bg-gray-700 text-white px-3 py-2 rounded"
-            >
-              <option value="barber">Barberos</option>
-              <option value="style">Estilos</option>
-              <option value="type">Tipos</option>
-              <option value="month">Meses</option>
-            </select>
-          </div>
-
-          {loadingBalance ? (
-            <p className="text-gray-400">Cargando balance...</p>
-          ) : (
-            <>
-              <ul className="text-gray-300">
-                {balance.items.map((item, idx) => (
-                  <li
-                    key={idx}
-                    className="flex justify-between border-b border-gray-700 py-1"
-                  >
-                    <span>
-                      {filter === "month"
-                        ? new Date(item.label).toLocaleDateString("es-AR", {
-                            month: "long",
-                          })
-                        : item.label}
-                    </span>
-                    <span className="text-green-400 font-bold">
-                      ${item.totalIncome.toLocaleString("es-AR")}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-
-              <div className="flex justify-between mt-4 border-t border-gray-600 pt-2">
-                <span className="text-white font-semibold">TOTAL</span>
-                <span className="text-yellow-400 text-xl font-bold">
-                  ${balance.total.toLocaleString("es-AR")}
-                </span>
-              </div>
-            </>
-          )}
-
-          <div className="mt-4 text-center">
-            <button
-              onClick={() => setView("none")}
-              className="bg-gray-600 hover:bg-gray-700 text-white text-lg px-6 py-3 rounded"
-            >
-              Volver
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Cierre de caja diario */}
-      {view === "closeDay" && closeDay && (
-        <div className="bg-gray-800 p-4 rounded-lg shadow-md space-y-6">
-          <div>
-            <h3 className="text-lg font-semibold text-white mb-2">
-              Por Barbero
-            </h3>
-            <ul className="text-gray-300">
-              {closeDay.byBarber.map((item, idx) => (
-                <li
-                  key={idx}
-                  className="flex justify-between border-b border-gray-700 py-1"
-                >
-                  <span>{item.label}</span>
-                  <span className="text-green-400 font-bold">
-                    ${item.totalIncome.toLocaleString("es-AR")}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="text-lg font-semibold text-white mb-2">Por Tipo</h3>
-            <ul className="text-gray-300">
-              {closeDay.byType.map((item, idx) => (
-                <li
-                  key={idx}
-                  className="flex justify-between border-b border-gray-700 py-1"
-                >
-                  <span>{item.label}</span>
-                  <span className="text-green-400 font-bold">
-                    ${item.totalIncome.toLocaleString("es-AR")}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="text-lg font-semibold text-white mb-2">
-              Por Estilo
-            </h3>
-            <ul className="text-gray-300">
-              {closeDay.byStyle.map((item, idx) => (
-                <li
-                  key={idx}
-                  className="flex justify-between border-b border-gray-700 py-1"
-                >
-                  <span>{item.label}</span>
-                  <span className="text-green-400 font-bold">
-                    ${item.totalIncome.toLocaleString("es-AR")}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="flex justify-between mt-4 border-t border-gray-600 pt-2">
-            <span className="text-white font-semibold">TOTAL DEL DÍA</span>
-            <span className="text-yellow-400 text-xl font-bold">
-              ${closeDay.total.toLocaleString("es-AR")}
-            </span>
-          </div>
-
-          {/* Botón volver */}
-          <div className="mt-4 text-center">
-            <button
-              onClick={() => setView("none")}
-              className="bg-gray-600 hover:bg-gray-700 text-white text-lg px-6 py-3 rounded"
-            >
-              Volver
-            </button>
-          </div>
-        </div>
-      )}
-
-      {view === "daily" && (
-        <div className="bg-gray-800 p-4 rounded-lg shadow-md space-y-6">
-          <div className="flex items-center gap-3 mb-4">
-            <DarkDatePicker
-              selectedDate={selectedDate ? new Date(selectedDate) : null}
-              setSelectedDate={(date) =>
-                setSelectedDate(date ? date.toISOString().split("T")[0] : "")
-              }
+    <div className="space-y-4 p-3">
+      <div className="flex items-center justify-between gap-4">
+        {/* Dropdown de tipo de reporte */}
+        <div className="relative flex-1">
+          <button
+            onClick={() => setShowReportDropdown(!showReportDropdown)}
+            className="w-full px-3 py-2 bg-gray-700 text-white rounded flex justify-between items-center text-lg"
+          >
+            {reportType === "summary" ? "Resumen" : "Detalle"}
+            <FiChevronDown
+              className={`ml-2 text-xl transition-transform duration-200 ${
+                showReportDropdown ? "rotate-180" : "rotate-0"
+              }`}
             />
-            <button
-              onClick={fetchDailyBalance}
-              className="bg-purple-600 hover:bg-purple-700 text-white text-lg px-4 py-2 rounded-lg"
-            >
-              Consultar
-            </button>
-          </div>
+          </button>
+          {showReportDropdown && (
+            <ul className="absolute top-full left-0 mt-1 w-full max-h-60 overflow-y-auto bg-gray-800 rounded shadow-lg z-10">
+              <li
+                onClick={() => {
+                  setReportType("summary");
+                  setShowReportDropdown(false);
+                }}
+                className="px-3 py-2 text-white hover:bg-gray-600 cursor-pointer"
+              >
+                Resumen
+              </li>
+              <li
+                onClick={() => {
+                  setReportType("detail");
+                  setShowReportDropdown(false);
+                }}
+                className="px-3 py-2 text-white hover:bg-gray-600 cursor-pointer"
+              >
+                Detalle
+              </li>
+            </ul>
+          )}
+        </div>
 
-          {loadingDaily && (
-            <p className="text-gray-400">Cargando balance diario...</p>
+        {/* Dropdown de rango de fechas */}
+        <div className="relative flex-1">
+          <button
+            onClick={() => setShowDropdown(!showDropdown)}
+            className="w-full px-3 py-2 bg-gray-700 text-white rounded flex justify-between items-center text-lg"
+          >
+            {selectedRange.label}
+            <FiChevronDown
+              className={`ml-2 text-xl transition-transform duration-200 ${
+                showDropdown ? "rotate-180" : "rotate-0"
+              }`}
+            />
+          </button>
+          {showDropdown && (
+            <ul className="absolute top-full left-0 mt-1 w-full max-h-60 overflow-y-auto bg-gray-800 rounded shadow-lg z-10">
+              {ranges.map((r) => (
+                <li
+                  key={r.id}
+                  onClick={() => {
+                    setRangeType(r.id as any);
+                    setShowDropdown(false);
+                  }}
+                  className="px-3 py-2 text-white hover:bg-gray-600 cursor-pointer"
+                >
+                  {r.label}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
+
+      {reportType === "summary" ? (
+        // 🔹 Render actual de Resumen
+        summary && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-6">
+            <div className=" bg-gray-800 shadow-md rounded-lg p-6 flex flex-col items-center">
+              <p className="text-4xl font-bold text-blue-500">
+                {summary.servicesCount}
+              </p>
+              <h3 className="text-lg font-semibold text-white mb-2">
+                Servicios registrados
+              </h3>
+            </div>
+            <div className="bg-gray-800 shadow-md rounded-lg p-6 flex flex-col items-center">
+              <p className="text-4xl font-bold text-green-600">
+                ${Number(summary.totalRevenue).toLocaleString("es-AR")}
+              </p>
+              <h3 className="text-lg font-semibold text-white mb-2">
+                Total acumulado
+              </h3>
+            </div>
+          </div>
+        )
+      ) : (
+        // 🔹 Vista de detalle
+        <div className="space-y-3 py-2">
+          {/* Summary */}
+          {/* {summary && (
+            <div className="flex justify-between bg-gray-800 shadow-md rounded-lg px-6 py-4 text-xl">
+              <p>Total:</p>
+              <p className="text-blue-600 font-semibold">
+                {summary.servicesCount} servicios
+              </p>
+              <p className="text-pink-400 font-semibold">
+                ${Number(summary.totalRevenue).toLocaleString("es-AR")}
+              </p>
+            </div>
+          )} */}
+
+          {/* Métodos de pago */}
+          {paymentMethods.length > 0 && (
+            <div className="bg-gray-800 shadow-md rounded-lg p-4">
+              <h3 className="text-lg font-semibold text-white mb-4 border-b">
+                Métodos de pago
+              </h3>
+              <div className="grid grid-cols-3 gap-4 text-white ">
+                {paymentMethods.map((pm) => (
+                  <>
+                    <span>{pm.method || "Sin designar"}</span>
+                    <span className="text-center">x{pm.count}</span>
+                    <span>
+                      $ {Number(pm.totalPrice).toLocaleString("es-AR")}
+                    </span>
+                  </>
+                ))}
+              </div>
+            </div>
           )}
 
-          {dailyBalance && (
-            <>
-              {/* Por Barbero */}
-              <div>
-                <h3 className="text-lg font-semibold text-white mb-2">
-                  Por Barbero
-                </h3>
-                <ul className="text-gray-300">
-                  {dailyBalance.byBarber.map((item, idx) => (
-                    <li
-                      key={idx}
-                      className="flex justify-between border-b border-gray-700 py-1"
-                    >
-                      <span>{item.label}</span>
-                      <span className="text-green-400 font-bold">
-                        ${item.totalIncome.toLocaleString("es-AR")}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+          {/* Categorías */}
+          {categories.length > 0 && (
+            <div className="bg-gray-800 shadow-md rounded-lg p-3">
+              <h3 className="text-lg font-semibold text-white mb-4">
+                Categorías
+              </h3>
+              <div className="space-y-4">
+                {categories.map((cat) => (
+                  <div
+                    key={cat.id}
+                    className="text-white border rounded-md px-2"
+                  >
+                    {/* Cabecera de la categoría */}
+                    <div className="grid grid-cols-3 gap-4 font-bold mb-2 border-b border-gray-600">
+                      <span>{cat.name}</span>
+                    </div>
 
-              {/* Por Tipo */}
-              <div>
-                <h3 className="text-lg font-semibold text-white mb-2">
-                  Por Tipo
-                </h3>
-                <ul className="text-gray-300">
-                  {dailyBalance.byType.map((item, idx) => (
-                    <li
-                      key={idx}
-                      className="flex justify-between border-b border-gray-700 py-1"
-                    >
-                      <span>{item.label}</span>
-                      <span className="text-green-400 font-bold">
-                        ${item.totalIncome.toLocaleString("es-AR")}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+                    {/* Tipos dentro de la categoría */}
+                    <div className="grid grid-cols-[2fr_1fr_2fr] gap-4 ml-4 items-end text-start ">
+                      {Object.entries(cat.types).map(([typeName, typeData]) => (
+                        <>
+                          <span className="text-sm">{typeName}</span>
+                          <span>x {typeData.count}</span>
+                          <span className="text-right">
+                            $ {typeData.totalPrice.toLocaleString("es-AR")}
+                          </span>
+                        </>
+                      ))}
+                    </div>
 
-              {/* Por Estilo */}
-              <div>
-                <h3 className="text-lg font-semibold text-white mb-2">
-                  Por Estilo
-                </h3>
-                <ul className="text-gray-300">
-                  {dailyBalance.byStyle.map((item, idx) => (
-                    <li
-                      key={idx}
-                      className="flex justify-between border-b border-gray-700 py-1"
-                    >
-                      <span>{item.label}</span>
-                      <span className="text-green-400 font-bold">
-                        ${item.totalIncome.toLocaleString("es-AR")}
+                    <div className="grid grid-cols-3 gap-4 font-bold mt-2 border-t border-gray-600">
+                      <span>{"Total: "}</span>
+                      <span>{cat.totalCount} servicios</span>
+                      <span className="text-right">
+                        $ {cat.totalPrice.toLocaleString("es-AR")}
                       </span>
-                    </li>
-                  ))}
-                </ul>
+                    </div>
+                  </div>
+                ))}
               </div>
-
-              {/* Total */}
-              <div className="flex justify-between mt-4 border-t border-gray-600 pt-2">
-                <span className="text-white font-semibold">TOTAL DEL DÍA</span>
-                <span className="text-yellow-400 text-xl font-bold">
-                  ${dailyBalance.total.toLocaleString("es-AR")}
-                </span>
-              </div>
-            </>
+            </div>
           )}
-
-          {/* Botón volver */}
-          <div className="mt-4 text-center">
-            <button
-              onClick={() => setView("none")}
-              className="bg-gray-600 hover:bg-gray-700 text-white text-lg px-6 py-3 rounded"
-            >
-              Volver
-            </button>
-          </div>
         </div>
       )}
     </div>

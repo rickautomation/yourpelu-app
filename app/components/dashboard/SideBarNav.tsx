@@ -8,17 +8,13 @@ import { apiPost } from "@/app/lib/apiPost";
 import {
   FiHome,
   FiUsers,
-  FiScissors,
   FiImage,
   FiSettings,
   FiCalendar,
   FiBarChart2,
-  FiDroplet,
   FiBox,
   FiList,
-  FiLayers,
   FiPlusCircle,
-  FiEdit,
 } from "react-icons/fi";
 import SidebarLink from "./SidebarLink";
 import Image from "next/image";
@@ -197,9 +193,9 @@ export default function SidebarNav({
           <>
             {userRole === "admin" && (
               <>
-                <SidebarLink href="/dashboard" setSidebarOpen={setSidebarOpen}>
+                {/* <SidebarLink href="/dashboard" setSidebarOpen={setSidebarOpen}>
                   <FiHome className="inline w-5 h-5 mr-2" /> Home
-                </SidebarLink>
+                </SidebarLink> */}
                 <SidebarLink
                   href="/dashboard/barberos"
                   setSidebarOpen={setSidebarOpen}

@@ -3,7 +3,6 @@ import Link from "next/link";
 import { useAuth } from "../hooks/useAuth";
 import {
   FiMenu,
-  FiUsers,
   FiPlusCircle,
   FiCalendar,
   FiUser,
@@ -15,6 +14,7 @@ import { useState, useRef, useEffect } from "react";
 import { useUserBarbershops } from "../hooks/useUserBarbershops";
 import { useRouter } from "next/navigation";
 import { useOfferings } from "../hooks/useOfferings";
+import { BiBarChart } from "react-icons/bi";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -29,7 +29,7 @@ export default function BottomNav({ onToggleSidebar, setSidebarOpen }: any) {
   const [showPopup, setShowPopup] = useState(false);
   const [popupStep, setPopupStep] = useState<number | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
-  const popupRef = useRef<HTMLDivElement>(null); 
+  const popupRef = useRef<HTMLDivElement>(null);
 
   // cerrar menú si se hace click fuera
   useEffect(() => {
@@ -49,20 +49,23 @@ export default function BottomNav({ onToggleSidebar, setSidebarOpen }: any) {
   }, [menuOpen]);
 
   useEffect(() => {
-  function handleClickOutside(event: MouseEvent) {
-    if (popupRef.current && !popupRef.current.contains(event.target as Node)) {
-      setShowPopup(false);
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        popupRef.current &&
+        !popupRef.current.contains(event.target as Node)
+      ) {
+        setShowPopup(false);
+      }
     }
-  }
-  if (showPopup) {
-    document.addEventListener("mousedown", handleClickOutside);
-  } else {
-    document.removeEventListener("mousedown", handleClickOutside);
-  }
-  return () => {
-    document.removeEventListener("mousedown", handleClickOutside);
-  };
-}, [showPopup]);
+    if (showPopup) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showPopup]);
 
   // interceptar click en links protegidos
   // interceptar click en links protegidos
@@ -91,13 +94,13 @@ export default function BottomNav({ onToggleSidebar, setSidebarOpen }: any) {
           <FiMenu className="w-6 h-6 text-pink-600" />
         </button>
 
-        {/* Clientes */}
+        {/* Turnos */}
         <Link
-          href="/dashboard/clientes"
-          onClick={(e) => handleProtectedClick(e, "/dashboard/clientes")}
+          href="/dashboard/turnos"
+          onClick={(e) => handleProtectedClick(e, "/dashboard/turnos")}
           className="flex items-center justify-center text-pink-600"
         >
-          <FiUsers className="w-10 h-10" />
+          <FiCalendar className="w-10 h-10" />
         </Link>
 
         {/* Cortes */}
@@ -109,13 +112,12 @@ export default function BottomNav({ onToggleSidebar, setSidebarOpen }: any) {
           <FiPlusCircle className="w-10 h-10" />
         </Link>
 
-        {/* Turnos */}
         <Link
-          href="/dashboard/turnos"
-          onClick={(e) => handleProtectedClick(e, "/dashboard/turnos")}
-          className="flex items-center justify-center text-pink-600"
+          href="/dashboard/reportes"
+          onClick={(e) => handleProtectedClick(e, "/dashboard/clientes")}
+          className="flex items-center justify-center text-pink-600 border-2 rounded-lg"
         >
-          <FiCalendar className="w-10 h-10" />
+          <BiBarChart className="w-9 h-9" />
         </Link>
 
         {/* Avatar con menú */}

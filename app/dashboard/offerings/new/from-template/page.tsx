@@ -39,16 +39,13 @@ export default function NewOfferingFromTemplatePage({
     addOffering,
     clientOfferings,
     isOfferingCategory,
-    categories,
     selectedCategory,
     setSelectedCategory,
+    globalCategories,
   } = useOfferings(activeBarbershop?.id);
   const { step, setStep } = useWizard();
 
   const router = useRouter();
-
-  console.log(clientOfferings.length);
-  console.log("categories: ", categories)
 
   const [showDropdown, setShowDropdown] = useState(false);
   const [openPriceInput, setOpenPriceInput] = useState<string | null>(null);
@@ -82,7 +79,7 @@ export default function NewOfferingFromTemplatePage({
           </button>
           {showDropdown && (
             <ul className="absolute top-full left-0 mt-1 w-68 max-h-60 overflow-y-auto bg-gray-800 rounded shadow-lg z-10">
-              {categories.map((cat: any) => (
+              {globalCategories.map((cat: any) => (
                 <li
                   key={cat.id}
                   onClick={() => {
@@ -98,14 +95,16 @@ export default function NewOfferingFromTemplatePage({
           )}
         </div>
 
-        <div className="ml-2">
-          <Link
-            href="/dashboard/offerings/new/from-custom?inWizard=true"
-            className="px-4 py-3 bg-pink-500 text-white text-xl font-bold rounded hover:bg-pink-600 transition-colors"
-          >
-            +
-          </Link>
-        </div>
+        {inWizard && (
+          <div className="ml-2">
+            <Link
+              href="/dashboard/offerings/new/from-custom?inWizard=true"
+              className="px-4 py-3 bg-pink-500 text-white text-xl font-bold rounded hover:bg-pink-600 transition-colors"
+            >
+              +
+            </Link>
+          </div>
+        )}
       </div>
 
       <div className="flex flex-col gap-2">
@@ -210,8 +209,8 @@ export default function NewOfferingFromTemplatePage({
               (co) => co.baseType?.id === service.id,
             );
           }).length === 0 && (
-            <div className="px-6 py-4 bg-gray-800 rounded-lg shadow-md text-center">
-              <p className="text-blue-600 font-semibold">
+            <div className="px-6 py-4 rounded-lg shadow-md text-center">
+              <p className="text-blue-500 font-semibold">
                 No quedan servicios de plantilla disponibles para agregar.
               </p>
             </div>
@@ -225,7 +224,6 @@ export default function NewOfferingFromTemplatePage({
               if (setStep) {
                 setStep(3);
               }
-              window.location.reload();
               router.push("/dashboard/initial-setup?step=3");
             }}
             disabled={clientOfferings.length === 0}

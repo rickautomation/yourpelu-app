@@ -13,7 +13,7 @@ export type CreateOfferingDto = {
   userId: string;
   clientId?: string | null;
   barbershopId?: string | null;
-  clientTypeId?: string | null;
+  clientOfferingTypeId?: string | null;
   clientOfferingCategoryId?: string | null;
   paymentMethodId?: string | null;
 };
@@ -115,19 +115,14 @@ export default function AddOwnOffering() {
     const dto: CreateOfferingDto = {
       price: Number(selectedClientType.price),
       userId: user.id,
-      clientId: null, // permitido
       barbershopId: activeBarbershop?.id || null,
-      clientTypeId: selectedClientType?.id || null,
+      clientOfferingTypeId: selectedClientType?.id || null,
       clientOfferingCategoryId: selectedCategory?.id || null,
       paymentMethodId: selectedPaymentMethod?.id || null,
     };
 
-    // solo agregamos clientId si existe
-    if (selectedClientType.id) {
-      dto.clientId = selectedClientType.id;
-    }
-
     try {
+      console.log("dto: ", dto)
       const offering = await createOffering(dto);
       if (offering) {
         setShowSuccessPopup(true);
@@ -273,7 +268,7 @@ export default function AddOwnOffering() {
             {selectedClientType ? `$${selectedClientType.price}` : ""}
           </p>
           <p className="italic">
-            {selectedPaymentMethod?.type || "Método de pago"}
+            {selectedPaymentMethod?.type || "Sin método de pago"}
           </p>
         </div>
 
@@ -283,7 +278,7 @@ export default function AddOwnOffering() {
             disabled={loading}
             className="bg-blue-500 hover:bg-green-600 text-white font-semibold px-6 py-2 rounded-lg transition-colors duration-200"
           >
-            Listo
+            Registrar
           </button>
         </div>
 

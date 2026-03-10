@@ -112,9 +112,9 @@ export default function ClientsPage() {
     <div className="flex flex-col gap-3 p-4">
       {/* Card para agregar cliente */}
       <div className="flex flex-col gap-3">
-        <div className="flex justify-between items-center border border-pink-700 rounded-lg p-4">
-          {!showAdd && (
-            <div className="flex items-center gap-1">
+        {!showAdd && (
+          <div className="flex justify-between items-center border border-pink-700 rounded-lg p-4">
+            <div className="flex items-center  gap-1">
               <input
                 type="text"
                 placeholder="Buscar cliente..."
@@ -123,20 +123,19 @@ export default function ClientsPage() {
                 className="px-2 py-2 rounded bg-gray-800 text-white w-full max-w-xs focus:outline-none focus:ring-2 focus:ring-pink-400"
               />
             </div>
-          )}
 
-          {!showAdd && (
             <button
               onClick={() => setShowAdd(true)}
               className="w-10 h-10 flex items-center justify-center bg-pink-400 text-white rounded-md hover:bg-pink-500 transition-colors text-xl font-bold"
             >
               +
             </button>
-          )}
-        </div>
+          </div>
+        )}
 
         {showAdd && (
           <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+            <h3 className="text-center text-xl font-semibold">Nuevo Cliente</h3>
             <div>
               <input
                 type="text"
