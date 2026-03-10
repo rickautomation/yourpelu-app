@@ -11,6 +11,7 @@ type OfferingCategory = {
   name: string;
   description?: string;
   types: OfferingType[];
+  baseType: string;
 };
 
 type OfferingType = {
@@ -55,35 +56,61 @@ export type ClientOfferingCategory = {
   deletedAt?: string | null;
 };
 
-
 export function useOfferings(barbershopId?: string) {
-const [categories, setCategories] = useState<(OfferingCategory | ClientOfferingCategory)[]>([]);
-const [selectedCategory, setSelectedCategory] = useState<OfferingCategory | ClientOfferingCategory | null>(null);
+  const [categories, setCategories] = useState<
+    (OfferingCategory | ClientOfferingCategory)[]
+  >([]);
+  const [globalCategories, setGlobalCategories] = useState<
+    (OfferingCategory | ClientOfferingCategory)[]
+  >([]);
+  const [clientCategories, setClientCategories] = useState<
+    (OfferingCategory | ClientOfferingCategory)[]
+  >([]);
+  const [selectedCategory, setSelectedCategory] = useState<
+    OfferingCategory | ClientOfferingCategory | null
+  >(null);
+  const [loadingCategories, setLoadingCategories] = useState(true);
 
-  const [clientOfferings, setClientOfferings] = useState<ClientOfferingType[]>([]);
+  const [clientOfferings, setClientOfferings] = useState<ClientOfferingType[]>(
+    [],
+  );
 
-useEffect(() => {
-  const fetchCategories = async () => {
-    try {
-      const globalCats = await apiGet<OfferingCategory[]>("/offering-categories");
-      let clientCats: ClientOfferingCategory[] = [];
-      if (barbershopId) {
-        clientCats = await apiGet<ClientOfferingCategory[]>(
-          `/client-offering-categories/barbershop/${barbershopId}`
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        setLoadingCategories(true);
+        const globalCats = await apiGet<OfferingCategory[]>(
+          "/offering-categories",
         );
-      }
+        let clientCats: ClientOfferingCategory[] = [];
+        if (barbershopId) {
+          clientCats = await apiGet<ClientOfferingCategory[]>(
+            `/client-offering-categories/barbershop/${barbershopId}`,
+          );
+        }
 
-      const allCats = [...globalCats, ...clientCats];
-      setCategories(allCats);
-      if (allCats.length > 0) {
-        setSelectedCategory(allCats[0]);
+        // Unificar por nombre sin repetidos
+        const merged = [...globalCats, ...clientCats];
+
+        // Si querés que gane siempre la versión clientCategory (más completa),
+        // ponelas al final del merge. El último con el mismo nombre pisa al anterior.
+        const unique = Array.from(
+          new Map(merged.map((cat) => [cat.name, cat])).values(),
+        );
+
+        setGlobalCategories(globalCats);
+        setClientCategories(clientCats);
+        setCategories(unique);
+
+        if (unique.length > 0) {
+          setSelectedCategory(globalCats[0]);
+        }
+      } catch (err) {
+        console.error("Error cargando categorías:", err);
       }
-    } catch (err) {
-      console.error("Error cargando categorías:", err);
-    }
-  };
-  fetchCategories();
-}, [barbershopId]);
+    };
+    fetchCategories();
+  }, [barbershopId]);
 
   // cargar servicios propios de la barbería
   useEffect(() => {
@@ -91,7 +118,7 @@ useEffect(() => {
       if (!barbershopId) return;
       try {
         const data = await apiGet<ClientOfferingType[]>(
-          `/client-offering-types/barbershop/${barbershopId}`
+          `/client-offering-types/barbershop/${barbershopId}`,
         );
         setClientOfferings(data);
       } catch (err) {
@@ -107,18 +134,21 @@ useEffect(() => {
     description?: string;
     price: number;
     baseTypeId?: string;
-      categoryId?: string;
+    categoryId?: string;
   }) => {
     if (!barbershopId) throw new Error("No barbershopId provided");
 
     try {
-      const newOffering = await apiPost<ClientOfferingType>("/client-offering-types", {
-        barbershopId,
-        baseTypeId: data.baseTypeId,
-        name: data.name,
-        description: data.description,
-        price: data.price,
-      });
+      const newOffering = await apiPost<ClientOfferingType>(
+        "/client-offering-types",
+        {
+          barbershopId,
+          baseTypeId: data.baseTypeId,
+          name: data.name,
+          description: data.description,
+          price: data.price,
+        },
+      );
       setClientOfferings((prev) => [...prev, newOffering]);
       return newOffering;
     } catch (err) {
@@ -128,39 +158,39 @@ useEffect(() => {
   };
 
   const addClientCategory = async (data: {
-  barbershopId: string;
-  name: string;
-  description?: string;
-}) => {
-  try {
-    const newCategory = await apiPost<ClientOfferingCategory>(
-      "/client-offering-categories",
-      data
-    );
-    setCategories((prev) => [...prev, newCategory]);
-    return newCategory;
-  } catch (err) {
-    console.error("Error creando categoría de cliente:", err);
-    throw err;
-  }
-};
+    barbershopId: string;
+    name: string;
+    description?: string;
+  }) => {
+    try {
+      const newCategory = await apiPost<ClientOfferingCategory>(
+        "/client-offering-categories",
+        data,
+      );
+      setCategories((prev) => [...prev, newCategory]);
+      return newCategory;
+    } catch (err) {
+      console.error("Error creando categoría de cliente:", err);
+      throw err;
+    }
+  };
 
-// helper para discriminar
-function isOfferingCategory(
-  cat: OfferingCategory | ClientOfferingCategory
-): cat is OfferingCategory {
-  return (cat as OfferingCategory).types !== undefined;
-}
+  // helper para discriminar
+  function isOfferingCategory(
+    cat: OfferingCategory | ClientOfferingCategory,
+  ): cat is OfferingCategory {
+    return (cat as OfferingCategory).types !== undefined;
+  }
 
   // actualizar precio
   const updatePrice = async (id: string, price: number) => {
     try {
       const updated = await apiPatch<ClientOfferingType>(
         `/client-offering-types/${id}/price`,
-        { price }
+        { price },
       );
       setClientOfferings((prev) =>
-        prev.map((co) => (co.id === id ? { ...co, price: updated.price } : co))
+        prev.map((co) => (co.id === id ? { ...co, price: updated.price } : co)),
       );
       return updated;
     } catch (err) {
@@ -187,9 +217,11 @@ function isOfferingCategory(
     clientOfferings,
     setClientOfferings,
     addOffering,
-    updatePrice, 
+    updatePrice,
     deleteOffering,
-    addClientCategory, 
-    isOfferingCategory
+    addClientCategory,
+    isOfferingCategory,
+    globalCategories,
+    loadingCategories
   };
 }

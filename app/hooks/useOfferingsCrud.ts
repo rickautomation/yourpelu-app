@@ -7,12 +7,13 @@ import { apiPatch } from "../lib/apiPatch";
 import { apiDelete } from "../lib/apiDelete";
 
 // DTO que coincide con tu backend
+// DTO que coincide con tu backend
 export type CreateOfferingDto = {
   price: number;
   userId: string;
   clientId?: string | null;
   barbershopId?: string | null;
-  clientTypeId?: string | null;
+  clientOfferingTypeId?: string | null;
   clientOfferingCategoryId?: string | null;
   paymentMethodId?: string | null;
 };
