@@ -1,5 +1,5 @@
+import UnderConstructionPage from "@/app/components/UnderConstructionPage";
+
 export default function ComentariosPage() {
-    return <div>
-        Comentarios Page
-    </div>
+    return (<UnderConstructionPage/>)
 }
