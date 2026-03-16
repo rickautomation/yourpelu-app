@@ -1,8 +1,8 @@
-"use client";
-
 import { useEffect, useState } from "react";
 import { apiGet } from "@/app/lib/apiGet";
 import { apiPost } from "@/app/lib/apiPost";
+import { apiDelete } from "@/app/lib/apiDelete";
+import { useAuth } from "@/app/lib/useAuth";
 
 export type BarberClient = {
   id: string;
@@ -13,72 +13,66 @@ export type BarberClient = {
   createdAt: string;
 };
 
-export function useClients(barbershopId?: string, clientId?: string) {
+export function useClients() {
+  const { user } = useAuth();
   const [clients, setClients] = useState<BarberClient[]>([]);
-  const [client, setClient] = useState<BarberClient | null>(null); // 👈 estado para cliente individual
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
-  // 🔹 obtener clientes de la barbería
+  const barbershopId = user?.barbershop?.id;
+
   const fetchClients = async () => {
-    if (!barbershopId) return;
-    setLoading(true);
+    if (!barbershopId) {
+      setLoading(false);
+      return;
+    }
     try {
       const data = await apiGet<BarberClient[]>(`/barber-clients/barbershop/${barbershopId}`);
       setClients(data);
-      setError(null);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      console.error("Error cargando clientes", err);
     } finally {
       setLoading(false);
     }
   };
 
-  // 🔹 crear cliente
-  const createClient = async (clientData: Partial<BarberClient>) => {
-    if (!barbershopId) return;
-    setLoading(true);
+  const addClient = async (client: Omit<BarberClient, "id" | "createdAt">) => {
     try {
-      const newClient = await apiPost<BarberClient>(
-        `/barber-clients/barbershop/${barbershopId}`,
-        clientData
-      );
-      setClients((prev) => [...prev, newClient]);
-      setError(null);
-      return newClient;
-    } catch (err: any) {
-      setError(err.message);
-      throw err;
-    } finally {
-      setLoading(false);
+      await apiPost(`/barber-clients/barbershop/${barbershopId}`, client);
+      await fetchClients();
+      showTempMessage("success", "Cliente creado exitosamente");
+    } catch (err) {
+      console.error("Error creando cliente", err);
+      showTempMessage("error", "Error al crear cliente");
     }
   };
 
-  // 🔹 obtener cliente por id
-  const fetchClientById = async (clientId: string): Promise<BarberClient | null> => {
+  const deleteClient = async (clientId: string) => {
     try {
-      const data = await apiGet<BarberClient>(`/barber-clients/client/${clientId}`);
-      setClient(data); // 👈 guardamos en estado
-      return data;
-    } catch (err: any) {
-      setError(err.message);
-      return null;
+      await apiDelete(`/barber-clients/client/${clientId}`);
+      await fetchClients();
+      showTempMessage("success", "Cliente eliminado");
+    } catch (err) {
+      console.error("Error eliminando cliente", err);
+      showTempMessage("error", "Error al eliminar cliente");
     }
   };
 
-  // 🔹 useEffect para barbershopId
+  const showTempMessage = (type: "success" | "error", text: string) => {
+    setMessage({ type, text });
+    setTimeout(() => setMessage(null), 3000);
+  };
+
   useEffect(() => {
-    if (barbershopId) {
-      fetchClients();
-    }
+    fetchClients();
   }, [barbershopId]);
 
-  // 🔹 useEffect para clientId
-  useEffect(() => {
-    if (clientId) {
-      fetchClientById(clientId); // 👈 ahora sí se ejecuta y actualiza `client`
-    }
-  }, [clientId]);
-
-  return { clients, client, loading, error, fetchClients, createClient, fetchClientById };
+  return {
+    clients,
+    loading,
+    message,
+    addClient,
+    deleteClient,
+    refetch: fetchClients,
+  };
 }
