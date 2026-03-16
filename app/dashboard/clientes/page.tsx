@@ -1,111 +1,32 @@
 "use client";
-import { useEffect, useState } from "react";
-import { apiGet } from "@/app/lib/apiGet";
-import { apiPost } from "@/app/lib/apiPost";
-import { useAuth } from "@/app/lib/useAuth";
+import { useState } from "react";
 import Link from "next/link";
-import { apiDelete } from "@/app/lib/apiDelete";
-
-type BarberClient = {
-  id: string;
-  name: string;
-  lastname: string;
-  email?: string;
-  phone?: string;
-  createdAt: string;
-};
+import { useClients } from "@/app/hooks/useClients";
 
 export default function ClientsPage() {
-  const { user } = useAuth();
-
-  const [clients, setClients] = useState<BarberClient[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { clients, loading, message, addClient, deleteClient } = useClients();
 
   const [showAdd, setShowAdd] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-
   const [name, setName] = useState("");
   const [lastname, setLastname] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
 
-  const [message, setMessage] = useState<{
-    type: "success" | "error";
-    text: string;
-  } | null>(null);
-
-  useEffect(() => {
-    const fetchClients = async () => {
-      try {
-        const data = await apiGet<BarberClient[]>(
-          `/barber-clients/barbershop/${user?.barbershop?.id}`,
-        );
-        setClients(data);
-      } catch (err) {
-        console.error("Error cargando clientes", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (user?.barbershop?.id) {
-      fetchClients();
-    } else {
-      setLoading(false);
-    }
-  }, [user]);
-
-  const handleSoftDelete = async (clientId: string) => {
-    try {
-      await apiDelete(`/barber-clients/client/${clientId}`);
-      const data = await apiGet<BarberClient[]>(
-        `/barber-clients/barbershop/${user?.barbershop?.id}`,
-      );
-      setClients(data);
-      showTempMessage("success", "Cliente eliminado");
-    } catch (err) {
-      console.error("Error eliminando cliente", err);
-      showTempMessage("error", "Error al eliminar cliente");
-    }
-  };
-
   const filteredClients = clients.filter((client) =>
     `${client.name} ${client.lastname} ${client.email ?? ""} ${client.phone ?? ""}`
       .toLowerCase()
-      .includes(searchTerm.toLowerCase()),
+      .includes(searchTerm.toLowerCase())
   );
-
-  const showTempMessage = (type: "success" | "error", text: string) => {
-    setMessage({ type, text });
-    setTimeout(() => setMessage(null), 3000);
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      await apiPost(`/barber-clients/barbershop/${user?.barbershop?.id}`, {
-        name,
-        lastname,
-        email,
-        phone,
-      });
-
-      setName("");
-      setLastname("");
-      setEmail("");
-      setPhone("");
-      setShowAdd(false);
-
-      const data = await apiGet<BarberClient[]>(
-        `/barber-clients/barbershop/${user?.barbershop?.id}`,
-      );
-      setClients(data);
-
-      showTempMessage("success", "Cliente creado exitosamente");
-    } catch (err) {
-      console.error("Error creando cliente", err);
-      showTempMessage("error", "Error al crear cliente");
-    }
+    await addClient({ name, lastname, email, phone });
+    setName("");
+    setLastname("");
+    setEmail("");
+    setPhone("");
+    setShowAdd(false);
   };
 
   return (
@@ -260,7 +181,7 @@ export default function ClientsPage() {
                       </Link>
 
                       <button
-                        onClick={() => handleSoftDelete(client.id)}
+                        onClick={() => deleteClient(client.id)}
                         className="flex-1 bg-red-500 text-white px-3 py-2 rounded hover:bg-red-700 transition-colors text-sm font-semibold"
                       >
                         Eliminar

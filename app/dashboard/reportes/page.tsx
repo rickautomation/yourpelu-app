@@ -7,7 +7,6 @@ import { useAnalytics } from "@/app/hooks/useAnalytics";
 
 import {
   getDayRangeLocal,
-  getTomorrowRangeLocal,
   getWeekRangeLocal,
   getMonthRangeLocal,
   getYearRangeLocal,
@@ -36,11 +35,6 @@ export default function ReportsPage() {
       fn: () => getDayRangeLocal("America/Argentina/Buenos_Aires"),
     },
     {
-      id: "tomorrow",
-      label: "Mañana",
-      fn: () => getTomorrowRangeLocal("America/Argentina/Buenos_Aires"),
-    },
-    {
       id: "week",
       label: "Semana",
       fn: () => getWeekRangeLocal("America/Argentina/Buenos_Aires"),
@@ -60,19 +54,21 @@ export default function ReportsPage() {
   const selectedRange = ranges.find((r) => r.id === rangeType)!;
   const dayRange = selectedRange.fn();
 
-  const { summary, paymentMethods, categories, loading, error } = useAnalytics(
-    activeBarbershop?.id,
-    dayRange,
-  );
-
-  console.log("paymenthMetods: ", paymentMethods);
-  console.log("categories: ", categories);
+  const {
+    summary,
+    paymentMethods,
+    categories,
+    clientsSummary,
+    usersSummary,
+    loading,
+    error,
+  } = useAnalytics(activeBarbershop?.id, dayRange);
 
   if (loading) return <p>Cargando reportes...</p>;
   if (error) return <p>Error: {error}</p>;
 
   return (
-    <div className="space-y-4 p-3">
+    <div className="space-y-3 p-3">
       <div className="flex items-center justify-between gap-4">
         {/* Dropdown de tipo de reporte */}
         <div className="relative flex-1">
@@ -88,7 +84,7 @@ export default function ReportsPage() {
             />
           </button>
           {showReportDropdown && (
-            <ul className="absolute top-full left-0 mt-1 w-full max-h-60 overflow-y-auto bg-gray-800 rounded shadow-lg z-10">
+            <ul className="absolute border border-0.5 border-pink-600 top-full left-0 mt-1 w-full max-h-60 overflow-y-auto bg-gray-800 rounded shadow-lg z-10">
               <li
                 onClick={() => {
                   setReportType("summary");
@@ -125,7 +121,7 @@ export default function ReportsPage() {
             />
           </button>
           {showDropdown && (
-            <ul className="absolute top-full left-0 mt-1 w-full max-h-60 overflow-y-auto bg-gray-800 rounded shadow-lg z-10">
+            <ul className="absolute top-full left-0 mt-1 w-full max-h-60 overflow-y-auto bg-gray-800 border border-0.5 border-pink-600 rounded shadow-lg z-10">
               {ranges.map((r) => (
                 <li
                   key={r.id}
@@ -168,19 +164,6 @@ export default function ReportsPage() {
       ) : (
         // 🔹 Vista de detalle
         <div className="space-y-3 py-2">
-          {/* Summary */}
-          {/* {summary && (
-            <div className="flex justify-between bg-gray-800 shadow-md rounded-lg px-6 py-4 text-xl">
-              <p>Total:</p>
-              <p className="text-blue-600 font-semibold">
-                {summary.servicesCount} servicios
-              </p>
-              <p className="text-pink-400 font-semibold">
-                ${Number(summary.totalRevenue).toLocaleString("es-AR")}
-              </p>
-            </div>
-          )} */}
-
           {/* Métodos de pago */}
           {paymentMethods.length > 0 && (
             <div className="bg-gray-800 shadow-md rounded-lg p-4">
@@ -189,13 +172,13 @@ export default function ReportsPage() {
               </h3>
               <div className="grid grid-cols-3 gap-4 text-white ">
                 {paymentMethods.map((pm) => (
-                  <>
+                  <div key={pm.method} className="contents">
                     <span>{pm.method || "Sin designar"}</span>
                     <span className="text-center">x{pm.count}</span>
                     <span>
                       $ {Number(pm.totalPrice).toLocaleString("es-AR")}
                     </span>
-                  </>
+                  </div>
                 ))}
               </div>
             </div>
@@ -221,13 +204,13 @@ export default function ReportsPage() {
                     {/* Tipos dentro de la categoría */}
                     <div className="grid grid-cols-[2fr_1fr_2fr] gap-4 ml-4 items-end text-start ">
                       {Object.entries(cat.types).map(([typeName, typeData]) => (
-                        <>
+                        <div key={typeName} className="contents">
                           <span className="text-sm">{typeName}</span>
                           <span>x {typeData.count}</span>
                           <span className="text-right">
                             $ {typeData.totalPrice.toLocaleString("es-AR")}
                           </span>
-                        </>
+                        </div>
                       ))}
                     </div>
 
@@ -238,6 +221,49 @@ export default function ReportsPage() {
                         $ {cat.totalPrice.toLocaleString("es-AR")}
                       </span>
                     </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Clientes */}
+          {clientsSummary.length > 0 && (
+            <div className="bg-gray-800 shadow-md rounded-lg p-4">
+              <h3 className="text-lg font-semibold text-white mb-4 border-b">
+                Clientes
+              </h3>
+              <div className="grid grid-cols-3 gap-4 text-white">
+                {clientsSummary.map((client) => (
+                  <div
+                    key={client.clientId || client.clientName}
+                    className="contents"
+                  >
+                    <span>{client.clientName}</span>
+                    <span className="text-center">x{client.servicesCount}</span>
+                    <span>
+                      $ {Number(client.totalRevenue).toLocaleString("es-AR")}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Barberos/Usuarios */}
+          {usersSummary.length > 0 && user?.rol === "admin" && (
+            <div className="bg-gray-800 shadow-md rounded-lg p-4">
+              <h3 className="text-lg font-semibold text-white mb-4 border-b">
+                Barberos
+              </h3>
+              <div className="grid grid-cols-3 gap-4 text-white">
+                {usersSummary.map((user) => (
+                  <div key={user.userId} className="contents">
+                    <span>{user.userName}</span>
+                    <span className="text-center">x{user.servicesCount}</span>
+                    <span>
+                      $ {Number(user.totalRevenue).toLocaleString("es-AR")}
+                    </span>
                   </div>
                 ))}
               </div>
