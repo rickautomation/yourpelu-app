@@ -50,7 +50,7 @@ export default function LoginPage({ setView }: Props) {
   }
 
   return (
-    <div className="h-full flex flex-col items-center justify-center bg-gray-950 animate-slideIn px-4">
+    <div className="flex flex-col items-center animate-slideIn min-h-screen px-4">
       <p className="text-gray-500 mb-6 text-center max-w-md">
         Iniciá sesión para acceder a tu panel de gestión. Con Your
         <span className="text-pink-400">Pelu</span> podés organizar turnos,

@@ -42,7 +42,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased h-full w-full overflow-x-hidden bg-gray-950`}
       >
-        <main className="relative z-20 bg-gray-950 h-full">
+        <main className="relative z-20 bg-slate-900 h-full">
           {children} 
           <ServiceWorkerRegister />
         </main>

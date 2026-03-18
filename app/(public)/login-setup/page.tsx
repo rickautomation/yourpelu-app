@@ -33,7 +33,7 @@ export default function LoginPage({ setView }: Props) {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen px-4">
       {/* Sección superior con fondo gris */}
-      <div className="bg-gray-950 w-full flex flex-col items-center pb-10">
+      <div className="w-full flex flex-col items-center pb-10">
         <p className="text-gray-300 mb-6 text-center max-w-md">
           Iniciá sesión para acceder a tu panel de gestión. Con Your
           <span className="text-pink-400">Pelu</span> podés organizar turnos,

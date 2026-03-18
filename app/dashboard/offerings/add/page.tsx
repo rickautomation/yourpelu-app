@@ -21,10 +21,9 @@ export type CreateOfferingDto = {
 
 export default function AddOwnOffering() {
   const { user } = useAuth();
-  const { activeBarbershop } = useUserBarbershops(user);
-  const { clientCategories, paymentMethods } = useOfferingsCategories(
-    activeBarbershop?.id,
-  );
+  const { activeBarbershop, settings } = useUserBarbershops(user);
+  const { clientCategories, paymentMethods } =
+    useOfferingsCategories(activeBarbershop?.id);
   const { createOffering, loading, error } = useOfferingsCrud();
   const { clients, message, addClient, deleteClient } = useClients();
 
@@ -124,41 +123,48 @@ export default function AddOwnOffering() {
     showClientPopup,
   ]);
 
-async function handleSubmit() {
-  if (!user?.id) {
-    console.error("No hay usuario autenticado");
-    return;
-  }
-  if (!activeBarbershop?.id) {
-    console.error("No hay barbería activa");
-    return;
-  }
-  if (!selectedCategory || !selectedClientType) {
-    console.error("Faltan datos para crear el offering");
-    return;
-  }
-
-  const dto: CreateOfferingDto = {
-    price: Number(selectedClientType.price),
-    userId: user.id,
-    barbershopId: activeBarbershop?.id || null,
-    clientOfferingTypeId: selectedClientType?.id || null,
-    clientOfferingCategoryId: selectedCategory?.id || null,
-    paymentMethodId: selectedPaymentMethod?.id || null,
-    clientId: selectedClient?.id || null,   // 👈 agregar esto
-  };
-
-  try {
-    console.log("dto: ", dto);
-    const offering = await createOffering(dto);
-    if (offering) {
-      setShowSuccessPopup(true);
-      setTimeout(() => setShowSuccessPopup(false), 3000);
+  async function handleSubmit() {
+    if (!user?.id) {
+      console.error("No hay usuario autenticado");
+      return;
     }
-  } catch (err) {
-    console.error("Error creando offering:", err);
+    if (!activeBarbershop?.id) {
+      console.error("No hay barbería activa");
+      return;
+    }
+    if (!selectedCategory || !selectedClientType) {
+      console.error("Faltan datos para crear el offering");
+      return;
+    }
+
+    const dto: CreateOfferingDto = {
+      price: Number(selectedClientType.price),
+      userId: user.id,
+      barbershopId: activeBarbershop?.id || null,
+      clientOfferingTypeId: selectedClientType?.id || null,
+      clientOfferingCategoryId: selectedCategory?.id || null,
+      paymentMethodId: selectedPaymentMethod?.id || null,
+      clientId: selectedClient?.id || null, // 👈 agregar esto
+    };
+
+    try {
+      const offering = await createOffering(dto);
+      if (offering) {
+        setShowSuccessPopup(true);
+        setTimeout(() => setShowSuccessPopup(false), 3000);
+      }
+    } catch (err) {
+      console.error("Error creando offering:", err);
+    }
   }
-}
+
+  if (loading)
+    return (
+      <div className="absolute inset-0 flex items-center justify-center ">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white"></div>
+      </div>
+    );
+
   return (
     <div className="py-2 px-4 space-y-4">
       {/* Tarjeta Categoría */}
@@ -278,17 +284,19 @@ async function handleSubmit() {
         </div>
       )}
 
-      <div
-        onClick={() => setShowClientPopup(true)}
-        className="px-4 py-3 bg-gray-700 text-white rounded-lg flex justify-between items-center cursor-pointer"
-      >
-        <span>
-          {selectedClient
-            ? `${selectedClient.name} ${selectedClient.lastname}`
-            : "Seleccionar cliente"}
-        </span>
-        <FiChevronDown className="text-xl" />
-      </div>
+      {settings?.clients_in_offerings && (
+        <div
+          onClick={() => setShowClientPopup(true)}
+          className="px-4 py-3 bg-gray-700 text-white rounded-lg flex justify-between items-center cursor-pointer"
+        >
+          <span>
+            {selectedClient
+              ? `${selectedClient.name} ${selectedClient.lastname}`
+              : "Seleccionar cliente"}
+          </span>
+          <FiChevronDown className="text-xl" />
+        </div>
+      )}
 
       {showClientPopup && (
         <div className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50">
@@ -371,17 +379,19 @@ async function handleSubmit() {
           )}
         </div>
 
-        <div className="flex justify-between">
-          <strong>Cliente: </strong>
+        {settings?.clients_in_offerings && (
+          <div className="flex justify-between">
+            <strong>Cliente: </strong>
 
-          {selectedClient ? (
-            <p className="italic">
-              {selectedClient.name + " " + selectedClient.lastname}
-            </p>
-          ) : (
-            <p className="italic text-gray-400">Sin cliente</p>
-          )}
-        </div>
+            {selectedClient ? (
+              <p className="italic">
+                {selectedClient.name + " " + selectedClient.lastname}
+              </p>
+            ) : (
+              <p className="italic text-gray-400">Sin cliente</p>
+            )}
+          </div>
+        )}
 
         <div className="w-full text-center">
           <button

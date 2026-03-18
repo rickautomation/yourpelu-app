@@ -68,7 +68,6 @@ export default function BottomNav({ onToggleSidebar, setSidebarOpen }: any) {
   }, [showPopup]);
 
   // interceptar click en links protegidos
-  // interceptar click en links protegidos
   const handleProtectedClick = (e: React.MouseEvent, href: string) => {
     if (!activeBarbershop) {
       e.preventDefault();

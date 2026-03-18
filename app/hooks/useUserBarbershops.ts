@@ -1,4 +1,4 @@
-// 
+//
 "use client";
 import { useEffect, useState } from "react";
 import { apiGet } from "../lib/apiGet";
@@ -30,8 +30,11 @@ interface User {
 }
 
 export function useUserBarbershops(user: User | null) {
-  const [activeBarbershop, setActiveBarbershop] = useState<Barbershop | null>(null);
+  const [activeBarbershop, setActiveBarbershop] = useState<Barbershop | null>(
+    null,
+  );
   const [barbershops, setBarbershops] = useState<Barbershop[]>([]);
+  const [settings, setSettings] = useState<any>(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -42,18 +45,28 @@ export function useUserBarbershops(user: User | null) {
       try {
         if (user.rol === "admin") {
           const current = await apiGet<{ barbershop: Barbershop }>(
-            `/current-barbershops/user/${user.id}/last`
+            `/current-barbershops/user/${user.id}/last`,
           );
           if (current?.barbershop) setActiveBarbershop(current.barbershop);
 
-          const all = await apiGet<Barbershop[]>(`/barbershops/user/${user.id}/all`);
+          const all = await apiGet<Barbershop[]>(
+            `/barbershops/user/${user.id}/all`,
+          );
           setBarbershops(all);
         }
 
         if (user.rol === "barber" || user.rol === "client") {
-          const all = await apiGet<Barbershop[]>(`/barbershops/user/${user.id}/all`);
+          const all = await apiGet<Barbershop[]>(
+            `/barbershops/user/${user.id}/all`,
+          );
           setBarbershops(all);
           setActiveBarbershop(all.length > 0 ? all[0] : null);
+        }
+        if (activeBarbershop) {
+          const s = await apiGet<any>(
+            `/barbershops/${activeBarbershop.id}/settings`,
+          );
+          setSettings(s);
         }
       } catch (err) {
         console.error("Error cargando barberías", err);
@@ -71,5 +84,11 @@ export function useUserBarbershops(user: User | null) {
     return () => window.removeEventListener("barbershop-changed", handler);
   }, [user]);
 
-  return { activeBarbershop, barbershops, setActiveBarbershop, loading };
+  return {
+    activeBarbershop,
+    barbershops,
+    settings,
+    setActiveBarbershop,
+    loading,
+  };
 }

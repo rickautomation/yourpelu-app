@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import { apiPost } from "@/app/lib/apiPost";
 
 import {
-  FiHome,
   FiUsers,
   FiImage,
   FiSettings,
@@ -45,7 +44,9 @@ export default function SidebarNav({
   userId: string;
   sessionId: string;
 }) {
-  const { clientOfferings } = useOfferings(activeBarbershop?.id);
+  const { clientOfferings, loadingCategories } = useOfferings(
+    activeBarbershop?.id,
+  );
 
   const [showSelector, setShowSelector] = useState(false);
 
@@ -174,19 +175,21 @@ export default function SidebarNav({
             ))}
         </div>
 
-        {clientOfferings.length < 1 && barbershops.length > 0 && (
-          <div className="flex flex-col gap-2 mt-4">
-            <button
-              onClick={() => {
-                setSidebarOpen(false);
-                router.push("/dashboard/initial-setup?step=2");
-              }}
-              className="px-4 py-2 bg-pink-600 text-white rounded-md shadow hover:bg-pink-700 transition"
-            >
-              Configura tu barbería
-            </button>
-          </div>
-        )}
+        {clientOfferings.length < 1 &&
+          barbershops.length > 0 &&
+          !loadingCategories && (
+            <div className="flex flex-col gap-2 mt-4">
+              <button
+                onClick={() => {
+                  setSidebarOpen(false);
+                  router.push("/dashboard/initial-setup?step=2");
+                }}
+                className="px-4 py-2 bg-pink-600 text-white rounded-md shadow hover:bg-pink-700 transition"
+              >
+                Configura tu barbería
+              </button>
+            </div>
+          )}
 
         {/* Links del sidebar */}
         {!showSelector && clientOfferings.length > 0 && (
@@ -228,7 +231,7 @@ export default function SidebarNav({
                   setSidebarOpen={setSidebarOpen}
                 >
                   <FiPlusCircle className="inline w-5 h-5 mr-2" />
-                  Registrar Servicio 
+                  Registrar Servicio
                 </SidebarLink>
                 <hr className="border-gray-700 my-2" />
                 <SidebarLink
