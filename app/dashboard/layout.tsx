@@ -46,7 +46,7 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-950 text-white relative">
+    <div className="min-h-screen flex flex-col bg-slate-950 text-white relative">
       {!sidebarOpen && (
         <Navbar
           onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}

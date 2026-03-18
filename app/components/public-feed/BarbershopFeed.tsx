@@ -3,9 +3,7 @@ import Image from "next/image";
 import {
   FaPhoneAlt,
   FaMapMarkerAlt,
-  FaClock,
   FaWhatsapp,
-  FaGift,
 } from "react-icons/fa";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination } from "swiper/modules";
@@ -13,6 +11,9 @@ import { Autoplay, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 import { useState } from "react";
+import { FiClock } from "react-icons/fi";
+import { LuMapPin } from "react-icons/lu";
+import { IoCalendarOutline, IoGiftOutline } from "react-icons/io5";
 
 type BarberImage = { id: string; imageUrl: string };
 
@@ -48,11 +49,11 @@ export default function BarbershopFeed({ barbershop }: Props) {
   const profile = barbershop.profile;
 
   return (
-    <div className="w-full max-w-md mx-auto text-white bg-gray-900 shadow-lg overflow-hidden">
+    <div className="w-full min-h-screen max-w-md mx-auto text-white bg-slate-900 shadow-lg overflow-hidden">
       {/* Header */}
-      <div className="flex flex-col items-center bg-gray-900">
+      <div className="flex flex-col items-center">
         {profile?.logoUrl && (
-          <div className="flex justify-around w-full px-2 py-4 bg-gray-900">
+          <div className="flex justify-around w-full px-2 py-4">
             <div className="w-20 h-20 rounded-full border-4 bg-black border-white overflow-hidden shadow-lg">
               <Image
                 src={`${process.env.NEXT_PUBLIC_API_URL}${profile.logoUrl}`}
@@ -64,9 +65,9 @@ export default function BarbershopFeed({ barbershop }: Props) {
               />
             </div>
             <div className="flex flex-col text-center items-center justify-center">
-              <h3 className="text-4xl font-bold">{barbershop.name}</h3>
+              <h3 className="text-3xl font-bold">{barbershop.name}</h3>
               {profile?.lema && (
-                <h2 className="text-lg font-semibold text-pink-400 italic">
+                <h2 className="text-md font-semibold text-pink-400 italic">
                   “{profile.lema}”
                 </h2>
               )}
@@ -79,47 +80,49 @@ export default function BarbershopFeed({ barbershop }: Props) {
           {profile?.openingHours && (
             <button
               onClick={() => setShowHours(true)}
-              className="w-16 h-16 rounded-full border-4 border-pink-400 flex flex-col items-center justify-center text-pink-400 hover:bg-pink-400 hover:text-white transition"
+              className="flex flex-col gap-1 items-center justify-center text-pink-400 hover:bg-pink-400 hover:text-white transition"
             >
-              <FaClock className="text-4xl" />
+              <FiClock className="text-6xl" />
+              <span className="text-xs">Horarios</span>
             </button>
           )}
 
           {barbershop.address && profile?.adressCoordinates && (
             <button
               onClick={() => setShowAddress(true)}
-              className="w-16 h-16 rounded-full border-4 border-pink-400 flex flex-col items-center justify-center text-pink-400 hover:bg-pink-400 hover:text-white transition"
+              className="flex flex-col gap-1 items-center justify-center text-pink-400 hover:bg-pink-400 hover:text-white transition"
             >
-              <FaMapMarkerAlt className="text-4xl" />
+              <LuMapPin className="text-6xl" />
+              <span className="text-xs">Ubicacion</span>
             </button>
           )}
 
           <button
             onClick={() => setShowPromos(true)}
-            className="w-16 h-16 rounded-full border-4 border-pink-400 flex flex-col items-center justify-center text-pink-400 hover:bg-pink-400 hover:text-white transition"
+            className="flex flex-col gap-1 items-center justify-center text-pink-400 hover:bg-pink-400 hover:text-white transition"
           >
-            <FaGift className="text-4xl" />
+            <IoGiftOutline className="text-6xl" />
+            <span className="text-xs">Promociones</span>
           </button>
 
-          {barbershop.phoneNumber && (
-            <button
-              onClick={() => setShowTurno(true)}
-              className="w-16 h-16 rounded-full border-4 border-pink-400 flex flex-col items-center justify-center text-pink-400 hover:bg-pink-400 hover:text-white transition"
-            >
-              <FaWhatsapp className="text-4xl" />
-            </button>
-          )}
+          <button
+            onClick={() => setShowTurno(true)}
+            className="flex flex-col gap-1 items-center justify-center text-pink-400 hover:bg-pink-400 hover:text-white transition"
+          >
+            <IoCalendarOutline className="text-6xl" />
+            <span className="text-xs">Turnos</span>
+          </button>
         </div>
 
         {/* Popups */}
         {showHours && (
           <div
             className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 px-6"
-            onClick={() => setShowHours(false)} // cerrar al tocar fuera
+            onClick={() => setShowHours(false)}
           >
             <div
               className="bg-gray-800 rounded-lg p-6 max-w-sm text-center"
-              onClick={(e) => e.stopPropagation()} // evitar cierre al tocar dentro
+              onClick={(e) => e.stopPropagation()}
             >
               <h3 className="text-xl font-bold text-pink-400 mb-4">Horarios</h3>
               <p className="text-gray-200">{profile?.openingHours}</p>
@@ -216,7 +219,6 @@ export default function BarbershopFeed({ barbershop }: Props) {
               >
                 <FaWhatsapp /> Abrir WhatsApp
               </a>
-
               <button
                 onClick={() => setShowTurno(false)}
                 className="mt-4 px-4 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600"
@@ -226,10 +228,19 @@ export default function BarbershopFeed({ barbershop }: Props) {
             </div>
           </div>
         )}
+
+        {/* Descripción más destacada */}
+        {profile?.description && (
+          <div className="px-6 py-4 text-center">
+            <p className="text-gray-300 text-md leading-relaxed">
+              {profile.description}
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Carrusel automático */}
-      <div className="px-6 pb-6 mt-6">
+      <div className="px-6 pb-6 mt-4">
         {profile?.images?.length ? (
           <Swiper
             modules={[Autoplay, Pagination]}
@@ -243,10 +254,10 @@ export default function BarbershopFeed({ barbershop }: Props) {
               <SwiperSlide key={img.id}>
                 <Image
                   src={`${process.env.NEXT_PUBLIC_API_URL}${img.imageUrl}`}
-                  alt="Imagen de la barbería" // 👈 obligatorio
+                  alt="Imagen de la barbería"
                   width={400}
-                  height={250}
-                  className="object-cover w-full h-[250px] rounded-lg"
+                  height={350}
+                  className="object-cover w-full h-[350px] rounded-lg"
                   unoptimized
                 />
               </SwiperSlide>
@@ -255,15 +266,6 @@ export default function BarbershopFeed({ barbershop }: Props) {
         ) : (
           <p className="italic text-gray-400 text-center">
             Próximamente fotos de nuestros cortes
-          </p>
-        )}
-      </div>
-
-      {/* Descripción */}
-      <div className="text-center px-6 pb-6">
-        {profile?.description && (
-          <p className="text-gray-300 text-sm leading-relaxed">
-            {profile.description}
           </p>
         )}
       </div>
