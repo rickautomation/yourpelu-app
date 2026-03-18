@@ -7,7 +7,6 @@ import { apiPatch } from "../lib/apiPatch";
 import { apiDelete } from "../lib/apiDelete";
 
 // DTO que coincide con tu backend
-// DTO que coincide con tu backend
 export type CreateOfferingDto = {
   price: number;
   userId: string;

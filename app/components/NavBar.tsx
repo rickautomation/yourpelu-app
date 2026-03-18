@@ -42,8 +42,6 @@ export default function Navbar({
     }
   };
 
-  console.log("barbershops quantity: ", barbershops?.length)
-
   // 👇 cerrar dropdown al hacer click fuera
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

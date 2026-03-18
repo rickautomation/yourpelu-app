@@ -38,7 +38,7 @@ export default function RegisterPage({ setView }: Props) {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center bg-gray-950 animate-slideIn px-4">
+    <div className="flex flex-col items-center animate-slideIn min-h-screen px-4">
       <p className="text-gray-500 text-center max-w-md">
         Registrate para empezar a gestionar tu peluquería. Vas a poder organizar
         turnos, clientes y cortes de manera simple y rápida, todo desde tu

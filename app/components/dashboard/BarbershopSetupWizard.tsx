@@ -7,7 +7,6 @@ import { useOfferings } from "@/app/hooks/useOfferings";
 import { useAuth } from "@/app/hooks/useAuth";
 import { useUserBarbershops } from "@/app/hooks/useUserBarbershops";
 import { WizardProvider } from "@/app/context/WizardContext";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 interface WizardProps {
@@ -24,7 +23,6 @@ export default function BarbershopSetupWizard({
 }: WizardProps) {
   const { user } = useAuth();
   const { activeBarbershop } = useUserBarbershops(user);
-  const { clientOfferings } = useOfferings(activeBarbershop?.id);
 
   const router = useRouter();
 

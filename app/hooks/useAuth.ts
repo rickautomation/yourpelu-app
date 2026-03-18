@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 import { useCallback, useState, useEffect } from "react";
 import { apiGet } from "../lib/apiGet";
 import { apiPost } from "../lib/apiPost";
-import { apiUpdate } from "../lib/apiUpdate";
 
 interface UserProfile {
   id: string;
@@ -33,40 +32,6 @@ export function useAuth() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
-
-  // const fetchUser = useCallback(async () => {
-  //   try {
-  //     const data = await apiGet<User>("/auth/me");
-  //     setUser(data);
-  //     setError(null);
-  //   } catch (err: any) {
-  //     if (!isRefreshing) {
-  //       isRefreshing = true;
-  //       refreshPromise = apiPost<{ ok: boolean }>("/auth/refresh", {}).finally(
-  //         () => {
-  //           isRefreshing = false;
-  //           refreshPromise = null;
-  //         },
-  //       );
-  //     }
-  //     try {
-  //       const refreshRes = await refreshPromise;
-  //       if (refreshRes?.ok) {
-  //         const data = await apiGet<User>("/auth/me");
-  //         setUser(data);
-  //         setError(null);
-  //       } else {
-  //         setError("No autorizado");
-  //         setUser(null);
-  //       }
-  //     } catch {
-  //       setError("No autorizado");
-  //       setUser(null);
-  //     }
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // }, []);
 
   const fetchUser = useCallback(async () => {
     try {
