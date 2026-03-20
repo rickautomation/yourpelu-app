@@ -62,12 +62,6 @@ export function useUserBarbershops(user: User | null) {
           setBarbershops(all);
           setActiveBarbershop(all.length > 0 ? all[0] : null);
         }
-        if (activeBarbershop) {
-          const s = await apiGet<any>(
-            `/barbershops/${activeBarbershop.id}/settings`,
-          );
-          setSettings(s);
-        }
       } catch (err) {
         console.error("Error cargando barberías", err);
       } finally {
@@ -83,6 +77,21 @@ export function useUserBarbershops(user: User | null) {
 
     return () => window.removeEventListener("barbershop-changed", handler);
   }, [user]);
+
+  useEffect(() => {
+    if (!activeBarbershop) return;
+    const loadSettings = async () => {
+      try {
+        const s = await apiGet<any>(
+          `/barbershops/${activeBarbershop.id}/settings`,
+        );
+        setSettings(s);
+      } catch (err) {
+        console.error("Error cargando settings", err);
+      }
+    };
+    loadSettings();
+  }, [activeBarbershop]);
 
   return {
     activeBarbershop,
