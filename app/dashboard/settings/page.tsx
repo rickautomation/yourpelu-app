@@ -67,35 +67,49 @@ export default function SettingsPage() {
 
   const [initialSettings, setInitialSettings] = useState<any>(null);
 
-  useEffect(() => {
-    const loadSettings = async () => {
-      if (!activeBarbershop?.id) return;
-      try {
-        const settings = await apiGet<any>(
-          `/barbershops/${activeBarbershop.id}/settings`,
-        );
-        if (settings) {
-          // setear estados con lo que viene del backend
-          setFeedActivo(settings.public_feed);
-          setTurnosDesdeFeed(settings.appointments_from_feed);
-          setTurnosDesdeYourpelu(settings.appointments_from_page);
-          setClientsIncludes(settings.clients_in_offerings);
-          setCierreCaja(settings.cash_closure_enabled);
-          setCierreDiario(settings.cash_closure_daily);
-          setCierreHorario(settings.cash_closure_daily_time || "18:00");
-          setCierreSemanal(settings.cash_closure_weekly);
-          setCierreDiaSemana(settings.cash_closure_weekly_day || "Sábado");
-          setCierreMensual(settings.cash_closure_monthly);
+useEffect(() => {
+  const loadSettings = async () => {
+    if (!activeBarbershop?.id) return;
+    try {
+      const settings = await apiGet<any>(
+        `/barbershops/${activeBarbershop.id}/settings`,
+      );
 
-          // guardar referencia inicial para comparar cambios
-          setInitialSettings(settings);
-        }
-      } catch (err) {
-        console.error("Error cargando configuración:", err);
-      }
-    };
-    loadSettings();
-  }, [activeBarbershop?.id]);
+      const defaultSettings = {
+        public_feed: false,
+        appointments_from_feed: false,
+        appointments_from_page: false,
+        clients_in_offerings: false,
+        cash_closure_enabled: false,
+        cash_closure_daily: false,
+        cash_closure_daily_time: "18:00",
+        cash_closure_weekly: false,
+        cash_closure_weekly_day: "Sábado",
+        cash_closure_monthly: false,
+      };
+
+      const effectiveSettings = settings ?? defaultSettings;
+
+      // setear estados
+      setFeedActivo(effectiveSettings.public_feed);
+      setTurnosDesdeFeed(effectiveSettings.appointments_from_feed);
+      setTurnosDesdeYourpelu(effectiveSettings.appointments_from_page);
+      setClientsIncludes(effectiveSettings.clients_in_offerings);
+      setCierreCaja(effectiveSettings.cash_closure_enabled);
+      setCierreDiario(effectiveSettings.cash_closure_daily);
+      setCierreHorario(effectiveSettings.cash_closure_daily_time || "18:00");
+      setCierreSemanal(effectiveSettings.cash_closure_weekly);
+      setCierreDiaSemana(effectiveSettings.cash_closure_weekly_day || "Sábado");
+      setCierreMensual(effectiveSettings.cash_closure_monthly);
+
+      // guardar referencia inicial
+      setInitialSettings(effectiveSettings);
+    } catch (err) {
+      console.error("Error cargando configuración:", err);
+    }
+  };
+  loadSettings();
+}, [activeBarbershop?.id]);
 
   // luego podés calcular hasChanges comparando contra initialSettings
   const hasChanges =
