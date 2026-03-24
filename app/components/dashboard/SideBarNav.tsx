@@ -45,9 +45,7 @@ export default function SidebarNav({
   userId: string;
   sessionId: string;
 }) {
-  const { clientOfferings, loadingCategories, loading } = useOfferings(
-    activeBarbershop?.id,
-  );
+  const { clientOfferings, loading } = useOfferings(activeBarbershop?.id);
 
   const [showSelector, setShowSelector] = useState(false);
 
@@ -176,17 +174,31 @@ export default function SidebarNav({
             ))}
         </div>
 
-        {clientOfferings.length < 1 && barbershops.length > 0 && (
-          <div className="flex flex-col gap-2 mt-4">
-            <button
-              onClick={() => {
-                setSidebarOpen(false);
-                router.push("/dashboard/initial-setup?step=2");
-              }}
-              className="px-4 py-2 bg-pink-600 text-white rounded-md shadow hover:bg-pink-700 transition"
+        {loading && (
+          <div className="flex justify-center items-center mt-4">
+            <svg
+              className="animate-spin h-6 w-6 text-pink-600"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
             >
-              Configura tu barbería
-            </button>
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              ></circle>
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+              ></path>
+            </svg>
+            <span className="ml-2 text-pink-600 text-sm">
+              Cargando servicios...
+            </span>
           </div>
         )}
 
@@ -239,7 +251,7 @@ export default function SidebarNav({
                   >
                     <div className="flex w-26  border rounded-md px-2 py-4 items-end text-xs text-center">
                       <FiList className="inline w-8 h-8 mr-2" />
-                       <div className="text-start">
+                      <div className="text-start">
                         <p>Lista de </p>
                         <p>Servicios</p>
                       </div>
@@ -257,7 +269,7 @@ export default function SidebarNav({
                       </div>
                     </div>
                   </SidebarLink>
-                   <SidebarLink
+                  <SidebarLink
                     href="/dashboard/offerings/add"
                     setSidebarOpen={setSidebarOpen}
                   >
@@ -286,12 +298,12 @@ export default function SidebarNav({
                     href="/dashboard/clientes"
                     setSidebarOpen={setSidebarOpen}
                   >
-                   <div className="flex w-26  border rounded-md p-2 px-2 py-4 items-end text-xs text-end">
+                    <div className="flex w-26  border rounded-md p-2 px-2 py-4 items-end text-xs text-end">
                       <FiUsers className="inline w-8 h-8 mr-2" />
                       <p>Clientes</p>
                     </div>
                   </SidebarLink>
-                   <SidebarLink
+                  <SidebarLink
                     href="/dashboard/clientes"
                     setSidebarOpen={setSidebarOpen}
                   >
@@ -326,7 +338,7 @@ export default function SidebarNav({
                     href="/dashboard/insumos"
                     setSidebarOpen={setSidebarOpen}
                   >
-                   <div className="flex w-26  border rounded-md p-2 px-2 py-4 items-end text-xs text-end">
+                    <div className="flex w-26  border rounded-md p-2 px-2 py-4 items-end text-xs text-end">
                       <FiBox className="inline w-8 h-8 mr-2" />
                       <p>Otro</p>
                     </div>
@@ -344,7 +356,7 @@ export default function SidebarNav({
                       <p>Reportes</p>
                     </div>
                   </SidebarLink>
-                   <SidebarLink
+                  <SidebarLink
                     href="/dashboard/reportes"
                     setSidebarOpen={setSidebarOpen}
                   >
@@ -366,7 +378,7 @@ export default function SidebarNav({
 
                 <hr className="border-gray-700 my-2" />
 
-                 <div className="flex justify-end">
+                <div className="flex justify-end">
                   <SidebarLink
                     href="/dashboard/settings"
                     setSidebarOpen={setSidebarOpen}
@@ -379,6 +391,20 @@ export default function SidebarNav({
                 </div>
               </>
             )}
+          </div>
+        )}
+
+        {!loading && clientOfferings && clientOfferings.length < 1 && (
+          <div className="flex flex-col gap-2 mt-4">
+            <button
+              onClick={() => {
+                setSidebarOpen(false);
+                router.push("/dashboard/initial-setup?step=2");
+              }}
+              className="px-4 py-2 bg-pink-600 text-white rounded-md shadow hover:bg-pink-700 transition"
+            >
+              Configura tu barbería
+            </button>
           </div>
         )}
       </nav>
