@@ -192,7 +192,7 @@ export default function SidebarNav({
 
         {/* Links del sidebar */}
         {!showSelector && clientOfferings.length > 0 && (
-          <>
+          <div className="mt-4 text-pink-600">
             {userRole === "admin" && (
               <>
                 <div className="flex justify-between">
@@ -334,7 +334,7 @@ export default function SidebarNav({
                 </div>
                 <hr className="border-gray-700 my-2" />
 
-                <div className="flex justify-start gap-2 ">
+                <div className="flex justify-between">
                   <SidebarLink
                     href="/dashboard/reportes"
                     setSidebarOpen={setSidebarOpen}
@@ -344,6 +344,29 @@ export default function SidebarNav({
                       <p>Reportes</p>
                     </div>
                   </SidebarLink>
+                   <SidebarLink
+                    href="/dashboard/reportes"
+                    setSidebarOpen={setSidebarOpen}
+                  >
+                    <div className="flex w-26 border rounded-md p-2 px-2 py-4 items-end text-xs text-end">
+                      <FiBarChart2 className="inline w-8 h-8 mr-2" />
+                      <p>Otro</p>
+                    </div>
+                  </SidebarLink>
+                  <SidebarLink
+                    href="/dashboard/reportes"
+                    setSidebarOpen={setSidebarOpen}
+                  >
+                    <div className="flex w-26 border rounded-md p-2 px-2 py-4 items-end text-xs text-start">
+                      <FiBarChart2 className="inline w-8 h-8 mr-2" />
+                      <p>Otro mas</p>
+                    </div>
+                  </SidebarLink>
+                </div>
+
+                <hr className="border-gray-700 my-2" />
+
+                 <div className="flex justify-end">
                   <SidebarLink
                     href="/dashboard/settings"
                     setSidebarOpen={setSidebarOpen}
@@ -354,10 +377,9 @@ export default function SidebarNav({
                     </div>
                   </SidebarLink>
                 </div>
-                <hr className="border-gray-700 my-2" />
               </>
             )}
-          </>
+          </div>
         )}
       </nav>
     </aside>
