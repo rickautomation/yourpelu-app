@@ -19,31 +19,6 @@ self.addEventListener("activate", (event) => {
   self.clients.claim();
 });
 
-// Fetch: estrategia mixta
-// self.addEventListener("fetch", (event) => {
-//   const req = event.request;
-
-//   // Si es llamada a la API → network-first
-//   if (req.url.includes("/api/")) {
-//     event.respondWith(
-//       fetch(req)
-//         .then((res) => {
-//           // opcional: cachear respuesta para offline
-//           const clone = res.clone();
-//           caches.open(CACHE_NAME).then((cache) => cache.put(req, clone));
-//           return res;
-//         })
-//         .catch(() => caches.match(req)) // si falla la red, usar cache
-//     );
-//     return;
-//   }
-
-//   // Para assets estáticos → cache-first
-//   event.respondWith(
-//     caches.match(req).then((cached) => cached || fetch(req))
-//   );
-// });
-
 self.addEventListener("fetch", (event) => {
   const req = event.request;
 
