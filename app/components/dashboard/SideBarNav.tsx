@@ -200,7 +200,7 @@ export default function SidebarNav({
                     href="/dashboard/dashboard"
                     setSidebarOpen={setSidebarOpen}
                   >
-                    <div className="flex w-26 border rounded-md p-2 items-end text-xs text-end">
+                    <div className="flex w-26  border rounded-md p-2 px-2 py-4 items-end text-xs text-end">
                       <FiHome className="inline w-8 h-8 mr-2" />
                       <p>Home</p>
                     </div>
@@ -209,7 +209,7 @@ export default function SidebarNav({
                     href="/dashboard/barberos"
                     setSidebarOpen={setSidebarOpen}
                   >
-                    <div className="flex w-26 border rounded-md p-2 items-end text-xs text-end">
+                    <div className="flex w-26  border rounded-md p-2 px-2 py-4 items-end text-xs text-end">
                       <FiUsers className="inline w-8 h-8 mr-1" />
                       <p>Barberos</p>
                     </div>
@@ -218,7 +218,7 @@ export default function SidebarNav({
                     href="/dashboard/barbershop-profile-settings"
                     setSidebarOpen={setSidebarOpen}
                   >
-                    <div className="flex w-26 border rounded-md p-2 items-end text-xs text-end">
+                    <div className="flex w-26  border rounded-md p-2 px-2 py-4 items-end text-xs text-end">
                       <FiImage className="inline w-8 h-8 mr-2" />
                       <p>Feed</p>
                     </div>
@@ -237,7 +237,7 @@ export default function SidebarNav({
                     href="/dashboard/offerings"
                     setSidebarOpen={setSidebarOpen}
                   >
-                    <div className="flex w-26 border rounded-md p-2 items-end text-xs text-end">
+                    <div className="flex w-26  border rounded-md px-2 py-4 items-end text-xs text-center">
                       <FiList className="inline w-8 h-8 mr-2" />
                        <div className="text-start">
                         <p>Lista de </p>
@@ -249,7 +249,7 @@ export default function SidebarNav({
                     href="/dashboard/offerings/add"
                     setSidebarOpen={setSidebarOpen}
                   >
-                    <div className="flex w-26 border rounded-md p-2 items-end text-xs text-end">
+                    <div className="flex w-26  border rounded-md p-2 px-2 py-4 items-end text-xs text-end">
                       <FiPlusCircle className="inline w-8 h-8 mr-2" />
                       <div>
                         <p>Registrar </p>
@@ -261,7 +261,7 @@ export default function SidebarNav({
                     href="/dashboard/offerings/add"
                     setSidebarOpen={setSidebarOpen}
                   >
-                    <div className="flex w-26 border rounded-md p-2 items-end text-xs text-end">
+                    <div className="flex w-26  border rounded-md p-2 px-2 py-4 items-end text-xs text-end">
                       <FiPlusCircle className="inline w-8 h-8 mr-2" />
                       <div>
                         <p>Otro </p>
@@ -277,7 +277,7 @@ export default function SidebarNav({
                     href="/dashboard/turnos"
                     setSidebarOpen={setSidebarOpen}
                   >
-                    <div className="flex w-26 border rounded-md p-2 items-end text-xs text-end">
+                    <div className="flex w-26  border rounded-md p-2 px-2 py-4 items-end text-xs text-end">
                       <FiCalendar className="inline w-8 h-8 mr-2" />
                       <p>Turnos</p>
                     </div>
@@ -286,7 +286,7 @@ export default function SidebarNav({
                     href="/dashboard/clientes"
                     setSidebarOpen={setSidebarOpen}
                   >
-                   <div className="flex w-26 border rounded-md p-2 items-end text-xs text-end">
+                   <div className="flex w-26  border rounded-md p-2 px-2 py-4 items-end text-xs text-end">
                       <FiUsers className="inline w-8 h-8 mr-2" />
                       <p>Clientes</p>
                     </div>
@@ -295,7 +295,7 @@ export default function SidebarNav({
                     href="/dashboard/clientes"
                     setSidebarOpen={setSidebarOpen}
                   >
-                    <div className="flex w-26 border rounded-md p-2 items-end text-xs text-end">
+                    <div className="flex w-26  border rounded-md p-2 px-2 py-4 items-end text-xs text-end">
                       <FiUsers className="inline w-8 h-8 mr-2" />
                       <p>Otro</p>
                     </div>
@@ -308,7 +308,7 @@ export default function SidebarNav({
                     href="/dashboard/insumos"
                     setSidebarOpen={setSidebarOpen}
                   >
-                    <div className="flex w-26 border rounded-md p-2 items-end text-xs text-end">
+                    <div className="flex w-26  border rounded-md p-2 px-2 py-4 items-end text-xs text-end">
                       <FiBox className="inline w-8 h-8 mr-2" />
                       <p>Insumos</p>
                     </div>
@@ -317,7 +317,7 @@ export default function SidebarNav({
                     href="/dashboard/insumos"
                     setSidebarOpen={setSidebarOpen}
                   >
-                    <div className="flex w-26 border rounded-md p-2 items-end text-xs text-end">
+                    <div className="flex w-26  border rounded-md p-2 px-2 py-4 items-end text-xs text-end">
                       <FiBox className="inline w-8 h-8 mr-2" />
                       <p>Distinto</p>
                     </div>
@@ -326,7 +326,7 @@ export default function SidebarNav({
                     href="/dashboard/insumos"
                     setSidebarOpen={setSidebarOpen}
                   >
-                   <div className="flex w-26 border rounded-md p-2 items-end text-xs text-end">
+                   <div className="flex w-26  border rounded-md p-2 px-2 py-4 items-end text-xs text-end">
                       <FiBox className="inline w-8 h-8 mr-2" />
                       <p>Otro</p>
                     </div>
@@ -339,7 +339,7 @@ export default function SidebarNav({
                     href="/dashboard/reportes"
                     setSidebarOpen={setSidebarOpen}
                   >
-                    <div className="flex w-26 border rounded-md p-2 items-end text-xs text-end">
+                    <div className="flex w-26  border rounded-md p-2 px-2 py-4 items-end text-xs text-end">
                       <FiBarChart2 className="inline w-8 h-8 mr-2" />
                       <p>Reportes</p>
                     </div>
@@ -348,7 +348,7 @@ export default function SidebarNav({
                     href="/dashboard/settings"
                     setSidebarOpen={setSidebarOpen}
                   >
-                    <div className="flex w-26 border rounded-md p-2 items-end text-xs text-end">
+                    <div className="flex w-26  border rounded-md p-2 px-2 py-4 items-end text-xs text-end">
                       <FiSettings className="inline w-8 h-8 mr-2" />
                       <p>Config</p>
                     </div>
