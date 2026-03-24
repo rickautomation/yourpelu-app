@@ -129,7 +129,7 @@ export default function BottomNav({ onToggleSidebar, setSidebarOpen }: any) {
               <img
                 src={`${API_URL}${user.userProfile.avatarUrl}`}
                 alt="User Avatar"
-                className="w-10 h-10 rounded-full border border-gray-700"
+                className="w-10 h-10 rounded-full object-cover border border-gray-700"
               />
             ) : (
               <div className="w-10 h-10 flex items-center justify-center rounded-full bg-pink-500 text-white font-bold">
