@@ -115,21 +115,23 @@ export function useOfferings(barbershopId?: string) {
   }, [barbershopId]);
 
   // cargar servicios propios de la barbería
-  useEffect(() => {
-    const fetchClientOfferings = async () => {
-      if (!barbershopId) return;
-      try {
-        const data = await apiGet<ClientOfferingType[]>(
-          `/client-offering-types/barbershop/${barbershopId}`,
-        );
-        setClientOfferings(data);
-      } catch (err) {
-        console.error("Error cargando servicios de barbería:", err);
-      }
-    };
-    fetchClientOfferings();
-    setLoading(false)
-  }, [barbershopId]);
+useEffect(() => {
+  const fetchClientOfferings = async () => {
+    if (!barbershopId) return;
+    try {
+      setLoading(true); // 👈 arrancamos en loading
+      const data = await apiGet<ClientOfferingType[]>(
+        `/client-offering-types/barbershop/${barbershopId}`,
+      );
+      setClientOfferings(data);
+    } catch (err) {
+      console.error("Error cargando servicios de barbería:", err);
+    } finally {
+      setLoading(false); // 👈 terminamos loading al final
+    }
+  };
+  fetchClientOfferings();
+}, [barbershopId]);
 
   // crear un nuevo servicio
   const addOffering = async (data: {
