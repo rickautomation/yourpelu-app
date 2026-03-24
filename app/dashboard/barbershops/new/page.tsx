@@ -100,6 +100,7 @@ export default function BarbershopPage() {
                   });
                   if (typeof refreshUser === "function") {
                     await refreshUser();
+                    window.location.href = "/dashboard";
                   }
                   setIsEditing(false);
                 }

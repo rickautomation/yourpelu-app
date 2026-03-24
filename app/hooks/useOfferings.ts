@@ -71,6 +71,8 @@ export function useOfferings(barbershopId?: string) {
   >(null);
   const [loadingCategories, setLoadingCategories] = useState(true);
 
+    const [loading, setLoading] = useState(true);
+
   const [clientOfferings, setClientOfferings] = useState<ClientOfferingType[]>(
     [],
   );
@@ -126,6 +128,7 @@ export function useOfferings(barbershopId?: string) {
       }
     };
     fetchClientOfferings();
+    setLoading(false)
   }, [barbershopId]);
 
   // crear un nuevo servicio
@@ -222,6 +225,7 @@ export function useOfferings(barbershopId?: string) {
     addClientCategory,
     isOfferingCategory,
     globalCategories,
-    loadingCategories
+    loadingCategories,
+    loading
   };
 }

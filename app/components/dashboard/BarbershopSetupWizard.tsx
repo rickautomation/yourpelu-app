@@ -60,6 +60,10 @@ export default function BarbershopSetupWizard({
     }
   };
 
+  useEffect(() => {
+    setStep(initialStep);
+  }, [initialStep]);
+
   return (
     <WizardProvider>
       <div className="text-white rounded-lg shadow-md">
@@ -180,7 +184,7 @@ export default function BarbershopSetupWizard({
 
             <button
               onClick={() => {
-                router.push("/dashboard");
+                window.location.href = "/dashboard";
               }}
               className="mt-4 bg-pink-400 text-white px-4 py-2 rounded hover:bg-pink-500 transition-colors font-semibold"
             >
