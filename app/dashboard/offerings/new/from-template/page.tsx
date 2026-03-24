@@ -51,6 +51,7 @@ export default function NewOfferingFromTemplatePage({
   const [openPriceInput, setOpenPriceInput] = useState<string | null>(null);
   const [price, setPrice] = useState<string>("");
   const [recentlyAdded, setRecentlyAdded] = useState<string | null>(null);
+  const [showErrorPopup, setShowErrorPopup] = useState(false);
 
   const [message, setMessage] = useState<{
     type: "success" | "error";
@@ -168,6 +169,12 @@ export default function NewOfferingFromTemplatePage({
                       <div className="flex gap-2">
                         <button
                           onClick={async () => {
+                            if (!price || Number(price) <= 0) {
+                              setShowErrorPopup(true);
+                              setTimeout(() => setShowErrorPopup(false), 2000); // se oculta solo
+                              return;
+                            }
+
                             await addOffering({
                               baseTypeId: service.id,
                               categoryId: selectedCategory?.id,
@@ -175,6 +182,7 @@ export default function NewOfferingFromTemplatePage({
                               description: service.description,
                               price: Number(price),
                             });
+
                             setOpenPriceInput(null);
                             setPrice("");
                             setRecentlyAdded(service.id);
@@ -236,6 +244,17 @@ export default function NewOfferingFromTemplatePage({
           >
             Finalizar
           </button>
+        </div>
+      )}
+
+      {showErrorPopup && (
+        <div className="fixed inset-0 backdrop-blur-sm bg-opacity-70 flex items-center justify-center z-50">
+          <div className="border border-red-500 bg-gray-800 text-white rounded-lg shadow-lg p-6 flex items-center space-x-3">
+            <span className="text-red-400 text-3xl">⚠️</span>
+            <span className="font-semibold">
+              Debes ingresar un precio válido
+            </span>
+          </div>
         </div>
       )}
     </div>

@@ -22,6 +22,8 @@ export default function OfferingPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [newPrice, setNewPrice] = useState<string>("");
 
+  const [showErrorPopup, setShowErrorPopup] = useState(false);
+
   // Construimos lista de categorías únicas
   const categories = Array.from(
     new Map(
@@ -136,7 +138,7 @@ export default function OfferingPage() {
         {offeringsToShow.map((co) => (
           <div
             key={co.id}
-            className="px-6 py-4 bg-gray-700 rounded-lg shadow-md flex flex-col gap-2"
+            className="px-6 py-4 bg-gray-800 rounded-lg shadow-md flex flex-col gap-2"
           >
             <div className="flex items-center justify-between">
               <div>
@@ -174,6 +176,12 @@ export default function OfferingPage() {
                   </button>
                   <button
                     onClick={async () => {
+                      if (!newPrice || Number(newPrice) <= 0) {
+                        setShowErrorPopup(true);
+                        setTimeout(() => setShowErrorPopup(false), 2000); // se oculta solo
+                        return;
+                      }
+
                       await updatePrice(co.id, Number(newPrice));
                       setEditingId(null);
                       setNewPrice("");
@@ -189,7 +197,7 @@ export default function OfferingPage() {
                     onClick={async () => {
                       await deleteOffering(co.id);
                     }}
-                    className="flex-1 bg-red-500 text-white px-3 py-2 rounded hover:bg-red-700 transition-colors text-sm font-semibold"
+                    className="flex-1 bg-rose-600 text-white px-3 py-2 rounded hover:bg-red-700 transition-colors text-sm font-semibold"
                   >
                     Borrar
                   </button>
@@ -198,7 +206,7 @@ export default function OfferingPage() {
                       setEditingId(co.id);
                       setNewPrice(String(parseFloat(String(co.price))));
                     }}
-                    className="flex-1 bg-blue-600 text-white px-3 py-2 rounded hover:bg-yellow-600 transition-colors text-sm font-semibold"
+                    className="flex-1 bg-cyan-700 text-white px-3 py-2 rounded hover:bg-yellow-600 transition-colors text-sm font-semibold"
                   >
                     Editar
                   </button>
@@ -216,6 +224,17 @@ export default function OfferingPage() {
           </div>
         )}
       </div>
+
+      {showErrorPopup && (
+        <div className="fixed inset-0 backdrop-blur-sm bg-opacity-70 flex items-center justify-center z-50">
+          <div className="border border-red-500 bg-gray-800 text-white rounded-lg shadow-lg p-6 flex items-center space-x-3">
+            <span className="text-red-400 text-3xl">⚠️</span>
+            <span className="font-semibold">
+              Debes ingresar un precio válido
+            </span>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -44,7 +44,7 @@ export default function SidebarNav({
   userId: string;
   sessionId: string;
 }) {
-  const { clientOfferings, loadingCategories } = useOfferings(
+  const { clientOfferings, loadingCategories, loading } = useOfferings(
     activeBarbershop?.id,
   );
 
@@ -176,8 +176,7 @@ export default function SidebarNav({
         </div>
 
         {clientOfferings.length < 1 &&
-          barbershops.length > 0 &&
-          !loadingCategories && (
+          barbershops.length > 0 && (
             <div className="flex flex-col gap-2 mt-4">
               <button
                 onClick={() => {

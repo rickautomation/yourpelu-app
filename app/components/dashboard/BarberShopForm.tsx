@@ -45,7 +45,7 @@ export default function BarbershopForm({
 };
 
   return (
-    <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+    <form className="flex flex-col gap-4 text-start" onSubmit={handleSubmit}>
       {message && (
         <div className="mb-4 bg-pink-500 text-white text-center py-2 rounded">
           {message}

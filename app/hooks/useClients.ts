@@ -17,7 +17,10 @@ export function useClients() {
   const { user } = useAuth();
   const [clients, setClients] = useState<BarberClient[]>([]);
   const [loading, setLoading] = useState(true);
-  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [message, setMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
 
   const barbershopId = user?.barbershop?.id;
 
@@ -27,7 +30,9 @@ export function useClients() {
       return;
     }
     try {
-      const data = await apiGet<BarberClient[]>(`/barber-clients/barbershop/${barbershopId}`);
+      const data = await apiGet<BarberClient[]>(
+        `/barber-clients/barbershop/${barbershopId}`,
+      );
       setClients(data);
     } catch (err) {
       console.error("Error cargando clientes", err);
@@ -38,12 +43,17 @@ export function useClients() {
 
   const addClient = async (client: Omit<BarberClient, "id" | "createdAt">) => {
     try {
-      await apiPost(`/barber-clients/barbershop/${barbershopId}`, client);
+      const created = await apiPost(
+        `/barber-clients/barbershop/${barbershopId}`,
+        client,
+      );
       await fetchClients();
       showTempMessage("success", "Cliente creado exitosamente");
+      return created; // devolver el cliente creado con id
     } catch (err) {
       console.error("Error creando cliente", err);
       showTempMessage("error", "Error al crear cliente");
+      return null;
     }
   };
 

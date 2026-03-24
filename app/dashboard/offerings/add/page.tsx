@@ -22,10 +22,11 @@ export type CreateOfferingDto = {
 export default function AddOwnOffering() {
   const { user } = useAuth();
   const { activeBarbershop, settings } = useUserBarbershops(user);
-  const { clientCategories, paymentMethods } =
-    useOfferingsCategories(activeBarbershop?.id);
+  const { clientCategories, paymentMethods } = useOfferingsCategories(
+    activeBarbershop?.id,
+  );
   const { createOffering, loading, error } = useOfferingsCrud();
-  const { clients, message, addClient, deleteClient } = useClients();
+  const { clients, addClient } = useClients();
 
   const [selectedCategory, setSelectedCategory] = useState<any | null>(null);
   const [selectedClientType, setSelectedClientType] = useState<any | null>(
@@ -40,6 +41,8 @@ export default function AddOwnOffering() {
   const [showPaymentPopup, setShowPaymentPopup] = useState(false);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
+  const [newClientName, setNewClientName] = useState(""); // input nombre
+  const [newClientLastname, setNewClientLastname] = useState(""); // input apellido
 
   const categoryRef = useRef<HTMLDivElement | null>(null);
   const clientTypeRef = useRef<HTMLDivElement | null>(null);
@@ -144,13 +147,16 @@ export default function AddOwnOffering() {
       clientOfferingTypeId: selectedClientType?.id || null,
       clientOfferingCategoryId: selectedCategory?.id || null,
       paymentMethodId: selectedPaymentMethod?.id || null,
-      clientId: selectedClient?.id || null, // 👈 agregar esto
+      clientId: selectedClient?.id || null,
     };
 
     try {
       const offering = await createOffering(dto);
       if (offering) {
         setShowSuccessPopup(true);
+        setSelectedClient(null);
+        setSearchTerm("");
+        setShowAdd(false);
         setTimeout(() => setShowSuccessPopup(false), 3000);
       }
     } catch (err) {
@@ -304,55 +310,172 @@ export default function AddOwnOffering() {
             className="border border-pink-600 bg-gray-800 rounded-lg p-6 w-80"
             ref={clientRef}
           >
-            <h2 className="text-center text-white text-lg mb-4">
-              Elegí un cliente
-            </h2>
+            {filteredClients.length > 0 && !showAdd && (
+              <h2 className="text-center text-white text-lg mb-4">
+                Elegí un cliente
+              </h2>
+            )}
 
-            {!showAdd && (
+            {!showAdd && filteredClients.length > 0 && (
               <div className="flex justify-between items-center mb-4">
                 <input
                   type="text"
-                  placeholder="Buscar cliente..."
+                  placeholder="Buscar..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value.trim())}
                   className="px-2 py-2 rounded bg-gray-700 text-white w-full max-w-xs focus:outline-none focus:ring-2 focus:ring-pink-400"
                 />
                 <button
                   onClick={() => setShowAdd(true)}
-                  className="w-10 h-10 flex items-center justify-center bg-pink-400 text-white rounded-md hover:bg-pink-500 transition-colors text-xl font-bold ml-2"
+                  className="flex gap-2 items-center justify-center bg-pink-400 px-2  text-white rounded-md hover:bg-pink-500 transition-colors font-bold ml-2"
                 >
-                  +
+                  <span>nuevo </span>
+                  <span className="text-4xl">+</span>
                 </button>
               </div>
             )}
 
-            <ul className="space-y-3">
-              {filteredClients.slice(0, 3).length > 0 ? (
-                filteredClients.slice(0, 3).map((client) => (
-                  <li
-                    key={client.id}
-                    onClick={() => {
-                      setSelectedClient(client);
-                      setShowClientPopup(false);
-                    }}
-                    className="px-3 py-3 border border-pink-600 bg-gray-700 text-white rounded-lg cursor-pointer hover:bg-gray-600 transition-colors"
-                  >
-                    <div className="flex flex-col">
-                      <span className="font-semibold">
-                        {client.name} {client.lastname}
-                      </span>
-                      <span className="text-sm text-gray-300">
-                        {client.email ?? client.phone}
-                      </span>
+            {/* Lista de clientes con scroll */}
+            {!showAdd && (
+              <ul className="space-y-3 max-h-48 overflow-y-auto">
+                {clients.length === 0 ? (
+                  <li className="p-3 text-gray-400 text-center">
+                    Aun no tienes clientes
+                    <div className="flex gap-2 justify-center mt-2">
+                      <button
+                        onClick={() => setShowAdd(true)}
+                        className="bg-pink-400 text-white px-3 py-2 rounded hover:bg-pink-500 transition-colors text-sm font-semibold"
+                      >
+                        Agregar ahora
+                      </button>
+                      <button
+                        onClick={() => setShowClientPopup(false)}
+                        className="bg-gray-600 text-white px-3 py-2 rounded hover:bg-gray-700 transition-colors text-sm font-semibold"
+                      >
+                        Cancelar
+                      </button>
                     </div>
                   </li>
-                ))
-              ) : (
-                <li className="px-3 py-3 bg-gray-700 text-gray-400 rounded-lg text-center">
-                  No se encontraron clientes
-                </li>
-              )}
-            </ul>
+                ) : filteredClients.length > 0 ? (
+                  <div>
+                    {
+                     searchTerm.length === 0 && ( <li
+                        onClick={() => {
+                          setSelectedClient(null);
+                          setShowClientPopup(false);
+                        }}
+                        className="px-3 py-2 border border-pink-600 bg-gray-700 text-white rounded-lg cursor-pointer hover:bg-gray-600 transition-colors mb-1"
+                      >
+                        <div className="flex flex-col">
+                          <span className="font-semibold">
+                            Sin cliente
+                          </span>
+                        </div>
+                      </li>)
+                    }
+                    {filteredClients.map((client) => (
+                      <li
+                        key={client.id}
+                        onClick={() => {
+                          setSelectedClient(client);
+                          setShowClientPopup(false);
+                        }}
+                        className="px-3 py-2 border border-pink-600 bg-gray-700 text-white rounded-lg cursor-pointer hover:bg-gray-600 transition-colors mb-1"
+                      >
+                        <div className="flex flex-col">
+                          <span className="font-semibold">
+                            {client.name} {client.lastname}
+                          </span>
+                        </div>
+                      </li>
+                    ))}
+                  </div>
+                ) : (
+                  <li className="p-3 text-gray-400 text-center">
+                    No se encontraron coincidencias
+                    <div className="flex flex-col gap-2 justify-center mt-2">
+                      <button
+                        onClick={() => setShowAdd(true)}
+                        className="bg-pink-400 text-white px-3 py-2 rounded hover:bg-pink-500 transition-colors text-sm font-semibold"
+                      >
+                        Agregar nuevo cliente
+                      </button>
+                      <button
+                        onClick={() => {
+                          setShowAdd(false); // volvemos a la vista original
+                          setSearchTerm(""); // opcional: limpiar búsqueda
+                        }}
+                        className="bg-gray-600 text-white px-3 py-2 rounded hover:bg-gray-700 transition-colors text-sm font-semibold"
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                  </li>
+                )}
+              </ul>
+            )}
+
+            {/* Formulario para agregar cliente */}
+            {showAdd && (
+              <form
+                onSubmit={async (e) => {
+                  e.preventDefault();
+
+                  const newClient = {
+                    name: newClientName,
+                    lastname: newClientLastname,
+                  };
+
+                  const created = await addClient(newClient);
+
+                  if (created) {
+                    setSelectedClient(created);
+                  }
+
+                  // Cerramos el form y limpiamos inputs
+                  setShowAdd(false);
+                  setNewClientName("");
+                  setNewClientLastname("");
+                  setShowClientPopup(false); // opcional: cerrar popup automáticamente
+                }}
+                className="flex flex-col gap-3"
+              >
+                <h2 className="text-center text-lg font-semibold">
+                  Nuevo Cliente
+                </h2>
+                <input
+                  type="text"
+                  placeholder="Nombre"
+                  value={newClientName}
+                  onChange={(e) => setNewClientName(e.target.value)}
+                  className="px-2 py-2 rounded bg-gray-700 text-white"
+                  required
+                />
+                <input
+                  type="text"
+                  placeholder="Apellido"
+                  value={newClientLastname}
+                  onChange={(e) => setNewClientLastname(e.target.value)}
+                  className="px-2 py-2 rounded bg-gray-700 text-white"
+                  required
+                />
+                <div className="flex gap-2">
+                  <button
+                    type="submit"
+                    className="flex-1 bg-pink-400 text-white px-3 py-2 rounded hover:bg-pink-500 transition-colors text-sm font-semibold"
+                  >
+                    Guardar
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowAdd(false)}
+                    className="flex-1 bg-gray-600 text-white px-3 py-2 rounded hover:bg-gray-700 transition-colors text-sm font-semibold"
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              </form>
+            )}
           </div>
         </div>
       )}

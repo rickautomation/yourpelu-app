@@ -10,7 +10,7 @@ export default function Home() {
   console.log("Autenticado:", isAuthenticated);
 
   return (
-    <section className="min-h-screen flex flex-col bg-gray-950 text-white relative overflow-hidden">
+    <section className="min-h-screen flex flex-col text-white relative overflow-hidden">
       <div className="mt-8 flex items-center justify-center px-6">
         <div className="text-center animate-fadeIn max-w-md">
           <p className="text-gray-300">

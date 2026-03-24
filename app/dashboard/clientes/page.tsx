@@ -30,26 +30,25 @@ export default function ClientsPage() {
   };
 
   return (
-    <div className="flex flex-col gap-3 p-4">
+    <div className="flex flex-col gap-3 px-4 py-2">
       {/* Card para agregar cliente */}
       <div className="flex flex-col gap-3">
         {!showAdd && (
-          <div className="flex justify-between items-center border border-pink-700 rounded-lg p-4">
-            <div className="flex items-center  gap-1">
+          <div className="flex justify-between items-center gap-3 rounded-lg py-2">
               <input
                 type="text"
                 placeholder="Buscar cliente..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value.trim())}
-                className="px-2 py-2 rounded bg-gray-800 text-white w-full max-w-xs focus:outline-none focus:ring-2 focus:ring-pink-400"
+                className="px-2 py-2 rounded bg-gray-800 text-white w-full  max-w-xs focus:outline-none focus:ring-2 focus:ring-pink-400"
               />
-            </div>
 
             <button
               onClick={() => setShowAdd(true)}
-              className="w-10 h-10 flex items-center justify-center bg-pink-400 text-white rounded-md hover:bg-pink-500 transition-colors text-xl font-bold"
+              className="flex items-center gap-2 justify-center px-2 bg-pink-400 text-white rounded-md hover:bg-pink-500 transition-colors font-bold"
             >
-              +
+              <span>nuevo</span>
+              <span className="text-4xl">+</span>
             </button>
           </div>
         )}
@@ -136,7 +135,7 @@ export default function ClientsPage() {
                 return (
                   <div
                     key={client.id}
-                    className="flex flex-col px-5 py-4 bg-gray-700 rounded-lg shadow-md"
+                    className="flex flex-col px-5 py-4 bg-gray-800 rounded-lg shadow-md"
                   >
                     {/* Nombre centrado */}
                     <div className="flex justify-center items-center mb-2">
