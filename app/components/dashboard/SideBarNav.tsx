@@ -14,6 +14,7 @@ import {
   FiBox,
   FiList,
   FiPlusCircle,
+  FiHome,
 } from "react-icons/fi";
 import SidebarLink from "./SidebarLink";
 import Image from "next/image";
@@ -175,41 +176,54 @@ export default function SidebarNav({
             ))}
         </div>
 
-        {clientOfferings.length < 1 &&
-          barbershops.length > 0 && (
-            <div className="flex flex-col gap-2 mt-4">
-              <button
-                onClick={() => {
-                  setSidebarOpen(false);
-                  router.push("/dashboard/initial-setup?step=2");
-                }}
-                className="px-4 py-2 bg-pink-600 text-white rounded-md shadow hover:bg-pink-700 transition"
-              >
-                Configura tu barbería
-              </button>
-            </div>
-          )}
+        {clientOfferings.length < 1 && barbershops.length > 0 && (
+          <div className="flex flex-col gap-2 mt-4">
+            <button
+              onClick={() => {
+                setSidebarOpen(false);
+                router.push("/dashboard/initial-setup?step=2");
+              }}
+              className="px-4 py-2 bg-pink-600 text-white rounded-md shadow hover:bg-pink-700 transition"
+            >
+              Configura tu barbería
+            </button>
+          </div>
+        )}
 
         {/* Links del sidebar */}
         {!showSelector && clientOfferings.length > 0 && (
           <>
             {userRole === "admin" && (
               <>
-                {/* <SidebarLink href="/dashboard" setSidebarOpen={setSidebarOpen}>
-                  <FiHome className="inline w-5 h-5 mr-2" /> Home
-                </SidebarLink> */}
-                <SidebarLink
-                  href="/dashboard/barberos"
-                  setSidebarOpen={setSidebarOpen}
-                >
-                  <FiUsers className="inline w-5 h-5 mr-2" /> Barberos
-                </SidebarLink>
-                <SidebarLink
-                  href="/dashboard/barbershop-profile-settings"
-                  setSidebarOpen={setSidebarOpen}
-                >
-                  <FiImage className="inline w-5 h-5 mr-2" /> Feed
-                </SidebarLink>
+                <div className="flex justify-between">
+                  <SidebarLink
+                    href="/dashboard/dashboard"
+                    setSidebarOpen={setSidebarOpen}
+                  >
+                    <div className="flex w-26 border rounded-md p-2 items-end text-xs text-end">
+                      <FiHome className="inline w-8 h-8 mr-2" />
+                      <p>Home</p>
+                    </div>
+                  </SidebarLink>
+                  <SidebarLink
+                    href="/dashboard/barberos"
+                    setSidebarOpen={setSidebarOpen}
+                  >
+                    <div className="flex w-26 border rounded-md p-2 items-end text-xs text-end">
+                      <FiUsers className="inline w-8 h-8 mr-1" />
+                      <p>Barberos</p>
+                    </div>
+                  </SidebarLink>
+                  <SidebarLink
+                    href="/dashboard/barbershop-profile-settings"
+                    setSidebarOpen={setSidebarOpen}
+                  >
+                    <div className="flex w-26 border rounded-md p-2 items-end text-xs text-end">
+                      <FiImage className="inline w-8 h-8 mr-2" />
+                      <p>Feed</p>
+                    </div>
+                  </SidebarLink>
+                </div>
                 <hr className="border-gray-700 my-2" />
               </>
             )}
@@ -218,54 +232,129 @@ export default function SidebarNav({
               userRole === "barber" ||
               userRole === "user") && (
               <>
-                <SidebarLink
-                  href="/dashboard/offerings"
-                  setSidebarOpen={setSidebarOpen}
-                >
-                  <FiList className="inline w-5 h-5 mr-2" /> Servicios
-                </SidebarLink>
+                <div className="flex justify-between">
+                  <SidebarLink
+                    href="/dashboard/offerings"
+                    setSidebarOpen={setSidebarOpen}
+                  >
+                    <div className="flex w-26 border rounded-md p-2 items-end text-xs text-end">
+                      <FiList className="inline w-8 h-8 mr-2" />
+                       <div className="text-start">
+                        <p>Lista de </p>
+                        <p>Servicios</p>
+                      </div>
+                    </div>
+                  </SidebarLink>
+                  <SidebarLink
+                    href="/dashboard/offerings/add"
+                    setSidebarOpen={setSidebarOpen}
+                  >
+                    <div className="flex w-26 border rounded-md p-2 items-end text-xs text-end">
+                      <FiPlusCircle className="inline w-8 h-8 mr-2" />
+                      <div>
+                        <p>Registrar </p>
+                        <p>Servicio</p>
+                      </div>
+                    </div>
+                  </SidebarLink>
+                   <SidebarLink
+                    href="/dashboard/offerings/add"
+                    setSidebarOpen={setSidebarOpen}
+                  >
+                    <div className="flex w-26 border rounded-md p-2 items-end text-xs text-end">
+                      <FiPlusCircle className="inline w-8 h-8 mr-2" />
+                      <div>
+                        <p>Otro </p>
+                        <p>Servicio</p>
+                      </div>
+                    </div>
+                  </SidebarLink>
+                </div>
+                <hr className="border-gray-700 my-2" />
 
-                <SidebarLink
-                  href="/dashboard/offerings/add"
-                  setSidebarOpen={setSidebarOpen}
-                >
-                  <FiPlusCircle className="inline w-5 h-5 mr-2" />
-                  Registrar Servicio
-                </SidebarLink>
+                <div className="flex justify-between">
+                  <SidebarLink
+                    href="/dashboard/turnos"
+                    setSidebarOpen={setSidebarOpen}
+                  >
+                    <div className="flex w-26 border rounded-md p-2 items-end text-xs text-end">
+                      <FiCalendar className="inline w-8 h-8 mr-2" />
+                      <p>Turnos</p>
+                    </div>
+                  </SidebarLink>
+                  <SidebarLink
+                    href="/dashboard/clientes"
+                    setSidebarOpen={setSidebarOpen}
+                  >
+                   <div className="flex w-26 border rounded-md p-2 items-end text-xs text-end">
+                      <FiUsers className="inline w-8 h-8 mr-2" />
+                      <p>Clientes</p>
+                    </div>
+                  </SidebarLink>
+                   <SidebarLink
+                    href="/dashboard/clientes"
+                    setSidebarOpen={setSidebarOpen}
+                  >
+                    <div className="flex w-26 border rounded-md p-2 items-end text-xs text-end">
+                      <FiUsers className="inline w-8 h-8 mr-2" />
+                      <p>Otro</p>
+                    </div>
+                  </SidebarLink>
+                </div>
                 <hr className="border-gray-700 my-2" />
-                <SidebarLink
-                  href="/dashboard/turnos"
-                  setSidebarOpen={setSidebarOpen}
-                >
-                  <FiCalendar className="inline w-5 h-5 mr-2" /> Turnos
-                </SidebarLink>
-                <SidebarLink
-                  href="/dashboard/clientes"
-                  setSidebarOpen={setSidebarOpen}
-                >
-                  <FiUsers className="inline w-5 h-5 mr-2" /> Clientes
-                </SidebarLink>
+
+                <div className="flex justify-between">
+                  <SidebarLink
+                    href="/dashboard/insumos"
+                    setSidebarOpen={setSidebarOpen}
+                  >
+                    <div className="flex w-26 border rounded-md p-2 items-end text-xs text-end">
+                      <FiBox className="inline w-8 h-8 mr-2" />
+                      <p>Insumos</p>
+                    </div>
+                  </SidebarLink>
+                  <SidebarLink
+                    href="/dashboard/insumos"
+                    setSidebarOpen={setSidebarOpen}
+                  >
+                    <div className="flex w-26 border rounded-md p-2 items-end text-xs text-end">
+                      <FiBox className="inline w-8 h-8 mr-2" />
+                      <p>Distinto</p>
+                    </div>
+                  </SidebarLink>
+                  <SidebarLink
+                    href="/dashboard/insumos"
+                    setSidebarOpen={setSidebarOpen}
+                  >
+                   <div className="flex w-26 border rounded-md p-2 items-end text-xs text-end">
+                      <FiBox className="inline w-8 h-8 mr-2" />
+                      <p>Otro</p>
+                    </div>
+                  </SidebarLink>
+                </div>
                 <hr className="border-gray-700 my-2" />
-                <SidebarLink
-                  href="/dashboard/insumos"
-                  setSidebarOpen={setSidebarOpen}
-                >
-                  <FiBox className="inline w-5 h-5 mr-2" /> Insumos
-                </SidebarLink>
+
+                <div className="flex justify-start gap-2 ">
+                  <SidebarLink
+                    href="/dashboard/reportes"
+                    setSidebarOpen={setSidebarOpen}
+                  >
+                    <div className="flex w-26 border rounded-md p-2 items-end text-xs text-end">
+                      <FiBarChart2 className="inline w-8 h-8 mr-2" />
+                      <p>Reportes</p>
+                    </div>
+                  </SidebarLink>
+                  <SidebarLink
+                    href="/dashboard/settings"
+                    setSidebarOpen={setSidebarOpen}
+                  >
+                    <div className="flex w-26 border rounded-md p-2 items-end text-xs text-end">
+                      <FiSettings className="inline w-8 h-8 mr-2" />
+                      <p>Config</p>
+                    </div>
+                  </SidebarLink>
+                </div>
                 <hr className="border-gray-700 my-2" />
-                <SidebarLink
-                  href="/dashboard/reportes"
-                  setSidebarOpen={setSidebarOpen}
-                >
-                  <FiBarChart2 className="inline w-5 h-5 mr-2" /> Reportes
-                </SidebarLink>
-                <hr className="border-gray-700 my-2" />
-                <SidebarLink
-                  href="/dashboard/settings"
-                  setSidebarOpen={setSidebarOpen}
-                >
-                  <FiSettings className="inline w-5 h-5 mr-2" /> Configuración
-                </SidebarLink>
               </>
             )}
           </>
