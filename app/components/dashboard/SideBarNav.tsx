@@ -15,10 +15,22 @@ import {
   FiList,
   FiPlusCircle,
   FiHome,
+  FiDollarSign,
+  FiShoppingCart,
+  FiLayers,
+  FiGrid,
 } from "react-icons/fi";
 import SidebarLink from "./SidebarLink";
 import Image from "next/image";
 import { useOfferings } from "@/app/hooks/useOfferings";
+import { RiMoneyDollarCircleLine } from "react-icons/ri";
+import {
+  IoAnalyticsSharp,
+  IoChatboxEllipsesOutline,
+  IoGiftOutline,
+} from "react-icons/io5";
+import { FaPeopleGroup } from "react-icons/fa6";
+import { BiMaleFemale } from "react-icons/bi";
 
 type Barbershop = {
   id: string;
@@ -196,9 +208,7 @@ export default function SidebarNav({
                 d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
               ></path>
             </svg>
-            <span className="ml-2 text-pink-600 text-sm">
-              Cargando servicios...
-            </span>
+            <span className="ml-2 text-pink-600 text-sm">Cargando...</span>
           </div>
         )}
 
@@ -208,15 +218,6 @@ export default function SidebarNav({
             {userRole === "admin" && (
               <>
                 <div className="flex justify-between">
-                  <SidebarLink
-                    href="/dashboard/dashboard"
-                    setSidebarOpen={setSidebarOpen}
-                  >
-                    <div className="flex w-26  border rounded-md p-2 px-2 py-4 items-end text-xs text-end">
-                      <FiHome className="inline w-8 h-8 mr-2" />
-                      <p>Home</p>
-                    </div>
-                  </SidebarLink>
                   <SidebarLink
                     href="/dashboard/barberos"
                     setSidebarOpen={setSidebarOpen}
@@ -233,6 +234,15 @@ export default function SidebarNav({
                     <div className="flex w-26  border rounded-md p-2 px-2 py-4 items-end text-xs text-end">
                       <FiImage className="inline w-8 h-8 mr-2" />
                       <p>Feed</p>
+                    </div>
+                  </SidebarLink>
+                  <SidebarLink
+                    href="/dashboard/chat"
+                    setSidebarOpen={setSidebarOpen}
+                  >
+                    <div className="flex w-26  border rounded-md p-2 px-2 py-4 items-end text-xs text-end">
+                      <IoChatboxEllipsesOutline className="inline w-8 h-8 mr-2" />
+                      <p>Chat</p>
                     </div>
                   </SidebarLink>
                 </div>
@@ -258,14 +268,14 @@ export default function SidebarNav({
                     </div>
                   </SidebarLink>
                   <SidebarLink
-                    href="/dashboard/offerings/add"
+                    href="/dashboard/offerings/categories"
                     setSidebarOpen={setSidebarOpen}
                   >
                     <div className="flex w-26  border rounded-md p-2 px-2 py-4 items-end text-xs text-end">
-                      <FiPlusCircle className="inline w-8 h-8 mr-2" />
-                      <div>
-                        <p>Registrar </p>
-                        <p>Servicio</p>
+                      <FiGrid className="inline w-8 h-8 mr-2" />
+                      <div className="text-start">
+                        <p>Catego_</p>
+                        <p>rias</p>
                       </div>
                     </div>
                   </SidebarLink>
@@ -276,7 +286,7 @@ export default function SidebarNav({
                     <div className="flex w-26  border rounded-md p-2 px-2 py-4 items-end text-xs text-end">
                       <FiPlusCircle className="inline w-8 h-8 mr-2" />
                       <div>
-                        <p>Otro </p>
+                        <p>Registrar </p>
                         <p>Servicio</p>
                       </div>
                     </div>
@@ -299,17 +309,20 @@ export default function SidebarNav({
                     setSidebarOpen={setSidebarOpen}
                   >
                     <div className="flex w-26  border rounded-md p-2 px-2 py-4 items-end text-xs text-end">
-                      <FiUsers className="inline w-8 h-8 mr-2" />
+                      <BiMaleFemale className="w-8 h-8 mr-2" />
                       <p>Clientes</p>
                     </div>
                   </SidebarLink>
                   <SidebarLink
-                    href="/dashboard/clientes"
+                    href="/dashboard/promotions"
                     setSidebarOpen={setSidebarOpen}
                   >
                     <div className="flex w-26  border rounded-md p-2 px-2 py-4 items-end text-xs text-end">
-                      <FiUsers className="inline w-8 h-8 mr-2" />
-                      <p>Otro</p>
+                      <IoGiftOutline className="inline w-8 h-8 mr-2" />
+                      <div>
+                        <p>Promo</p>
+                        <p>ciones</p>
+                      </div>
                     </div>
                   </SidebarLink>
                 </div>
@@ -326,21 +339,21 @@ export default function SidebarNav({
                     </div>
                   </SidebarLink>
                   <SidebarLink
-                    href="/dashboard/insumos"
+                    href="/dashboard/insumos/sell"
                     setSidebarOpen={setSidebarOpen}
                   >
-                    <div className="flex w-26  border rounded-md p-2 px-2 py-4 items-end text-xs text-end">
-                      <FiBox className="inline w-8 h-8 mr-2" />
-                      <p>Distinto</p>
+                    <div className="flex w-26  border rounded-md p-2 px-2 py-4 items-end text-xs">
+                      <FiShoppingCart className="inline w-10 h-8 mr-2" />
+                      <p>Vender insumos</p>
                     </div>
                   </SidebarLink>
                   <SidebarLink
-                    href="/dashboard/insumos"
+                    href="/dashboard/insumos/stock"
                     setSidebarOpen={setSidebarOpen}
                   >
                     <div className="flex w-26  border rounded-md p-2 px-2 py-4 items-end text-xs text-end">
-                      <FiBox className="inline w-8 h-8 mr-2" />
-                      <p>Otro</p>
+                      <FiLayers className="inline w-8 h-8 mr-2" />
+                      <p>Inventario</p>
                     </div>
                   </SidebarLink>
                 </div>
@@ -357,21 +370,21 @@ export default function SidebarNav({
                     </div>
                   </SidebarLink>
                   <SidebarLink
-                    href="/dashboard/reportes"
+                    href="/dashboard/analitycs"
                     setSidebarOpen={setSidebarOpen}
                   >
                     <div className="flex w-26 border rounded-md p-2 px-2 py-4 items-end text-xs text-end">
-                      <FiBarChart2 className="inline w-8 h-8 mr-2" />
-                      <p>Otro</p>
+                      <IoAnalyticsSharp className="inline w-8 h-8 mr-2" />
+                      <p>Analytics</p>
                     </div>
                   </SidebarLink>
                   <SidebarLink
-                    href="/dashboard/reportes"
+                    href="/dashboard/cash-closing"
                     setSidebarOpen={setSidebarOpen}
                   >
                     <div className="flex w-26 border rounded-md p-2 px-2 py-4 items-end text-xs text-start">
-                      <FiBarChart2 className="inline w-8 h-8 mr-2" />
-                      <p>Otro mas</p>
+                      <FiDollarSign className="inline w-8 h-8 mr-2" />
+                      <p>Cierre de caja</p>
                     </div>
                   </SidebarLink>
                 </div>
