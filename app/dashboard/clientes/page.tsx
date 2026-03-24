@@ -40,12 +40,12 @@ export default function ClientsPage() {
                 placeholder="Buscar cliente..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value.trim())}
-                className="px-2 py-2 rounded bg-gray-800 text-white w-full  max-w-xs focus:outline-none focus:ring-2 focus:ring-pink-400"
+                className="px-2 py-2 rounded bg-gray-800 text-white w-full  max-w-xs focus:outline-none focus:ring-2 focus:ring-pink-600"
               />
 
             <button
               onClick={() => setShowAdd(true)}
-              className="flex items-center gap-2 justify-center px-2 bg-pink-400 text-white rounded-md hover:bg-pink-500 transition-colors font-bold"
+              className="flex items-center gap-2 justify-center px-2 border border-pink-600 text-pink-600 rounded-md hover:bg-pink-500 transition-colors font-bold"
             >
               <span>nuevo</span>
               <span className="text-4xl">+</span>
@@ -165,26 +165,26 @@ export default function ClientsPage() {
 
                     {/* Botones ocupando todo el ancho */}
                     <div className="flex w-full gap-2">
-                      <Link
-                        href={`/dashboard/clientes/info/${client.id}`}
-                        className="flex-1 text-center bg-pink-400 text-white px-3 py-2 rounded hover:bg-pink-500 transition-colors text-sm font-semibold"
+                      <button
+                        onClick={() => deleteClient(client.id)}
+                        className="flex-1 border border-red-600 text-red-600 px-3 py-2 rounded hover:bg-red-700 transition-colors text-sm font-semibold"
                       >
-                        Ver más
-                      </Link>
+                        Eliminar
+                      </button>
 
                       <Link
                         href={`/dashboard/clientes/edit/${client.id}`}
-                        className="flex-1 text-center bg-blue-400 text-white px-3 py-2 rounded hover:bg-blue-500 transition-colors text-sm font-semibold"
+                        className="flex-1 text-center border border-blue-600 text-blue-600 px-3 py-2 rounded hover:bg-blue-500 transition-colors text-sm font-semibold"
                       >
                         Editar
                       </Link>
 
-                      <button
-                        onClick={() => deleteClient(client.id)}
-                        className="flex-1 bg-red-500 text-white px-3 py-2 rounded hover:bg-red-700 transition-colors text-sm font-semibold"
+                      <Link
+                        href={`/dashboard/clientes/info/${client.id}`}
+                        className="flex-1 text-center border-2 border-pink-600 text-pink-600 px-3 py-2 rounded hover:bg-pink-500 transition-colors text-sm font-semibold"
                       >
-                        Eliminar
-                      </button>
+                        Ver más
+                      </Link>
                     </div>
                   </div>
                 );
