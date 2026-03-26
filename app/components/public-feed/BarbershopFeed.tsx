@@ -48,6 +48,14 @@ export default function BarbershopFeed({ barbershop }: Props) {
 
   const profile = barbershop.profile;
 
+  const getImageSrc = (url?: string) => {
+  if (!url) return "";
+  if (url.startsWith("http")) {
+    return url; // producción (Cloudinary)
+  }
+  return `${process.env.NEXT_PUBLIC_API_URL}${url}`; // local
+};
+
   return (
     <div className="w-full min-h-screen max-w-md mx-auto text-white bg-slate-900 shadow-lg overflow-hidden">
       {/* Header */}
@@ -56,7 +64,7 @@ export default function BarbershopFeed({ barbershop }: Props) {
           <div className="flex justify-around w-full px-2 py-4">
             <div className="w-20 h-20 rounded-full border-4 bg-black border-white overflow-hidden shadow-lg">
               <Image
-                src={`${process.env.NEXT_PUBLIC_API_URL}${profile.logoUrl}`}
+                 src={getImageSrc(profile?.logoUrl)}
                 alt={`${barbershop.name} logo`}
                 width={80}
                 height={80}
@@ -253,7 +261,7 @@ export default function BarbershopFeed({ barbershop }: Props) {
             {profile.images.map((img) => (
               <SwiperSlide key={img.id}>
                 <Image
-                  src={`${process.env.NEXT_PUBLIC_API_URL}${img.imageUrl}`}
+                   src={getImageSrc(img.imageUrl)}
                   alt="Imagen de la barbería"
                   width={400}
                   height={350}
