@@ -23,12 +23,12 @@ function OnOffToggle({
         disabled
           ? "bg-gray-300 cursor-not-allowed"
           : value
-            ? "bg-green-500"
+            ? "border-3 border-green-500"
             : "bg-gray-400"
       }`}
     >
       <span
-        className={`absolute left-2 text-md font-bold text-white ${value ? "opacity-100" : "opacity-0"}`}
+        className={`absolute left-2 text-md font-bold  text-green-500 ${value ? "opacity-100" : "opacity-0"}`}
       >
         SI
       </span>
@@ -38,8 +38,8 @@ function OnOffToggle({
         NO
       </span>
       <span
-        className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform ${
-          value ? "translate-x-8" : "translate-x-0"
+        className={`inline-block h-6 w-6 transform rounded-full  transition-transform ${
+          value ? "translate-x-8 bg-green-500" : "translate-x-0 bg-white"
         }`}
       />
     </button>
