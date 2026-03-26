@@ -19,6 +19,16 @@ export default function ProfilePage() {
     }
   };
 
+  const getAvatarSrc = (avatarUrl: string) => {
+    if (!avatarUrl) return null;
+    // Si empieza con http, ya es una URL pública (Cloudinary)
+    if (avatarUrl.startsWith("http")) {
+      return avatarUrl;
+    }
+    // Si no, es local y hay que anteponer API_URL
+    return `${API_URL}${avatarUrl}`;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -63,7 +73,7 @@ export default function ProfilePage() {
                 />
               ) : user.userProfile?.avatarUrl ? (
                 <img
-                  src={`${API_URL}${user.userProfile.avatarUrl}`}
+                  src={getAvatarSrc(user.userProfile?.avatarUrl) ?? ""}
                   alt="Avatar"
                   className="w-32 h-32 rounded-full object-cover border"
                 />
