@@ -30,13 +30,21 @@ interface Props {
 export default function BarbershopProfileCardEditable({ barbershop }: Props) {
   const profile = barbershop.profile;
 
+  const getImageSrc = (url?: string) => {
+    if (!url) return "";
+    if (url.startsWith("http")) {
+      return url; // Producción: Cloudinary u otra URL pública
+    }
+    return `${process.env.NEXT_PUBLIC_API_URL}${url}`; // Local: concatenar API_URL
+  };
+
   return (
     <div className="max-w-3xl mx-auto text-white overflow-hidden  bg-gray-900">
       {/* Header */}
       <div className="flex flex-col items-center p-6 bg-gray-800">
         {profile?.logoUrl ? (
           <Image
-            src={`${process.env.NEXT_PUBLIC_API_URL}${profile.logoUrl}`}
+            src={getImageSrc(profile?.logoUrl)}
             alt={`${barbershop.name} logo`}
             width={120}
             height={120}
@@ -90,7 +98,7 @@ export default function BarbershopProfileCardEditable({ barbershop }: Props) {
             {profile.images.map((img) => (
               <Image
                 key={img.id}
-                src={`${process.env.NEXT_PUBLIC_API_URL}${img.imageUrl}`}
+                src={getImageSrc(img.imageUrl)}
                 alt="Barbershop image"
                 width={300}
                 height={200}

@@ -31,6 +31,14 @@ export default function BottomNav({ onToggleSidebar, setSidebarOpen }: any) {
   const menuRef = useRef<HTMLDivElement>(null);
   const popupRef = useRef<HTMLDivElement>(null);
 
+  const getAvatarSrc = (avatarUrl?: string) => {
+  if (!avatarUrl) return "";
+  if (avatarUrl.startsWith("http")) {
+    return avatarUrl; // producción (Cloudinary)
+  }
+  return `${API_URL}${avatarUrl}`; // local
+};
+
   // cerrar menú si se hace click fuera
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -127,7 +135,7 @@ export default function BottomNav({ onToggleSidebar, setSidebarOpen }: any) {
           >
             {user?.userProfile?.avatarUrl ? (
               <img
-                src={`${API_URL}${user.userProfile.avatarUrl}`}
+                src={getAvatarSrc(user.userProfile.avatarUrl)}
                 alt="User Avatar"
                 className="w-10 h-10 rounded-full object-cover border border-gray-700"
               />
