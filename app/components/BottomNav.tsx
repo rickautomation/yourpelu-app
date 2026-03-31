@@ -103,7 +103,7 @@ export default function BottomNav({ onToggleSidebar, setSidebarOpen }: any) {
 
         {/* Turnos */}
         <Link
-          href="/dashboard/turnos"
+          href="/dashboard/appoiments"
           onClick={(e) => handleProtectedClick(e, "/dashboard/turnos")}
           className="flex items-center justify-center text-pink-600"
         >
