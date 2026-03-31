@@ -17,7 +17,7 @@ type CreateAppoimentDto = {
   barbershopId: string;
 };
 
-export default function AppoinmentsPage({
+export default function AppointmentsPage({
   params,
 }: {
   params: Promise<{ barbershopId: string }>;
@@ -46,7 +46,7 @@ export default function AppoinmentsPage({
       const body: CreateAppoimentDto = { ...form, barbershopId };
 
       const res = await apiPost<CreateAppoimentDto>(
-        "/public-data/appoiments",
+        "/public-data/appointments",
         body,
       );
 
