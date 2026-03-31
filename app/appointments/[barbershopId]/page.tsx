@@ -3,7 +3,6 @@
 import Image from "next/image";
 import React, { useState } from "react";
 import { usePublicBarbershopFeed } from "@/app/hooks/usePublicBarbershopFeed";
-import { FaCalendarAlt } from "react-icons/fa";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { use } from "react";
