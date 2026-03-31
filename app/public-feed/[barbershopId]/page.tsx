@@ -11,5 +11,5 @@ export default function PublicFeedPage({ params }: { params: Promise<{ barbersho
   if (error) return <p>Error: {error}</p>;
   if (!barbershop) return <p>No se encontró la barbería</p>;
 
-  return <BarbershopFeed barbershop={barbershop.barbershop} />;
+  return <BarbershopFeed barbershop={barbershop} />;
 }

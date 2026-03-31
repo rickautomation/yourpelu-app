@@ -38,6 +38,14 @@ export default function BarbersPage() {
     }
   };
 
+  const getImageSrc = (url?: string) => {
+    if (!url) return "";
+    if (url.startsWith("http")) {
+      return url; // producción (Cloudinary)
+    }
+    return `${process.env.NEXT_PUBLIC_API_URL}${url}`; // local
+  };
+
   useEffect(() => {
     if (activeBarbershop?.id) {
       setExpandedBarberId(null);
@@ -88,7 +96,7 @@ export default function BarbersPage() {
                 {/* Avatar o iniciales */}
                 {barber.userProfile?.avatarUrl ? (
                   <img
-                    src={`${process.env.NEXT_PUBLIC_API_URL}${barber.userProfile.avatarUrl}`}
+                    src={getImageSrc(barber.userProfile.avatarUrl)}
                     alt={`${barber.name} ${barber.lastname}`}
                     className="w-10 h-10 rounded-full border border-gray-600"
                   />

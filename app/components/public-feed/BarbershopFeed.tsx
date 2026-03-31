@@ -1,19 +1,12 @@
 "use client";
 import Image from "next/image";
-import {
-  FaPhoneAlt,
-  FaMapMarkerAlt,
-  FaWhatsapp,
-} from "react-icons/fa";
+import { FaPhoneAlt, FaMapMarkerAlt, FaWhatsapp } from "react-icons/fa";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination } from "swiper/modules";
 
 import "swiper/css";
 import "swiper/css/pagination";
 import { useState } from "react";
-import { FiClock } from "react-icons/fi";
-import { LuMapPin } from "react-icons/lu";
-import { IoCalendarOutline, IoGiftOutline } from "react-icons/io5";
 
 type BarberImage = { id: string; imageUrl: string };
 
@@ -22,6 +15,7 @@ type ProfileData = {
   lema?: string;
   description?: string;
   openingHours?: string;
+  openingHours2?: string;
   adressCoordinates?: string;
   logoUrl?: string;
   websiteUrl?: string | null;
@@ -48,30 +42,31 @@ export default function BarbershopFeed({ barbershop }: Props) {
 
   const profile = barbershop.profile;
 
+  console.log("hours: ", barbershop.profile);
+
   const getImageSrc = (url?: string) => {
-  if (!url) return "";
-  if (url.startsWith("http")) {
-    return url; // producción (Cloudinary)
-  }
-  return `${process.env.NEXT_PUBLIC_API_URL}${url}`; // local
-};
+    if (!url) return "";
+    if (url.startsWith("http")) {
+      return url; // producción (Cloudinary)
+    }
+    return `${process.env.NEXT_PUBLIC_API_URL}${url}`; // local
+  };
 
   return (
-    <div className="w-full min-h-screen max-w-md mx-auto text-white bg-slate-900 shadow-lg overflow-hidden">
-      {/* Header */}
+    <div className="w-full min-h-screen max-w-md mx-auto text-black bg-slate-100 shadow-lg overflow-hidden">
+      <div className="flex flex-col items-center w-full py-4">
+        <Image
+          src={getImageSrc(profile?.logoUrl)}
+          alt={`${barbershop.name} logo`}
+          width={30} // 👈 más grande
+          height={30} // 👈 más grande
+          className="h-30 w-30 rounded-full object-cover shadow-md" // 👈 redondo, sin borde
+          unoptimized
+        />
+      </div>
       <div className="flex flex-col items-center">
         {profile?.logoUrl && (
-          <div className="flex justify-around w-full px-2 py-4">
-            <div className="w-20 h-20 rounded-full border-4 bg-black border-white overflow-hidden shadow-lg">
-              <Image
-                 src={getImageSrc(profile?.logoUrl)}
-                alt={`${barbershop.name} logo`}
-                width={80}
-                height={80}
-                className="object-contain w-full h-full"
-                unoptimized
-              />
-            </div>
+          <div className="flex justify-around w-full px-2">
             <div className="flex flex-col text-center items-center justify-center">
               <h3 className="text-3xl font-bold">{barbershop.name}</h3>
               {profile?.lema && (
@@ -83,14 +78,26 @@ export default function BarbershopFeed({ barbershop }: Props) {
           </div>
         )}
 
+        <div className="text-end text-black">
+          <a
+            href={`https://www.google.com/maps/search/?api=1&query=${profile?.adressCoordinates}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-end gap-3"
+          >
+            <FaMapMarkerAlt />
+            <p className="text-xs">{barbershop.address}</p>
+          </a>
+        </div>
+
         {/* Historias (círculos interactivos) */}
-        <div className="flex justify-center gap-4 mt-2 flex-wrap">
+        {/* <div className="flex justify-center gap-4 mt-2 flex-wrap  text-pink-600">
           {profile?.openingHours && (
             <button
               onClick={() => setShowHours(true)}
-              className="flex flex-col gap-1 items-center justify-center text-pink-400 hover:bg-pink-400 hover:text-white transition"
+              className="flex flex-col gap-1 items-center justify-center hover:text-white transition"
             >
-              <FiClock className="text-6xl" />
+              <FiClock className="text-4xl" />
               <span className="text-xs">Horarios</span>
             </button>
           )}
@@ -98,29 +105,29 @@ export default function BarbershopFeed({ barbershop }: Props) {
           {barbershop.address && profile?.adressCoordinates && (
             <button
               onClick={() => setShowAddress(true)}
-              className="flex flex-col gap-1 items-center justify-center text-pink-400 hover:bg-pink-400 hover:text-white transition"
+              className="flex flex-col gap-1 items-center justify-center hover:text-white transition"
             >
-              <LuMapPin className="text-6xl" />
+              <LuMapPin className="text-4xl" />
               <span className="text-xs">Ubicacion</span>
             </button>
           )}
 
           <button
             onClick={() => setShowPromos(true)}
-            className="flex flex-col gap-1 items-center justify-center text-pink-400 hover:bg-pink-400 hover:text-white transition"
+            className="flex flex-col gap-1 items-center justify-center hover:text-white transition"
           >
-            <IoGiftOutline className="text-6xl" />
+            <IoGiftOutline className="text-4xl" />
             <span className="text-xs">Promociones</span>
           </button>
 
           <button
             onClick={() => setShowTurno(true)}
-            className="flex flex-col gap-1 items-center justify-center text-pink-400 hover:bg-pink-400 hover:text-white transition"
+            className="flex flex-col gap-1 items-center justify-center hover:text-white transition"
           >
-            <IoCalendarOutline className="text-6xl" />
+            <IoCalendarOutline className="text-4xl" />
             <span className="text-xs">Turnos</span>
           </button>
-        </div>
+        </div> */}
 
         {/* Popups */}
         {showHours && (
@@ -261,7 +268,7 @@ export default function BarbershopFeed({ barbershop }: Props) {
             {profile.images.map((img) => (
               <SwiperSlide key={img.id}>
                 <Image
-                   src={getImageSrc(img.imageUrl)}
+                  src={getImageSrc(img.imageUrl)}
                   alt="Imagen de la barbería"
                   width={400}
                   height={350}
@@ -276,6 +283,15 @@ export default function BarbershopFeed({ barbershop }: Props) {
             Próximamente fotos de nuestros cortes
           </p>
         )}
+      </div>
+
+      <div
+        className="flex gap-1  text-black text-center"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <h3>Horarios: </h3>
+        <p>{profile?.openingHours}</p>
+        {profile?.openingHours2 && <p>{profile?.openingHours2}</p>}
       </div>
     </div>
   );

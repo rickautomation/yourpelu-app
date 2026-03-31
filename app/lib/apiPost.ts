@@ -1,4 +1,5 @@
 export async function apiPost<T>(url: string, body: any): Promise<T> {
+  console.log("body: ", JSON.stringify(body))
   const res = await fetch(process.env.NEXT_PUBLIC_API_URL + url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
