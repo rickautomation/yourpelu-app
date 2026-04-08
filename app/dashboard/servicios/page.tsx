@@ -3,9 +3,9 @@
 import { use, useEffect, useState } from "react";
 import { useAuth } from "@/app/lib/useAuth";
 import { useServices } from "@/app/hooks/useServices";
-import { useUserBarbershops } from "@/app/hooks/useUserBarbershops";
 import { useRouter } from "next/navigation";
 import TemplateServicesPage from "./new/page";
+import { useUserEstablishment } from "@/app/hooks/useUserEstablishment";
 
 interface ServicesPageProps {
   render?: string; // porque le pasás "true" como string
@@ -18,11 +18,11 @@ export default function ServicesPage({
   hasServices,
 }: ServicesPageProps) {
   const { user, refreshUser } = useAuth();
-  const { activeBarbershop } = useUserBarbershops(user);
+  const {activeEstablishment} = useUserEstablishment(user)
   const router = useRouter();
 
   console.log("usr in service: ", user )
-  console.log("barbershop: ", activeBarbershop)
+  console.log("barbershop: ", activeEstablishment)
 
   const {
     ownServices,
@@ -31,7 +31,7 @@ export default function ServicesPage({
     addOwnService,
     updateService,
     deleteService,
-  } = useServices(activeBarbershop?.id);
+  } = useServices(activeEstablishment?.id);
 
   const [showMenu, setShowMenu] = useState(false);
   const [showOwnPopup, setShowOwnPopup] = useState(false);

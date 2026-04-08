@@ -1,17 +1,15 @@
 "use client";
 
 import { useAuth } from "@/app/hooks/useAuth";
-import { useUserBarbershops } from "@/app/hooks/useUserBarbershops";
+import { useUserEstablishment } from "@/app/hooks/useUserEstablishment";
 
 export default function DashboardPanelPage() {
   const { user, loading, isUnauthorized, router } = useAuth();
-  const { activeBarbershop, barbershops } = useUserBarbershops(user);
+  const { activeEstablishment } = useUserEstablishment(user)
 
   if (loading) {
     return <div className="p-6 text-white">Cargando...</div>;
   }
-
-  console.log("activeBarbershop", activeBarbershop);
 
   return (
     <div className="text-white">
@@ -19,9 +17,9 @@ export default function DashboardPanelPage() {
         <div className="flex border-amber-300 gap-1 space-y-4">
           <div className="border-b border-gray-700">
             <h1 className="text-3xl font-bold">
-              {activeBarbershop?.name}
+              {activeEstablishment?.name}
             </h1>
-            <p className="text-xs text-gray-300">{activeBarbershop?.address}</p>
+            <p className="text-xs text-gray-300">{activeEstablishment?.address}</p>
           </div>
         </div>
       )}

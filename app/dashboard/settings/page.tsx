@@ -1,11 +1,11 @@
 "use client";
 
 import { useAuth } from "@/app/hooks/useAuth";
-import { useUserBarbershops } from "@/app/hooks/useUserBarbershops";
 import { apiUpdate } from "@/app/lib/apiUpdate";
 import { apiGet } from "@/app/lib/apiGet";
 import { useState, useEffect } from "react";
 import { FiCheckCircle } from "react-icons/fi";
+import { useUserEstablishment } from "@/app/hooks/useUserEstablishment";
 
 function OnOffToggle({
   value,
@@ -48,7 +48,7 @@ function OnOffToggle({
 
 export default function SettingsPage() {
   const { user } = useAuth();
-  const { activeBarbershop } = useUserBarbershops(user);
+  const {activeEstablishment} = useUserEstablishment(user)
 
   // Estados
   const [feedActivo, setFeedActivo] = useState(false);
@@ -69,10 +69,10 @@ export default function SettingsPage() {
 
 useEffect(() => {
   const loadSettings = async () => {
-    if (!activeBarbershop?.id) return;
+    if (!activeEstablishment?.id) return;
     try {
       const settings = await apiGet<any>(
-        `/barbershops/${activeBarbershop.id}/settings`,
+        `/barbershops/${activeEstablishment.id}/settings`,
       );
 
       const defaultSettings = {
@@ -109,7 +109,7 @@ useEffect(() => {
     }
   };
   loadSettings();
-}, [activeBarbershop?.id]);
+}, [activeEstablishment?.id]);
 
   // luego podés calcular hasChanges comparando contra initialSettings
   const hasChanges =
@@ -141,7 +141,7 @@ useEffect(() => {
     };
 
     try {
-      await apiUpdate(`/barbershops/${activeBarbershop?.id}/settings`, payload);
+      await apiUpdate(`/barbershops/${activeEstablishment?.id}/settings`, payload);
       setShowSuccessPopup(true);
       setTimeout(() => setShowSuccessPopup(false), 3000); // popup se cierra solo
     } catch (err) {

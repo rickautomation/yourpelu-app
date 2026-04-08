@@ -5,9 +5,11 @@ import { useAuth } from "@/app/lib/useAuth";
 import { Barbershop } from "@/app/interfaces";
 import { apiUpdate } from "@/app/lib/apiUpdate";
 import BarbershopForm from "@/app/components/dashboard/BarberShopForm";
+import { useUserEstablishment } from "@/app/hooks/useUserEstablishment";
 
 export default function BarbershopPage() {
   const { user, loading, isAuthenticated, refreshUser } = useAuth();
+  const {establishments} = useUserEstablishment(user)
 
   const [name, setName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -15,8 +17,6 @@ export default function BarbershopPage() {
   const [message, setMessage] = useState<string | null>(null);
   const [barbershop, setBarbershop] = useState<Barbershop | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-
- const barbershops = user?.barbershops ?? [];
 
   const sessionId = useMemo(() => {
     return typeof crypto.randomUUID === "function"

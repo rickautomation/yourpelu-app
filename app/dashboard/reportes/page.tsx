@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { FiChevronDown } from "react-icons/fi";
 import { useAuth } from "@/app/lib/useAuth";
-import { useUserBarbershops } from "@/app/hooks/useUserBarbershops";
 import { useAnalytics } from "@/app/hooks/useAnalytics";
 
 import {
