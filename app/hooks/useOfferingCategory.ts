@@ -52,7 +52,7 @@ export type PaymentMethod = {
   deletedAt?: string | null;
 };
 
-export function useOfferingsCategories(barbershopId?: string) {
+export function useOfferingsCategories(establishmentId?: string) {
   const [globalCategories, setGlobalCategories] = useState<OfferingCategory[]>(
     [],
   );
@@ -79,9 +79,9 @@ export function useOfferingsCategories(barbershopId?: string) {
         setPaymentMethods(methods);
 
         // propias de la barbería con clientTypes
-        if (barbershopId) {
+        if (establishmentId) {
           const clients = await apiGet<ClientOfferingCategory[]>(
-            `/client-offering-categories/barbershop/${barbershopId}/with-client-types`,
+            `/client-offering-categories/establishment/${establishmentId}/with-client-types`,
           );
           setClientCategories(clients);
         } else {
@@ -95,7 +95,7 @@ export function useOfferingsCategories(barbershopId?: string) {
       }
     };
     fetchCategories();
-  }, [barbershopId]);
+  }, [establishmentId]);
 
   // 🔑 filtramos solo las globales que tengan types no vacío
   const globalWithTypes = useMemo(

@@ -10,6 +10,7 @@ interface BarbershopFormProps {
     name: string;
     phoneNumber: string;
     address: string;
+    type: string
   }) => Promise<void>;
 }
 
@@ -31,6 +32,7 @@ export default function BarbershopForm({
       name: name.trim(),
       phoneNumber: phoneNumber.trim(),
       address: address.trim(),
+      type: "ksjksjs"
     });
 
     setMessage("Barbería guardada ✅");

@@ -3,6 +3,7 @@ import { apiGet } from "@/app/lib/apiGet";
 import { apiPost } from "@/app/lib/apiPost";
 import { apiDelete } from "@/app/lib/apiDelete";
 import { useAuth } from "@/app/lib/useAuth";
+import { useUserEstablishment } from "./useUserEstablishment";
 
 export type BarberClient = {
   id: string;
@@ -22,16 +23,18 @@ export function useClients() {
     text: string;
   } | null>(null);
 
-  const barbershopId = user?.barbershop?.id;
+  const {activeEstablishment} = useUserEstablishment(user)
+
+  const establishmentId = activeEstablishment?.id
 
   const fetchClients = async () => {
-    if (!barbershopId) {
+    if (!establishmentId) {
       setLoading(false);
       return;
     }
     try {
       const data = await apiGet<BarberClient[]>(
-        `/barber-clients/barbershop/${barbershopId}`,
+        `/barber-clients/establishment/${establishmentId}`,
       );
       setClients(data);
     } catch (err) {
@@ -44,7 +47,7 @@ export function useClients() {
   const addClient = async (client: Omit<BarberClient, "id" | "createdAt">) => {
     try {
       const created = await apiPost(
-        `/barber-clients/barbershop/${barbershopId}`,
+        `/barber-clients/establishment/${establishmentId}`,
         client,
       );
       await fetchClients();
@@ -75,7 +78,7 @@ export function useClients() {
 
   useEffect(() => {
     fetchClients();
-  }, [barbershopId]);
+  }, [establishmentId]);
 
   return {
     clients,

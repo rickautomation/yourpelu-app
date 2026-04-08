@@ -1,14 +1,14 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/app/hooks/useAuth";
-import { useUserBarbershops } from "@/app/hooks/useUserBarbershops";
 import { apiPost } from "@/app/lib/apiPost";
 
 import { FaWhatsapp } from "react-icons/fa";
+import { useUserEstablishment } from "@/app/hooks/useUserEstablishment";
 
 export default function NewBarberPage() {
   const { user, loading, isUnauthorized, router } = useAuth();
-  const { activeBarbershop } = useUserBarbershops(user);
+  const { activeEstablishment } = useUserEstablishment(user);
 
   const [name, setName] = useState("");
   const [lastname, setLastname] = useState("");
@@ -31,23 +31,23 @@ export default function NewBarberPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      if (!activeBarbershop?.id) {
-        setMessage("No hay barbería activa ❌");
+      if (!activeEstablishment?.id) {
+        setMessage("No hay establecimiento activo ❌");
         return;
       }
 
       const res = await apiPost<{
         activationLink: string;
         phoneNumber: string;
-      }>("/user/barber", {
+      }>("/user/staff", {
         name,
         lastname,
         phoneNumber,
         email,
-        barbershopId: activeBarbershop.id,
+        establishmentId: activeEstablishment?.id,
       });
 
-      setMessage(`Barbero creado ✅ Enlace: ${res.activationLink}`);
+      setMessage(`Invitacion creada ✅ Enlace: ${res.activationLink}`);
       setActivationLink(res.activationLink);
 
       setNewBarberPhone(res.phoneNumber);
@@ -106,7 +106,7 @@ export default function NewBarberPage() {
               <button
                 onClick={() => {
                   const formattedPhone = formatArgPhone(newBarberPhone!);
-                  const message = `Hola 👋, ${activeBarbershop?.name} te invita a unirte a YourPelu. 
+                  const message = `Hola 👋, ${activeEstablishment?.name} te invita a unirte a YourPelu. 
 Para activarla y configurar tu contraseña, ingresá al siguiente enlace: 
 ${activationLink}
 

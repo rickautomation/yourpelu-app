@@ -12,6 +12,7 @@ export type CreateOfferingDto = {
   userId: string;
   clientId?: string | null;
   barbershopId?: string | null;
+  establishmentId?: string | null;
   clientOfferingTypeId?: string | null;
   clientOfferingCategoryId?: string | null;
   paymentMethodId?: string | null;

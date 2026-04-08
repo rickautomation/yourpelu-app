@@ -2,18 +2,19 @@
 
 import { useAuth } from "@/app/hooks/useAuth";
 import { useOfferingsCategories } from "@/app/hooks/useOfferingCategory";
-import { useUserBarbershops } from "@/app/hooks/useUserBarbershops";
 import { useOfferingsCrud } from "@/app/hooks/useOfferingsCrud";
 import { useState, useEffect } from "react";
 import { useRef } from "react";
 import { FiCheckCircle, FiChevronDown } from "react-icons/fi";
 import { useClients } from "@/app/hooks/useClients";
+import { useUserEstablishment } from "@/app/hooks/useUserEstablishment";
 
 export type CreateOfferingDto = {
   price: number;
   userId: string;
   clientId?: string | null;
   barbershopId?: string | null;
+  establishmentId?: string | null;
   clientOfferingTypeId?: string | null;
   clientOfferingCategoryId?: string | null;
   paymentMethodId?: string | null;
@@ -21,9 +22,9 @@ export type CreateOfferingDto = {
 
 export default function AddOwnOffering() {
   const { user } = useAuth();
-  const { activeBarbershop, settings } = useUserBarbershops(user);
+  const { activeEstablishment, settings} = useUserEstablishment(user)
   const { clientCategories, paymentMethods } = useOfferingsCategories(
-    activeBarbershop?.id,
+    activeEstablishment?.id,
   );
   const { createOffering, loading, error } = useOfferingsCrud();
   const { clients, addClient } = useClients();
@@ -131,7 +132,7 @@ export default function AddOwnOffering() {
       console.error("No hay usuario autenticado");
       return;
     }
-    if (!activeBarbershop?.id) {
+    if (!activeEstablishment?.id) {
       console.error("No hay barbería activa");
       return;
     }
@@ -143,7 +144,8 @@ export default function AddOwnOffering() {
     const dto: CreateOfferingDto = {
       price: Number(selectedClientType.price),
       userId: user.id,
-      barbershopId: activeBarbershop?.id || null,
+      barbershopId: activeEstablishment?.id || null,
+      establishmentId: activeEstablishment?.id || null,
       clientOfferingTypeId: selectedClientType?.id || null,
       clientOfferingCategoryId: selectedCategory?.id || null,
       paymentMethodId: selectedPaymentMethod?.id || null,

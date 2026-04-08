@@ -1,15 +1,16 @@
 "use client";
 
-import { useAuth } from "../lib/useAuth";
-import { useUserBarbershops } from "../hooks/useUserBarbershops";
+
 import { FaUserPlus } from "react-icons/fa";
 import Link from "next/link";
 import { useOfferings } from "../hooks/useOfferings";
+import { useUserEstablishment } from "../hooks/useUserEstablishment";
+import { useAuth } from "../hooks/useAuth";
 
 export default function DashboardPage() {
-  const { user, loading, isUnauthorized, router } = useAuth();
-  const { activeBarbershop } = useUserBarbershops(user);
-  const { clientOfferings } = useOfferings(activeBarbershop?.id);
+  const { user, loading, isUnauthorized, router } = useAuth()
+  const { activeEstablishment } = useUserEstablishment(user);
+  const { clientOfferings } = useOfferings(activeEstablishment?.id);
 
   const userName = user?.name || "Usuario";
 
@@ -22,7 +23,7 @@ export default function DashboardPage() {
   return (
     <div className="flex flex-col space-y-4 p-4">
       {/* Caso 1: sin barbería activa */}
-      {!activeBarbershop && (
+      {!activeEstablishment && (
         <div className="text-center">
           <h2 className="text-2xl font-bold mb-4">Hola {userName}!</h2>
           <p className="mb-6">
@@ -39,7 +40,7 @@ export default function DashboardPage() {
       )}
 
       {/* Caso 2: barbería activa pero sin servicios */}
-      {activeBarbershop && clientOfferings.length === 0 && (
+      {activeEstablishment && clientOfferings.length === 0 && (
         <div className="text-center">
           <h2 className="text-2xl font-bold mb-4">Hola {userName}!</h2>
           <p className="mb-6">
@@ -48,7 +49,7 @@ export default function DashboardPage() {
             empezar a trabajar.
           </p>
           <button
-            onClick={() => router.push("/dashboard/initial-setup?step=2")}
+            onClick={() => router.push("/dashboard/initial-setup?step=3")}
             className="bg-blue-600 px-6 py-2 text-white rounded"
           >
             Seguir configurando
@@ -57,14 +58,16 @@ export default function DashboardPage() {
       )}
 
       {/* Caso 3: barbería activa con servicios */}
-      {activeBarbershop && clientOfferings.length > 0 && (
+      {activeEstablishment && clientOfferings.length > 0 && (
         <section className="flex justify-between p-1 pr-3 items-center rounded-lg">
           <div>
-            <h1 className="text-3xl font-bold">{activeBarbershop?.name}</h1>
-            <p className="text-sm text-gray-300">{activeBarbershop?.address}</p>
+            <h1 className="text-3xl font-bold">{activeEstablishment?.name}</h1>
+            <p className="text-sm text-gray-300">
+              {activeEstablishment?.address}
+            </p>
             <p className="text-sm text-gray-300">
               <span className="text-pink-600">Teléfono: </span>
-              {activeBarbershop?.phoneNumber}
+              {activeEstablishment?.phoneNumber}
             </p>
           </div>
           <Link href="/dashboard/barberos/new">

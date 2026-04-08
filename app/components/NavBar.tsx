@@ -1,24 +1,30 @@
 "use client";
 import Link from "next/link";
 import { useAuth } from "../lib/useAuth";
-import { Barbershop } from "../interfaces";
 import { useState, useRef, useEffect } from "react";
 import { apiPost } from "../lib/apiPost";
 import Image from "next/image";
 
+export interface Establishment {
+  id: string;
+  name: string;
+  phoneNumber?: string;
+  address?: string;
+}
+
 export default function Navbar({
   onToggleSidebar,
-  activeBarbershop,
-  setActiveBarbershop,
-  barbershops,
+  activeEstablishment,
+  setActiveEstablishment,
+  establishments,
   userId,
   sessionId,
   sidebarOpen,
 }: {
   onToggleSidebar?: () => void;
-  activeBarbershop?: Barbershop | null;
-  setActiveBarbershop?: (shop: Barbershop) => void;
-  barbershops?: Barbershop[];
+  activeEstablishment?: Establishment | null;
+  setActiveEstablishment?: (shop: Establishment) => void;
+  establishments?: Establishment[];
   userId?: string;
   sessionId?: string;
   sidebarOpen?: boolean;
@@ -27,16 +33,16 @@ export default function Navbar({
   const [showSelector, setShowSelector] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const handleSelectBarbershop = async (shop: Barbershop) => {
+  const handleSelectEstablishment = async (shop: Establishment) => {
     try {
-      await apiPost("/current-barbershops/set", {
+      await apiPost("/current-estabishment/set", {
         userId,
-        barbershopId: shop.id,
+        establishmentId: shop.id,
         sessionId,
       });
-      setActiveBarbershop?.(shop);
+      setActiveEstablishment?.(shop);
       setShowSelector(false);
-      window.dispatchEvent(new Event("barbershop-changed"));
+      window.dispatchEvent(new Event("establishment-changed"));
     } catch (err) {
       console.error("Error cambiando barbería activa", err);
     }
@@ -88,13 +94,13 @@ export default function Navbar({
       {/* Lado derecho: barbería activa + avatar */}
       {isAuthenticated && (
         <div className="flex items-center gap-3 relative">
-          {activeBarbershop && !sidebarOpen && (barbershops?.length ?? 0) > 1 && (
+          {activeEstablishment && !sidebarOpen && (establishments?.length ?? 0) > 1 && (
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setShowSelector(!showSelector)}
                 className="px-1 py-2 border border-pink-300 rounded-md text-sm text-pink-300 font-semibold flex items-center gap-2 hover:bg-pink-600 hover:text-white transition"
               >
-                {activeBarbershop.name}
+                {activeEstablishment.name}
                 <svg
                   className={`w-4 h-4 transform transition-transform ${
                     showSelector ? "rotate-180" : "rotate-0"
@@ -112,14 +118,14 @@ export default function Navbar({
                 </svg>
               </button>
 
-              {showSelector && barbershops && (
+              {showSelector && establishments && (
                 <div className="absolute mt-2 w-40 bg-gray-800 border border-gray-700 rounded-md shadow-lg z-50 right-0">
-                  {barbershops.map((shop) => (
+                  {establishments.map((shop) => (
                     <button
                       key={shop.id}
-                      onClick={() => handleSelectBarbershop(shop)}
+                      onClick={() => handleSelectEstablishment(shop)}
                       className={`w-full text-left px-4 py-2 hover:bg-gray-700 ${
-                        activeBarbershop?.id === shop.id
+                        activeEstablishment?.id === shop.id
                           ? "bg-gray-900 text-pink-400"
                           : "text-white"
                       }`}

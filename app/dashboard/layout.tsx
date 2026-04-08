@@ -4,9 +4,9 @@ import ButtonNav from "../components/BottomNav";
 import SidebarNav from "../components/dashboard/SideBarNav";
 import { useState, useMemo } from "react";
 import { useAuth } from "../hooks/useAuth";
-import { useUserBarbershops } from "../hooks/useUserBarbershops";
+import { useUserEstablishment } from "../hooks/useUserEstablishment";
 
-type UserRole = "admin" | "barber" | "client" | "user";
+type UserRole = "admin" | "staff" | "client" | "user";
 
 export default function DashboardLayout({
   children,
@@ -17,15 +17,15 @@ export default function DashboardLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const {
-    activeBarbershop,
-    barbershops,
-    setActiveBarbershop,
+    activeEstablishment,
+    establishments,
+    setActiveEstablishment,
     loading: shopsLoading,
-  } = useUserBarbershops(user);
+  } = useUserEstablishment(user);
 
   const role: UserRole =
     user?.rol === "admin" ||
-    user?.rol === "barber" ||
+    user?.rol === "staff" ||
     user?.rol === "client" ||
     user?.rol === "user"
       ? user.rol
@@ -50,9 +50,9 @@ export default function DashboardLayout({
       {!sidebarOpen && (
         <Navbar
           onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
-          activeBarbershop={activeBarbershop}
-          setActiveBarbershop={setActiveBarbershop}
-          barbershops={barbershops}
+          activeEstablishment={activeEstablishment}
+          setActiveEstablishment={setActiveEstablishment}
+          establishments={establishments}
           userId={user.id}
           sessionId={sessionId}
           sidebarOpen={sidebarOpen}
@@ -69,9 +69,9 @@ export default function DashboardLayout({
 
         {sidebarOpen && (
           <SidebarNav
-            barbershops={barbershops}
-            activeBarbershop={activeBarbershop}
-            setActiveBarbershop={setActiveBarbershop}
+            establishments={establishments}
+            activeEstablishment={activeEstablishment}
+            setActiveEstablishment={setActiveEstablishment}
             setSidebarOpen={setSidebarOpen}
             userRole={role}
             userId={user.id}

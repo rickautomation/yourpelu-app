@@ -2,9 +2,9 @@
 import { useEffect, useState } from "react";
 import { apiGet } from "../lib/apiGet";
 
-type BarberImage = { 
-  id: string; 
-  imageUrl: string; 
+type BarberImage = {
+  id: string;
+  imageUrl: string;
 };
 
 type ProfileData = {
@@ -23,48 +23,45 @@ type UserProfile = {
   avatarUrl?: string;
 };
 
-type Barber = {
+type Staff = {
   id: string;
   name: string;
-  lastname: string;        // 👈 coincide con la respuesta del backend
+  lastname: string; // 👈 coincide con la respuesta del backend
   phoneNumber?: string;
   email?: string;
   activationLink?: string | null;
   userProfile?: UserProfile; // 👈 agregado para el avatar
 };
 
-type Barbershop = {
+type Establishment = {
   id: string;
   name: string;
   address?: string;
   phoneNumber?: string;
   profile?: ProfileData;
-  barbers?: Barber[];
+  staff?: Staff[];
 };
-
-export function usePublicBarbershopFeed(barbershopId: string) {
-  const [barbershop, setBarbershop] = useState<Barbershop | null>(null);
-  const [barbers, setBarbers] = useState<Barber[]>([]);
+export function usePublicBarbershopFeed(establishmentId: string) {
+  const [establishment, setEstablishment] = useState<Establishment | null>(null);
+  const [staff, setStaff] = useState<Staff[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!barbershopId) return;
+    if (!establishmentId) return;
 
     const load = async () => {
       setLoading(true);
       try {
-        // 👇 desempaquetamos la respuesta para quedarnos solo con la barbería
-        const data = await apiGet<{ barbershop: Barbershop }>(
-          `/public-data/barbershop/${barbershopId}/feed`,
+        const data = await apiGet<{ establishment: Establishment }>(
+          `/public-data/establishment/${establishmentId}/feed`,
         );
-        setBarbershop(data.barbershop);
+        setEstablishment(data.establishment);
 
-        const barbersData = await apiGet<Barber[]>(
-          `/public-data/barbershop/${barbershopId}/barbers`,
+        const staffData = await apiGet<Staff[]>(
+          `/public-data/establishment/${establishmentId}/staff`,
         );
-
-        setBarbers(barbersData);
+        setStaff(staffData);
       } catch (err: any) {
         setError(err.message);
       } finally {
@@ -73,7 +70,7 @@ export function usePublicBarbershopFeed(barbershopId: string) {
     };
 
     load();
-  }, [barbershopId]);
+  }, [establishmentId]);
 
-  return { barbershop, barbers, loading, error };
+  return { establishment, staff, loading, error };
 }

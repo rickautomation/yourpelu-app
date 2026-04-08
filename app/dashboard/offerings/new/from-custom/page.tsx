@@ -3,15 +3,15 @@ import { useState } from "react";
 import { FiChevronDown, FiCheckCircle } from "react-icons/fi";
 import { useAuth } from "@/app/hooks/useAuth";
 import { useOfferings } from "@/app/hooks/useOfferings";
-import { useUserBarbershops } from "@/app/hooks/useUserBarbershops";
 import { apiPost } from "@/app/lib/apiPost";
 import { useRouter } from "next/navigation";
 import { useWizard } from "@/app/context/WizardContext";
 import { useSearchParams } from "next/navigation";
+import { useUserEstablishment } from "@/app/hooks/useUserEstablishment";
 
 export interface ClientOfferingType {
   id: string;
-  barbershopId: string;
+  establishmentId: string;
   name: string;
   description?: string;
   price: number;
@@ -22,9 +22,9 @@ export interface ClientOfferingType {
 
 export default function NewOfferingFromCustomPage() {
   const { user } = useAuth();
-  const { activeBarbershop } = useUserBarbershops(user);
+   const {activeEstablishment} = useUserEstablishment(user)
   const { categories, addClientCategory, clientOfferings, setClientOfferings } = useOfferings(
-    activeBarbershop?.id,
+    activeEstablishment?.id, activeEstablishment?.type?.id
   );
   const { step, setStep } = useWizard();
   const searchParams = useSearchParams();
@@ -55,7 +55,7 @@ export default function NewOfferingFromCustomPage() {
     }
 
     const payload = {
-      barbershopId: activeBarbershop?.id,
+      establishmentId: activeEstablishment?.id,
       name,
       description,
       price: Number(price),
@@ -162,7 +162,7 @@ export default function NewOfferingFromCustomPage() {
             e.preventDefault();
             try {
               const newCat = await addClientCategory({
-                barbershopId: activeBarbershop?.id!,
+                establishmentId: activeEstablishment?.id!,
                 name: newCategoryName,
                 description: newCategoryDescription,
               });
@@ -264,9 +264,9 @@ export default function NewOfferingFromCustomPage() {
           <button
             onClick={() => {
               if (setStep) {
-                setStep(3);
+                setStep(4);
               }
-              router.push("/dashboard/initial-setup?step=3");
+              router.push("/dashboard/initial-setup?step=4");
             }}
             disabled={clientOfferings.length === 0}
             className={`px-4 py-2 rounded 
