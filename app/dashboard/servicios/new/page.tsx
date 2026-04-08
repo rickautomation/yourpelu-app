@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useAuth } from "@/app/lib/useAuth";
 import { useServices } from "@/app/hooks/useServices";
-import { useUserBarbershops } from "@/app/hooks/useUserBarbershops";
+import { useUserEstablishment } from "@/app/hooks/useUserEstablishment";
 
 interface ServicesPageProps {
   render?: string; 
@@ -17,10 +17,10 @@ export default function TemplateServicesPage({
   setHasServices,
 }: ServicesPageProps) {
   const { user } = useAuth();
-  const { activeBarbershop } = useUserBarbershops(user);
+  const { activeEstablishment} = useUserEstablishment(user)
 
   const { globalServices, ownServices, addGlobalService, loading, error } =
-    useServices(activeBarbershop?.id);
+    useServices(activeEstablishment?.id);
 
   const [openPriceInput, setOpenPriceInput] = useState<string | null>(null);
   const [price, setPrice] = useState<string>("");

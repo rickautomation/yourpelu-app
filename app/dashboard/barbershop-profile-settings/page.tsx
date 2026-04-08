@@ -2,16 +2,17 @@
 
 import { useState, useEffect, use } from "react";
 import { useAuth } from "@/app/hooks/useAuth";
-import { useUserBarbershops } from "@/app/hooks/useUserBarbershops";
 import LogoUploader from "./components/LogoUploader";
 import CarouselUploader from "./components/CarouselUploader";
 import LocationSelector from "./components/LocationSelector";
 import BarbershopInfoForm from "./components/BarbershopInfoForm";
 import BarbershopProfileCard from "./components/BarbershopProfileCard";
+import { useUserEstablishment } from "@/app/hooks/useUserEstablishment";
 
 export default function BarbershopProfileSettingsPage() {
   const { user, loading, isUnauthorized, router } = useAuth();
-  const { activeBarbershop } = useUserBarbershops(user);
+
+  const {activeEstablishment} = useUserEstablishment(user)
 
   const [logo, setLogo] = useState<File | null>(null);
   const [carouselImages, setCarouselImages] = useState<File[]>([]);
@@ -28,32 +29,32 @@ export default function BarbershopProfileSettingsPage() {
     name?: string;
     address?: string;
   }>({
-    name: activeBarbershop?.name || "",
-    address: activeBarbershop?.address || "",
-    contacto: activeBarbershop?.phoneNumber || "",
+    name: activeEstablishment?.name || "",
+    address: activeEstablishment?.address || "",
+    contacto: activeEstablishment?.phoneNumber || "",
   });
 
   const [success, setSuccess] = useState(false);
 
   useEffect(() => {
-    if (activeBarbershop) {
+    if (activeEstablishment) {
       setInfo((prev) => ({
-        name: activeBarbershop.name || "",
-        address: activeBarbershop.address || "",
-        contacto: activeBarbershop.phoneNumber || "",
+        name: activeEstablishment.name || "",
+        address: activeEstablishment.address || "",
+        contacto: activeEstablishment.phoneNumber || "",
         lema: prev.lema || "",
         descripcion: prev.descripcion || "",
         horario1: prev.horario1 || "",
         horario2: prev.horario2 || "",
       }));
     }
-  }, [activeBarbershop]);
+  }, [activeEstablishment]);
 
   const handleFinalSubmit = async () => {
-    if (!activeBarbershop?.id) return;
+    if (!activeEstablishment?.id) return;
 
     const formData = new FormData();
-    formData.append("barbershopId", activeBarbershop.id);
+    formData.append("barbershopId", activeEstablishment.id);
 
     if (info.lema) formData.append("lema", info.lema);
     if (info.descripcion) formData.append("descripcion", info.descripcion);
@@ -70,7 +71,7 @@ export default function BarbershopProfileSettingsPage() {
 
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/barbershops/${activeBarbershop.id}/setup-feed`,
+        `${process.env.NEXT_PUBLIC_API_URL}/barbershops/${activeEstablishment.id}/setup-feed`,
         {
           method: "POST",
           body: formData,
@@ -93,11 +94,11 @@ export default function BarbershopProfileSettingsPage() {
   setInfo({
     lema: "",
     descripcion: "",
-    contacto: activeBarbershop?.phoneNumber || "",
+    contacto: activeEstablishment?.phoneNumber || "",
     horario1: "",
     horario2: "",
-    name: activeBarbershop?.name || "",
-    address: activeBarbershop?.address || "",
+    name: activeEstablishment?.name || "",
+    address: activeEstablishment?.address || "",
   });
   setLogo(null);
   setCarouselImages([]);
@@ -116,15 +117,15 @@ export default function BarbershopProfileSettingsPage() {
 
   return (
     <div className="flex flex-col text-center">
-      {activeBarbershop?.profile ? (
-        <BarbershopProfileCard barbershop={activeBarbershop} />
+      {activeEstablishment?.profile ? (
+        <BarbershopProfileCard barbershop={activeEstablishment} />
       ) : (
         <>
           {/* Paso 0: Introducción */}
           {step === 0 && (
             <div className="space-y-4 px-4 py-4">
               <h3 className="text-2xl font-semibold">
-                ¿Listo para configurar el Feed de <strong className="text-pink-600">"{activeBarbershop?.name}"</strong>?
+                ¿Listo para configurar el Feed de <strong className="text-pink-600">"{activeEstablishment?.name}"</strong>?
               </h3>
 
               <p className="text-gray-400">
@@ -158,7 +159,7 @@ export default function BarbershopProfileSettingsPage() {
             <LocationSelector
               location={location}
               setLocation={setLocation}
-              defaultAddress={activeBarbershop?.address}
+              defaultAddress={activeEstablishment?.address}
             />
           )}
 
@@ -176,7 +177,7 @@ export default function BarbershopProfileSettingsPage() {
               {/* Título mejorado */}
               <h2 className="text-2xl font-bold mb-4">
                 Revisión final de{" "}
-                <span className="text-pink-500">{activeBarbershop?.name}</span>
+                <span className="text-pink-500">{activeEstablishment?.name}</span>
               </h2>
               <p className="text-gray-400 text-sm mb-4">
                 Verifica que toda la información esté correcta antes de publicar

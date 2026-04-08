@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { FiChevronDown } from "react-icons/fi";
 import { useAuth } from "@/app/lib/useAuth";
-import { useUserBarbershops } from "@/app/hooks/useUserBarbershops";
 import { useAnalytics } from "@/app/hooks/useAnalytics";
 
 import {
@@ -11,10 +10,11 @@ import {
   getMonthRangeLocal,
   getYearRangeLocal,
 } from "@/app/lib/dateRanges";
+import { useUserEstablishment } from "@/app/hooks/useUserEstablishment";
 
 export default function ReportsPage() {
   const { user } = useAuth();
-  const { activeBarbershop } = useUserBarbershops(user);
+  const { activeEstablishment } = useUserEstablishment(user);
 
   // Estado para el tipo de reporte (Resumen o Detalle)
   const [reportType, setReportType] = useState<"summary" | "detail">("summary");
@@ -62,7 +62,7 @@ export default function ReportsPage() {
     usersSummary,
     loading,
     error,
-  } = useAnalytics(activeBarbershop?.id, dayRange);
+  } = useAnalytics(activeEstablishment?.id, dayRange);
 
   if (loading) return <p>Cargando reportes...</p>;
   if (error) return <p>Error: {error}</p>;

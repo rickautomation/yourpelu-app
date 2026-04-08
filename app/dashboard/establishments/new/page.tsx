@@ -5,11 +5,9 @@ import { useAuth } from "@/app/lib/useAuth";
 import { Barbershop } from "@/app/interfaces";
 import { apiUpdate } from "@/app/lib/apiUpdate";
 import BarbershopForm from "@/app/components/dashboard/BarberShopForm";
-import { useUserEstablishment } from "@/app/hooks/useUserEstablishment";
 
-export default function BarbershopPage() {
+export default function EstablishmentPage() {
   const { user, loading, isAuthenticated, refreshUser } = useAuth();
-  const {establishments} = useUserEstablishment(user)
 
   const [name, setName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -23,38 +21,6 @@ export default function BarbershopPage() {
       ? crypto.randomUUID()
       : String(Date.now());
   }, []);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!user) {
-      setMessage("Debes estar autenticado para crear/editar una barbería");
-      return;
-    }
-
-    try {
-      if (barbershop) {
-        await apiUpdate<Barbershop>(`/establishment/${barbershop.id}`, {
-          name,
-          phoneNumber,
-          address,
-        });
-      } else {
-        await apiPost<Barbershop>("/establishment", {
-          name,
-          phoneNumber,
-          address,
-          userId: user.id,
-          sessionId,
-        });
-      }
-
-      setMessage("Barbería guardada ✅");
-      setIsEditing(false);
-    } catch (err: any) {
-      console.error(err);
-      setMessage(err.message || "Error al guardar barbería ❌");
-    }
-  };
 
   if (loading) return <p className="text-white">Cargando...</p>;
   if (!isAuthenticated) return <p className="text-white">No autorizado</p>;
@@ -88,12 +54,12 @@ export default function BarbershopPage() {
               onSave={async (data) => {
                 if (barbershop) {
                   await apiUpdate<Barbershop>(
-                    `/barbershops/${barbershop.id}`,
+                    `/establishment/${barbershop.id}`,
                     data
                   );
                   setIsEditing(false);
                 } else {
-                  await apiPost<Barbershop>("/barbershops", {
+                  await apiPost<Barbershop>("/establishment", {
                     ...data,
                     userId: user.id,
                     sessionId,

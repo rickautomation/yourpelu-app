@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/app/hooks/useAuth";
-import { useUserBarbershops } from "@/app/hooks/useUserBarbershops";
 
 import { FiChevronDown } from "react-icons/fi";
 import { FiCheckCircle } from "react-icons/fi";
@@ -11,6 +10,7 @@ import { useWizard } from "@/app/context/WizardContext";
 
 import { useOfferings } from "@/app/hooks/useOfferings";
 import Link from "next/link";
+import { useUserEstablishment } from "@/app/hooks/useUserEstablishment";
 
 interface OfferingPageProps {
   inWizard?: boolean;
@@ -34,7 +34,7 @@ export default function NewOfferingFromTemplatePage({
   inWizard,
 }: OfferingPageProps) {
   const { user } = useAuth();
-  const { activeBarbershop } = useUserBarbershops(user);
+  const {activeEstablishment} = useUserEstablishment(user)
   const {
     addOffering,
     clientOfferings,
@@ -42,7 +42,7 @@ export default function NewOfferingFromTemplatePage({
     selectedCategory,
     setSelectedCategory,
     globalCategories,
-  } = useOfferings(activeBarbershop?.id);
+  } = useOfferings(activeEstablishment?.id, activeEstablishment?.type?.id);
   const { step, setStep } = useWizard();
 
   const router = useRouter();
@@ -168,6 +168,15 @@ export default function NewOfferingFromTemplatePage({
                       />
                       <div className="flex gap-2">
                         <button
+                          onClick={() => {
+                            setOpenPriceInput(null);
+                            setPrice("");
+                          }}
+                          className="flex-1 bg-gray-600 text-white px-3 py-2 rounded hover:bg-gray-700 transition-colors text-sm font-semibold"
+                        >
+                          Cancelar
+                        </button>
+                         <button
                           onClick={async () => {
                             if (!price || Number(price) <= 0) {
                               setShowErrorPopup(true);
@@ -191,15 +200,6 @@ export default function NewOfferingFromTemplatePage({
                           className="flex-1 bg-pink-400 text-white px-3 py-2 rounded hover:bg-pink-500 transition-colors text-sm font-semibold"
                         >
                           Confirmar
-                        </button>
-                        <button
-                          onClick={() => {
-                            setOpenPriceInput(null);
-                            setPrice("");
-                          }}
-                          className="flex-1 bg-gray-600 text-white px-3 py-2 rounded hover:bg-gray-700 transition-colors text-sm font-semibold"
-                        >
-                          Cancelar
                         </button>
                       </div>
                     </div>
@@ -230,9 +230,9 @@ export default function NewOfferingFromTemplatePage({
           <button
             onClick={() => {
               if (setStep) {
-                setStep(3);
+                setStep(4);
               }
-              router.push("/dashboard/initial-setup?step=3");
+              router.push("/dashboard/initial-setup?step=4");
             }}
             disabled={clientOfferings.length === 0}
             className={`px-4 py-2 rounded 

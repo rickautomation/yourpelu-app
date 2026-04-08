@@ -14,7 +14,6 @@ import {
   FiBox,
   FiList,
   FiPlusCircle,
-  FiHome,
   FiDollarSign,
   FiShoppingCart,
   FiLayers,
@@ -23,13 +22,11 @@ import {
 import SidebarLink from "./SidebarLink";
 import Image from "next/image";
 import { useOfferings } from "@/app/hooks/useOfferings";
-import { RiMoneyDollarCircleLine } from "react-icons/ri";
 import {
   IoAnalyticsSharp,
   IoChatboxEllipsesOutline,
   IoGiftOutline,
 } from "react-icons/io5";
-import { FaPeopleGroup } from "react-icons/fa6";
 import { BiMaleFemale } from "react-icons/bi";
 
 type Barbershop = {
@@ -38,42 +35,61 @@ type Barbershop = {
   address?: string;
 };
 
-type UserRole = "admin" | "barber" | "client" | "user";
+type Establishment = {
+  id: string;
+  name: string;
+  address?: string;
+  type?: EstablishmentType
+};
+
+type EstablishmentType = {
+  id: string;
+  name: string;
+  description: string;
+};
+
+type UserRole = "admin" | "staff" | "client" | "user";
 
 export default function SidebarNav({
-  barbershops,
-  activeBarbershop,
-  setActiveBarbershop,
+  establishments,
+  activeEstablishment,
+  setActiveEstablishment,
   setSidebarOpen,
   userRole,
   userId,
   sessionId,
 }: {
-  barbershops: Barbershop[];
-  activeBarbershop: Barbershop | null;
-  setActiveBarbershop: (shop: Barbershop) => void;
+  establishments: Establishment[];              // 👈 antes barbershops
+  activeEstablishment: Establishment | null;   // 👈 antes activeBarbershop
+  setActiveEstablishment: (shop: Establishment) => void;
   setSidebarOpen: (open: boolean) => void;
   userRole: UserRole;
   userId: string;
   sessionId: string;
 }) {
-  const { clientOfferings, loading } = useOfferings(activeBarbershop?.id);
+  const { clientOfferings, loading } = useOfferings(activeEstablishment?.id, activeEstablishment?.type?.id);
+
+  console.log("active: ", activeEstablishment)
+
 
   const [showSelector, setShowSelector] = useState(false);
+
+
+  console.log("client offering: ", clientOfferings)
 
   const router = useRouter();
 
   const handleSelectBarbershop = async (shop: Barbershop) => {
     try {
       // 👇 persistir barbería activa en backend
-      await apiPost("/current-barbershops/set", {
+      await apiPost("/current-establishments/set", {
         userId,
         barbershopId: shop.id,
         sessionId,
       });
 
       // 👇 actualizar estado local
-      setActiveBarbershop(shop);
+      setActiveEstablishment(shop);
       setShowSelector(false);
 
       // 👇 notificar al resto de la app
@@ -110,14 +126,14 @@ export default function SidebarNav({
             </Link>
           </div>
           {(userRole === "admin" || userRole === "user") &&
-            (barbershops.length > 0 ? (
+            (establishments.length > 0 ? (
               <>
                 {/* Botón para abrir/cerrar selector */}
                 <button
                   className="flex items-center justify-between w-full px-4 py-2 text-lg font-semibold text-pink-600 border border-pink-600 rounded-md hover:bg-pink-600 hover:text-white transition"
                   onClick={() => setShowSelector(!showSelector)}
                 >
-                  {activeBarbershop?.name || "Seleccionar barbería"}
+                  {activeEstablishment?.name || "Seleccionar barbería"}
                   <svg
                     className={`w-5 h-5 ml-2 transform transition-transform ${
                       showSelector ? "rotate-180" : "rotate-0"
@@ -139,11 +155,11 @@ export default function SidebarNav({
                 {showSelector && (
                   <>
                     <div className="mt-2 bg-gray-800 border border-gray-700 rounded-md shadow-lg">
-                      {barbershops.map((shop) => (
+                      {establishments.map((shop) => (
                         <button
                           key={shop.id}
                           className={`w-full text-left px-4 py-2 hover:bg-gray-700 ${
-                            activeBarbershop?.id === shop.id
+                            activeEstablishment?.id === shop.id
                               ? "bg-gray-900 text-pink-400"
                               : "text-white"
                           }`}
@@ -251,7 +267,7 @@ export default function SidebarNav({
             )}
 
             {(userRole === "admin" ||
-              userRole === "barber" ||
+              userRole === "staff" ||
               userRole === "user") && (
               <>
                 <div className="flex justify-between">
@@ -296,7 +312,7 @@ export default function SidebarNav({
 
                 <div className="flex justify-between">
                   <SidebarLink
-                    href="/dashboard/turnos"
+                    href="/dashboard/appointments"
                     setSidebarOpen={setSidebarOpen}
                   >
                     <div className="flex w-26  border rounded-md p-2 px-2 py-4 items-end text-xs text-end">
@@ -412,11 +428,11 @@ export default function SidebarNav({
             <button
               onClick={() => {
                 setSidebarOpen(false);
-                router.push("/dashboard/initial-setup?step=2");
+                router.push("/dashboard/initial-setup?step=3");
               }}
               className="px-4 py-2 bg-pink-600 text-white rounded-md shadow hover:bg-pink-700 transition"
             >
-              Configura tu barbería
+              Configura tu establecimiento
             </button>
           </div>
         )}

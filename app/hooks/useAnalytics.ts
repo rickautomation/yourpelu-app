@@ -44,7 +44,7 @@ export type UserSummaryReport = {
   totalRevenue: number;
 };
 
-export function useAnalytics(barbershopId?: string, dateRange?: DateRange) {
+export function useAnalytics(establishmentId?: string, dateRange?: DateRange) {
   const [usersSummary, setUsersSummary] = useState<UserSummaryReport[]>([]);
   const [summary, setSummary] = useState<SummaryReport | null>(null);
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethodReport[]>(
@@ -70,11 +70,11 @@ export function useAnalytics(barbershopId?: string, dateRange?: DateRange) {
   };
 
   const fetchSummary = async () => {
-    if (!barbershopId) return;
+    if (!establishmentId) return;
     setLoading(true);
     try {
       const data = await apiGet<SummaryReport>(
-        `/analytics/reports/summary/${barbershopId}${buildQuery(dateRange)}`,
+        `/analytics/reports/summary/${establishmentId}${buildQuery(dateRange)}`,
       );
       //console.log("📊 Summary report:", data);
       setSummary(data);
@@ -86,10 +86,10 @@ export function useAnalytics(barbershopId?: string, dateRange?: DateRange) {
   };
 
   const fetchPaymentMethods = async () => {
-    if (!barbershopId) return;
+    if (!establishmentId) return;
     try {
       const data = await apiGet<PaymentMethodReport[]>(
-        `/analytics/reports/payment-methods/${barbershopId}${buildQuery(dateRange)}`,
+        `/analytics/reports/payment-methods/${establishmentId}${buildQuery(dateRange)}`,
       );
       //console.log("💳 Payment methods report:", data);
       setPaymentMethods(data);
@@ -99,10 +99,10 @@ export function useAnalytics(barbershopId?: string, dateRange?: DateRange) {
   };
 
   const fetchClientsSummary = async () => {
-    if (!barbershopId) return;
+    if (!establishmentId) return;
     try {
       const data = await apiGet<ClientSummaryReport[]>(
-        `/analytics/reports/clients-summary/${barbershopId}${buildQuery(dateRange)}`,
+        `/analytics/reports/clients-summary/${establishmentId}${buildQuery(dateRange)}`,
       );
       setClientsSummary(data);
     } catch (err: any) {
@@ -111,10 +111,10 @@ export function useAnalytics(barbershopId?: string, dateRange?: DateRange) {
   };
 
   const fetchUsersSummary = async () => {
-    if (!barbershopId) return;
+    if (!establishmentId) return;
     try {
       const data = await apiGet<UserSummaryReport[]>(
-        `/analytics/reports/users-summary/${barbershopId}${buildQuery(dateRange)}`,
+        `/analytics/reports/users-summary/${establishmentId}${buildQuery(dateRange)}`,
       );
       setUsersSummary(data);
     } catch (err: any) {
@@ -123,10 +123,10 @@ export function useAnalytics(barbershopId?: string, dateRange?: DateRange) {
   };
 
   const fetchTopCategories = async () => {
-    if (!barbershopId) return;
+    if (!establishmentId) return;
     try {
       const data = await apiGet<TopCategoryReport[]>(
-        `/analytics/reports/top-categories/${barbershopId}${buildQuery(dateRange)}`,
+        `/analytics/reports/top-categories/${establishmentId}${buildQuery(dateRange)}`,
       );
       //console.log("🏆 Top categories report:", data);
       setTopCategories(data);
@@ -136,10 +136,10 @@ export function useAnalytics(barbershopId?: string, dateRange?: DateRange) {
   };
 
   const fetchCategories = async () => {
-    if (!barbershopId) return;
+    if (!establishmentId) return;
     try {
       const data = await apiGet<CategoryReport[]>(
-        `/analytics/reports/categories/${barbershopId}${buildQuery(dateRange)}`,
+        `/analytics/reports/categories/${establishmentId}${buildQuery(dateRange)}`,
       );
       //console.log("📂 Categories report:", data);
       setCategories(data);
@@ -148,16 +148,16 @@ export function useAnalytics(barbershopId?: string, dateRange?: DateRange) {
     }
   };
 
-  // 🔹 useEffect interno: se dispara automáticamente con barbershopId y dateRange
+  // 🔹 useEffect interno: se dispara automáticamente con establishmentId y dateRange
   useEffect(() => {
-    if (!barbershopId) return;
+    if (!establishmentId) return;
     fetchSummary();
     fetchPaymentMethods();
     fetchTopCategories();
     fetchCategories();
     fetchClientsSummary(); // 👈 nuevo
     fetchUsersSummary();
-  }, [barbershopId, dateRange?.fromDate, dateRange?.toDate]);
+  }, [establishmentId, dateRange?.fromDate, dateRange?.toDate]);
 
   return {
     summary,

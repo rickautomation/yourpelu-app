@@ -11,17 +11,20 @@ import {
   FiMessageSquare,
 } from "react-icons/fi";
 import { useState, useRef, useEffect } from "react";
-import { useUserBarbershops } from "../hooks/useUserBarbershops";
 import { useRouter } from "next/navigation";
 import { useOfferings } from "../hooks/useOfferings";
 import { BiBarChart } from "react-icons/bi";
+import { useUserEstablishment } from "../hooks/useUserEstablishment";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function BottomNav({ onToggleSidebar, setSidebarOpen }: any) {
   const { user, logout } = useAuth();
-  const { activeBarbershop } = useUserBarbershops(user);
-  const { clientOfferings } = useOfferings(activeBarbershop?.id);
+  const { activeEstablishment } = useUserEstablishment(user);
+  const { clientOfferings } = useOfferings(
+    activeEstablishment?.id,
+    activeEstablishment?.type?.id,
+  );
 
   const router = useRouter();
 
@@ -32,12 +35,12 @@ export default function BottomNav({ onToggleSidebar, setSidebarOpen }: any) {
   const popupRef = useRef<HTMLDivElement>(null);
 
   const getAvatarSrc = (avatarUrl?: string) => {
-  if (!avatarUrl) return "";
-  if (avatarUrl.startsWith("http")) {
-    return avatarUrl; // producción (Cloudinary)
-  }
-  return `${API_URL}${avatarUrl}`; // local
-};
+    if (!avatarUrl) return "";
+    if (avatarUrl.startsWith("http")) {
+      return avatarUrl; // producción (Cloudinary)
+    }
+    return `${API_URL}${avatarUrl}`; // local
+  };
 
   // cerrar menú si se hace click fuera
   useEffect(() => {
@@ -77,14 +80,14 @@ export default function BottomNav({ onToggleSidebar, setSidebarOpen }: any) {
 
   // interceptar click en links protegidos
   const handleProtectedClick = (e: React.MouseEvent, href: string) => {
-    if (!activeBarbershop) {
+    if (!activeEstablishment) {
       e.preventDefault();
       setShowPopup(true);
       setPopupStep(1); // 👈 barbería no configurada
     } else if (clientOfferings.length === 0) {
       e.preventDefault();
       setShowPopup(true);
-      setPopupStep(2); // 👈 barbería existe pero sin servicios
+      setPopupStep(3); // 👈 barbería existe pero sin servicios
     } else {
       setSidebarOpen?.(false);
       router.push(href);
@@ -103,7 +106,7 @@ export default function BottomNav({ onToggleSidebar, setSidebarOpen }: any) {
 
         {/* Turnos */}
         <Link
-          href="/dashboard/appoiments"
+          href="/dashboard/appointments"
           onClick={(e) => handleProtectedClick(e, "/dashboard/turnos")}
           className="flex items-center justify-center text-pink-600"
         >

@@ -1,13 +1,13 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/app/hooks/useAuth";
-import { useUserBarbershops } from "@/app/hooks/useUserBarbershops";
 import { apiGet } from "@/app/lib/apiGet";
 import { apiDelete } from "@/app/lib/apiDelete";
+import { useUserEstablishment } from "@/app/hooks/useUserEstablishment";
 
 export default function BarbersPage() {
   const { user, loading, isUnauthorized, router } = useAuth();
-  const { activeBarbershop } = useUserBarbershops(user);
+  const {activeEstablishment } = useUserEstablishment(user)
 
   const [barbers, setBarbers] = useState<
     {
@@ -29,7 +29,7 @@ export default function BarbersPage() {
     try {
       if (shopId) {
         const res = await apiGet<typeof barbers>(
-          `/user/barbershop/${shopId}/barbers`,
+          `/user/establishment/${shopId}/staff`,
         );
         setBarbers(res);
       }
@@ -47,13 +47,13 @@ export default function BarbersPage() {
   };
 
   useEffect(() => {
-    if (activeBarbershop?.id) {
+    if (activeEstablishment?.id) {
       setExpandedBarberId(null);
-      fetchBarbers(activeBarbershop.id);
+      fetchBarbers(activeEstablishment?.id);
     } else {
       setBarbers([]);
     }
-  }, [activeBarbershop?.id]);
+  }, [activeEstablishment?.id]);
 
   if (loading) return <p>Cargando...</p>;
   if (isUnauthorized) {
@@ -181,7 +181,7 @@ export default function BarbersPage() {
                         onClick={async () => {
                           try {
                             await apiDelete(`/user/barber/soft/${barber.id}`);
-                            fetchBarbers(activeBarbershop!.id);
+                            fetchBarbers(activeEstablishment!.id);
                           } catch (err) {
                             console.error("Error cancelando barbero", err);
                           }
@@ -195,7 +195,7 @@ export default function BarbersPage() {
                         onClick={async () => {
                           try {
                             await apiDelete(`/user/barber/soft/${barber.id}`);
-                            fetchBarbers(activeBarbershop!.id);
+                            fetchBarbers(activeEstablishment!.id);
                           } catch (err) {
                             console.error("Error eliminando barbero", err);
                           }

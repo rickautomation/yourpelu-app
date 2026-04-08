@@ -5,11 +5,11 @@ import BarbershopFeed from "@/app/components/public-feed/BarbershopFeed";
 
 export default function PublicFeedPage({ params }: { params: Promise<{ barbershopId: string }> }) {
   const { barbershopId } = React.use(params); // 👈 unwrap del Promise
-  const { barbershop, loading, error } = usePublicBarbershopFeed(barbershopId);
+  const { establishment, loading, error } = usePublicBarbershopFeed(barbershopId);
 
   if (loading) return <p>Cargando...</p>;
   if (error) return <p>Error: {error}</p>;
-  if (!barbershop) return <p>No se encontró la barbería</p>;
+  if (!establishment) return <p>No se encontró la barbería</p>;
 
-  return <BarbershopFeed barbershop={barbershop} />;
+  return <BarbershopFeed barbershop={establishment} />;
 }

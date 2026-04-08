@@ -44,7 +44,7 @@ export type ClientOfferingCategory = {
   id: string;
   name: string;
   description?: string;
-  barbershop: {
+  establishment: {
     id: string;
     name: string;
     address?: string;
@@ -56,7 +56,7 @@ export type ClientOfferingCategory = {
   deletedAt?: string | null;
 };
 
-export function useOfferings(barbershopId?: string) {
+export function useOfferings(establishmentId?: string, typeId?: string) {
   const [categories, setCategories] = useState<
     (OfferingCategory | ClientOfferingCategory)[]
   >([]);
@@ -71,7 +71,7 @@ export function useOfferings(barbershopId?: string) {
   >(null);
   const [loadingCategories, setLoadingCategories] = useState(true);
 
-    const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
 
   const [clientOfferings, setClientOfferings] = useState<ClientOfferingType[]>(
     [],
@@ -81,21 +81,25 @@ export function useOfferings(barbershopId?: string) {
     const fetchCategories = async () => {
       try {
         setLoadingCategories(true);
-        const globalCats = await apiGet<OfferingCategory[]>(
-          "/offering-categories",
-        );
+
+        let globalCats: OfferingCategory[] = []; // 👈 declarar acá
+
+        if (typeId) {
+          globalCats = await apiGet<OfferingCategory[]>(
+            `/offering-categories/by-type/${typeId}`,
+          );
+        }
+
         let clientCats: ClientOfferingCategory[] = [];
-        if (barbershopId) {
+        if (establishmentId) {
           clientCats = await apiGet<ClientOfferingCategory[]>(
-            `/client-offering-categories/barbershop/${barbershopId}`,
+            `/client-offering-categories/establishment/${establishmentId}`,
           );
         }
 
         // Unificar por nombre sin repetidos
         const merged = [...globalCats, ...clientCats];
 
-        // Si querés que gane siempre la versión clientCategory (más completa),
-        // ponelas al final del merge. El último con el mismo nombre pisa al anterior.
         const unique = Array.from(
           new Map(merged.map((cat) => [cat.name, cat])).values(),
         );
@@ -109,29 +113,34 @@ export function useOfferings(barbershopId?: string) {
         }
       } catch (err) {
         console.error("Error cargando categorías:", err);
+      } finally {
+        setLoadingCategories(false); // 👈 importante cerrar el loading
       }
     };
     fetchCategories();
-  }, [barbershopId]);
+  }, [establishmentId, typeId]);
 
   // cargar servicios propios de la barbería
-useEffect(() => {
-  const fetchClientOfferings = async () => {
-    if (!barbershopId) return;
-    try {
-      setLoading(true); // 👈 arrancamos en loading
-      const data = await apiGet<ClientOfferingType[]>(
-        `/client-offering-types/barbershop/${barbershopId}`,
-      );
-      setClientOfferings(data);
-    } catch (err) {
-      console.error("Error cargando servicios de barbería:", err);
-    } finally {
-      setLoading(false); // 👈 terminamos loading al final
-    }
-  };
-  fetchClientOfferings();
-}, [barbershopId]);
+  useEffect(() => {
+    const fetchClientOfferings = async () => {
+      if (!establishmentId) {
+        setLoading(false); // 👈 cerrar loading si no hay establecimiento
+        return;
+      }
+      try {
+        setLoading(true);
+        const data = await apiGet<ClientOfferingType[]>(
+          `/client-offering-types/establishment/${establishmentId}`,
+        );
+        setClientOfferings(data);
+      } catch (err) {
+        console.error("Error cargando servicios de establecimiento:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchClientOfferings();
+  }, [establishmentId]);
 
   // crear un nuevo servicio
   const addOffering = async (data: {
@@ -141,13 +150,13 @@ useEffect(() => {
     baseTypeId?: string;
     categoryId?: string;
   }) => {
-    if (!barbershopId) throw new Error("No barbershopId provided");
+    if (!establishmentId) throw new Error("No establishmentId provided");
 
     try {
       const newOffering = await apiPost<ClientOfferingType>(
         "/client-offering-types",
         {
-          barbershopId,
+          establishmentId,
           baseTypeId: data.baseTypeId,
           name: data.name,
           description: data.description,
@@ -163,7 +172,7 @@ useEffect(() => {
   };
 
   const addClientCategory = async (data: {
-    barbershopId: string;
+    establishmentId: string;
     name: string;
     description?: string;
   }) => {
@@ -228,6 +237,6 @@ useEffect(() => {
     isOfferingCategory,
     globalCategories,
     loadingCategories,
-    loading
+    loading,
   };
 }

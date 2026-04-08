@@ -3,16 +3,16 @@
 import { useState } from "react";
 import { FiChevronDown } from "react-icons/fi";
 import { useOfferings } from "@/app/hooks/useOfferings";
-import { useUserBarbershops } from "@/app/hooks/useUserBarbershops";
 import { useAuth } from "@/app/lib/useAuth";
 
 import Link from "next/link";
+import { useUserEstablishment } from "@/app/hooks/useUserEstablishment";
 
 export default function OfferingPage() {
   const { user } = useAuth();
-  const { activeBarbershop } = useUserBarbershops(user);
+  const { activeEstablishment } = useUserEstablishment(user);
   const { clientOfferings, updatePrice, deleteOffering } = useOfferings(
-    activeBarbershop?.id,
+    activeEstablishment?.id,
   );
 
   const [showDropdown, setShowDropdown] = useState(false);
@@ -54,8 +54,6 @@ export default function OfferingPage() {
         return categoryId === selectedCategory?.id;
       })
     : clientOfferings;
-
-  console.log("offerings: ", clientOfferings);
 
   return (
     <div className="px-4 py-2">

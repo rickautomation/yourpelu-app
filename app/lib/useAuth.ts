@@ -4,20 +4,13 @@ import { useRouter } from "next/navigation";
 import { apiGet } from "./apiGet";
 import { apiPost } from "./apiPost";
 
-type Barbershop = {
-  id: string;
-  name: string;
-};
-
 interface User {
   id: string;
   name: string;
   lastname: string;
   phoneNumber: string;
   rol: string;
-  barbershop: Barbershop | null;  
-  barbershops?: Barbershop[];  
-  avatarUrl?: string;             
+  avatarUrl?: string;
 }
 
 let isRefreshing = false;
@@ -33,60 +26,17 @@ export function useAuth() {
     try {
       const data = await apiGet<User>("/auth/me");
 
-      // 👇 si es admin, pedimos barbería activa y todas
-      if (data.rol === "admin") {
-        try {
-          const current = await apiGet<{ barbershop: Barbershop }>(
-            `/current-barbershops/user/${data.id}/last`
-          );
-          if (current?.barbershop) {
-            data.barbershop = current.barbershop;
-          }
-          const all = await apiGet<Barbershop[]>(
-            `/barbershops/user/${data.id}/all`
-          );
-          data.barbershops = all;
-        } catch (err) {
-          console.error("Error cargando barberías de admin", err);
-        }
-      }
-
-      // 👇 si es barber, pedimos su única barbería
-      if (data.rol === "barber") {
-        try {
-          const all = await apiGet<Barbershop[]>(
-            `/barbershops/user/${data.id}/all`
-          );
-          data.barbershops = all;
-          data.barbershop = all.length > 0 ? all[0] : null;
-        } catch (err) {
-          console.error("Error cargando barbería de barber", err);
-        }
-      }
-
-      // 👇 si es client, pedimos todas sus barberías
-      if (data.rol === "client") {
-        try {
-          const all = await apiGet<Barbershop[]>(
-            `/barbershops/user/${data.id}/all`
-          );
-          data.barbershops = all;
-          // opcional: setear la primera como activa
-          data.barbershop = all.length > 0 ? all[0] : null;
-        } catch (err) {
-          console.error("Error cargando barberías de client", err);
-        }
-      }
-
       setUser(data);
       setError(null);
     } catch (err: any) {
       if (!isRefreshing) {
         isRefreshing = true;
-        refreshPromise = apiPost<{ ok: boolean }>("/auth/refresh", {}).finally(() => {
-          isRefreshing = false;
-          refreshPromise = null;
-        });
+        refreshPromise = apiPost<{ ok: boolean }>("/auth/refresh", {}).finally(
+          () => {
+            isRefreshing = false;
+            refreshPromise = null;
+          },
+        );
       }
       try {
         const refreshRes = await refreshPromise;

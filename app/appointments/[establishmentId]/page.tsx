@@ -7,32 +7,35 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { use } from "react";
 import { apiPost } from "@/app/lib/apiPost";
+// add coment here
 
 type CreateAppoimentDto = {
   name: string;
   lastname: string;
   phoneNumber: string;
   date: Date;
-  barberId: string;
-  barbershopId: string;
+  staffId: string;
+  establishmentId: string;
 };
 
 export default function AppointmentsPage({
   params,
 }: {
-  params: Promise<{ barbershopId: string }>;
+  params: Promise<{ establishmentId: string }>;
 }) {
-  const { barbershopId } = use(params);
-  const { barbershop, barbers, loading, error } =
-    usePublicBarbershopFeed(barbershopId);
+  const { establishmentId } = use(params);
+  const { establishment, staff, loading, error } =
+    usePublicBarbershopFeed(establishmentId);
 
-  const [form, setForm] = useState<Omit<CreateAppoimentDto, "barbershopId">>({
-    name: "",
-    lastname: "",
-    phoneNumber: "",
-    date: new Date(),
-    barberId: "",
-  });
+  const [form, setForm] = useState<Omit<CreateAppoimentDto, "establishmentId">>(
+    {
+      name: "",
+      lastname: "",
+      phoneNumber: "",
+      date: new Date(),
+      staffId: "",
+    },
+  );
 
   const [openCalendar, setOpenCalendar] = useState(false);
 
@@ -43,7 +46,7 @@ export default function AppointmentsPage({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const body: CreateAppoimentDto = { ...form, barbershopId };
+      const body: CreateAppoimentDto = { ...form, establishmentId };
 
       const res = await apiPost<CreateAppoimentDto>(
         "/public-data/appointments",
@@ -56,7 +59,7 @@ export default function AppointmentsPage({
         lastname: "",
         phoneNumber: "",
         date: new Date(),
-        barberId: "",
+        staffId: "",
       });
     } catch (err: any) {
       alert(err.message || "Error al reservar turno");
@@ -74,10 +77,10 @@ export default function AppointmentsPage({
   return (
     <div className="flex flex-col items-center px-4 py-2 bg-gray-200 text-black min-h-screen">
       <div className="rounded-full">
-        {barbershop?.profile?.logoUrl ? (
+        {establishment?.profile?.logoUrl ? (
           <Image
-            src={getImageSrc(barbershop?.profile?.logoUrl)}
-            alt={`${barbershop.name} logo`}
+            src={getImageSrc(establishment?.profile?.logoUrl)}
+            alt={`${establishment.name} logo`}
             width={30} // 👈 más grande
             height={30} // 👈 más grande
             className="h-30 w-30 rounded-full object-cover shadow-md" // 👈 redondo, sin borde
@@ -91,7 +94,7 @@ export default function AppointmentsPage({
       </div>
       <h1 className="text-2xl py-4">
         Reserva tu lugar en{" "}
-        <span className="text-pink-600">{barbershop?.name}</span>
+        <span className="text-pink-600">{establishment?.name}</span>
       </h1>
 
       <form
@@ -157,7 +160,6 @@ export default function AppointmentsPage({
               className="flex items-center gap-2 p-2 bg-pink-500 text-white rounded px-2 py-1 "
             >
               Cambiar
-              {/* <FaCalendarAlt className="w-8 h-8" /> */}
             </button>
           </div>
 
@@ -195,39 +197,39 @@ export default function AppointmentsPage({
             Seleccioná un especialista
           </h2>
           <div className="flex flex-col gap-2">
-            {barbers.map((barber) => (
+            {staff.map((member) => (
               <label
-                key={barber.id}
+                key={member.id}
                 className="bg-slate-300 p-3 rounded shadow cursor-pointer flex items-center gap-3"
               >
                 {/* Avatar o iniciales */}
-                {barber.userProfile?.avatarUrl ? (
+                {member.userProfile?.avatarUrl ? (
                   <img
-                    src={getImageSrc(barber.userProfile.avatarUrl)}
-                    alt={`${barber.name} ${barber.lastname}`}
+                    src={getImageSrc(member.userProfile.avatarUrl)}
+                    alt={`${member.name} ${member.lastname}`}
                     className="w-10 h-10 rounded-full border border-gray-600"
                   />
                 ) : (
                   <div className="w-10 h-10 flex items-center justify-center rounded-full bg-pink-500 text-white font-bold">
-                    {barber.name.charAt(0)}
-                    {barber.lastname.charAt(0)}
+                    {member.name.charAt(0)}
+                    {member.lastname.charAt(0)}
                   </div>
                 )}
 
                 {/* Nombre */}
                 <p className="text-lg font-semibold flex-1">
-                  {barber.name} {barber.lastname}
+                  {member.name} {member.lastname}
                 </p>
 
                 {/* Checkbox único */}
                 <input
                   type="checkbox"
-                  checked={form.barberId === barber.id}
+                  checked={form.staffId === member.id}
                   onChange={(e) => {
                     if (e.target.checked) {
-                      setForm({ ...form, barberId: barber.id });
+                      setForm({ ...form, staffId: member.id });
                     } else {
-                      setForm({ ...form, barberId: "" }); // 👈 deselecciona
+                      setForm({ ...form, staffId: "" }); // 👈 deselecciona
                     }
                   }}
                   className="w-5 h-5 accent-pink-500"
