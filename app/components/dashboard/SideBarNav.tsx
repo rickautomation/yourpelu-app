@@ -69,19 +69,12 @@ export default function SidebarNav({
 }) {
   const { clientOfferings, loading } = useOfferings(activeEstablishment?.id, activeEstablishment?.type?.id);
 
-  console.log("active: ", activeEstablishment)
-
-
   const [showSelector, setShowSelector] = useState(false);
-
-
-  console.log("client offering: ", clientOfferings)
 
   const router = useRouter();
 
   const handleSelectBarbershop = async (shop: Barbershop) => {
     try {
-      // 👇 persistir barbería activa en backend
       await apiPost("/current-establishments/set", {
         userId,
         barbershopId: shop.id,
@@ -176,14 +169,14 @@ export default function SidebarNav({
                     {/* Botón Nueva Barbería separado */}
                     <div className="mt-3">
                       <Link
-                        href="/dashboard/barbershops/new"
+                        href="/dashboard/initial-setup?step=1"
                         onClick={() => setSidebarOpen(false)}
                         className="flex items-center justify-start gap-2 w-full px-4 py-1 border border-pink-600 rounded-md text-xl font-semibold text-white hover:bg-pink-600 hover:text-white transition"
                       >
                         <span className="text-3xl text-pink-600 font-semibold">
                           +
                         </span>
-                        Nueva Barbería
+                        Nuevo establecimiento
                       </Link>
                     </div>
                   </>
@@ -192,12 +185,12 @@ export default function SidebarNav({
             ) : (
               // 👇 Si no hay barberías, mostrar solo el botón Nueva Barbería
               <Link
-                href="/dashboard/barbershops/new"
+                href="/dashboard/initial-setup?step=1"
                 onClick={() => setSidebarOpen(false)}
                 className="flex items-center justify-start gap-2 w-full px-4 py-1 border border-pink-600 rounded-md text-xl font-semibold"
               >
                 <span className="text-3xl text-pink-600 font-semibold">+</span>
-                Nueva Barbería
+                Nuevo establecimiento
               </Link>
             ))}
         </div>
@@ -230,17 +223,17 @@ export default function SidebarNav({
 
         {/* Links del sidebar */}
         {!showSelector && clientOfferings.length > 0 && (
-          <div className="mt-4 text-pink-600">
+          <div className="flex flex-col gap-2 mt-4 text-pink-600">
             {userRole === "admin" && (
               <>
                 <div className="flex justify-between">
                   <SidebarLink
-                    href="/dashboard/barberos"
+                    href="/dashboard/staff"
                     setSidebarOpen={setSidebarOpen}
                   >
                     <div className="flex w-26  border rounded-md p-2 px-2 py-4 items-end text-xs text-end">
                       <FiUsers className="inline w-8 h-8 mr-1" />
-                      <p>Barberos</p>
+                      <p>Team</p>
                     </div>
                   </SidebarLink>
                   <SidebarLink
@@ -262,7 +255,6 @@ export default function SidebarNav({
                     </div>
                   </SidebarLink>
                 </div>
-                <hr className="border-gray-700 my-2" />
               </>
             )}
 
@@ -308,7 +300,6 @@ export default function SidebarNav({
                     </div>
                   </SidebarLink>
                 </div>
-                <hr className="border-gray-700 my-2" />
 
                 <div className="flex justify-between">
                   <SidebarLink
@@ -342,7 +333,6 @@ export default function SidebarNav({
                     </div>
                   </SidebarLink>
                 </div>
-                <hr className="border-gray-700 my-2" />
 
                 <div className="flex justify-between">
                   <SidebarLink
@@ -373,7 +363,6 @@ export default function SidebarNav({
                     </div>
                   </SidebarLink>
                 </div>
-                <hr className="border-gray-700 my-2" />
 
                 <div className="flex justify-between">
                   <SidebarLink
@@ -404,8 +393,6 @@ export default function SidebarNav({
                     </div>
                   </SidebarLink>
                 </div>
-
-                <hr className="border-gray-700 my-2" />
 
                 <div className="flex justify-end">
                   <SidebarLink

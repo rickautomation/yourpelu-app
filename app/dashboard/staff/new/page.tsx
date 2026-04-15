@@ -1,0 +1,196 @@
+"use client";
+import { useEffect, useState } from "react";
+import { useAuth } from "@/app/hooks/useAuth";
+import { apiPost } from "@/app/lib/apiPost";
+
+import { FaWhatsapp } from "react-icons/fa";
+import { useUserEstablishment } from "@/app/hooks/useUserEstablishment";
+
+export default function NewStaffPage() {
+  const { user, loading, isUnauthorized, router } = useAuth();
+  const { activeEstablishment } = useUserEstablishment(user);
+
+  const [name, setName] = useState("");
+  const [lastname, setLastname] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState<string | null>(null);
+  const [activationLink, setActivationLink] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+  const [newBarberPhone, setNewBarberPhone] = useState<string | null>(null);
+  const [showModal, setShowModal] = useState(false);
+
+  useEffect(() => {
+    if (copied) {
+      const timer = setTimeout(() => {
+        router.push("/dashboard/staff");
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [copied, router]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      if (!activeEstablishment?.id) {
+        setMessage("No hay establecimiento activo ❌");
+        return;
+      }
+
+      const res = await apiPost<{
+        activationLink: string;
+        phoneNumber: string;
+      }>("/user/staff", {
+        name,
+        lastname,
+        phoneNumber,
+        email,
+        establishmentId: activeEstablishment?.id,
+      });
+
+      setActivationLink(res.activationLink);
+      setNewBarberPhone(res.phoneNumber);
+      setShowModal(true); // abrir modal
+
+      setName("");
+      setLastname("");
+      setPhoneNumber("");
+      setEmail("");
+    } catch (err: any) {
+      console.error(err);
+      setMessage("Error al crear barbero ❌");
+    }
+  };
+
+  const openWhatsapp = (url: string) => {
+    window.open(url, "_blank");
+  };
+
+  const formatArgPhone = (phone: string) => {
+    let clean = phone.replace(/\D/g, "");
+
+    if (clean.startsWith("0")) {
+      clean = clean.slice(1);
+    }
+
+    if (clean.startsWith("15")) {
+      clean = clean.slice(2);
+    }
+
+    if (clean.startsWith("549")) return clean;
+
+    if (clean.startsWith("9")) return "549" + clean.slice(1);
+
+    return "549" + clean;
+  };
+
+  if (loading) return <p>Cargando...</p>;
+  if (isUnauthorized) {
+    router.push("/login");
+    return null;
+  }
+
+  return (
+    <div className="flex flex-col space-y-2 p-4">
+      {showModal && (
+        <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm z-50 px-4">
+          <div className="bg-gray-800 p-6 rounded-lg shadow-xl text-center max-w-md w-full">
+            <h3 className="text-xl font-semibold mb-6 text-white">
+              Invitación creada ✅
+            </h3>
+            <div className="flex flex-col justify-center">
+              <button
+                onClick={() => {
+                  const formattedPhone = formatArgPhone(newBarberPhone!);
+                  const message = `Hola 👋, ${activeEstablishment?.name} te invita a unirte a YourPelu. 
+Para activarla y configurar tu contraseña, ingresá al siguiente enlace: 
+${activationLink}
+
+⚠️ Recordá que este enlace es único y solo funciona una vez.`;
+
+                  const whatsappUrl = `https://api.whatsapp.com/send?phone=${formattedPhone}&text=${encodeURIComponent(message)}`;
+
+                  setShowModal(false); // cerrar modal
+                  setCopied(true); // disparar navegación en 2s
+
+                  openWhatsapp(whatsappUrl);
+                }}
+                className="flex items-center justify-center gap-3 bg-green-500 text-white px-6 py-3 rounded hover:bg-green-600 transition-colors font-semibold text-lg"
+              >
+                <FaWhatsapp className="w-7 h-7" />
+                Enviar por WhatsApp
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {!copied && (
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col gap-4 px-2 rounded-lg shadow-md"
+        >
+          <div>
+            <label className="block text-sm mb-1">Nombre</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value.trim())}
+              required
+              className="px-3 py-2 rounded bg-gray-700 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm mb-1">Apellido</label>
+            <input
+              type="text"
+              value={lastname}
+              onChange={(e) => setLastname(e.target.value.trim())}
+              required
+              className="px-3 py-2 rounded bg-gray-700 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm mb-1">Teléfono</label>
+            <input
+              type="text"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value.trim())}
+              required
+              className="px-3 py-2 rounded bg-gray-700 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm mb-1">Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value.trim())}
+              required
+              className="px-3 py-2 rounded bg-gray-700 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
+            />
+          </div>
+
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => router.back()}
+              className="flex-1 bg-rose-500 text-white px-4 py-2 rounded hover:bg-gray-700 transition-colors font-semibold"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              className="flex-1 bg-pink-400 text-white px-4 py-2 rounded hover:bg-pink-500 transition-colors font-semibold"
+            >
+              Agregar
+            </button>
+          </div>
+        </form>
+      )}
+    </div>
+  );
+}
