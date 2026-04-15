@@ -130,7 +130,7 @@ export default function BarbershopSetupWizard({
                   key={t.id}
                   onClick={() => {
                     setFormData({ ...formData, typeId: t.id });
-                    setStep(2); // 👈 ahora pasa al formulario
+                    setStep(2); 
                   }}
                   className="bg-slate-900 text-white px-4 py-4 rounded hover:bg-pink-500 transition-colors font-semibold"
                 >
@@ -149,7 +149,7 @@ export default function BarbershopSetupWizard({
                 onSubmit={async (e) => {
                   e.preventDefault();
                   await handleSubmit();
-                  setSuccess(true); // 👈 activa el éxito
+                  setSuccess(true); 
                 }}
               >
                 <h2 className="text-xl text-center font-bold mb-4">

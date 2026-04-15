@@ -66,6 +66,8 @@ export default function AppointmentsPage({
     }
   };
 
+  console.log("logo url: ", establishment?.profile?.logoUrl)
+
   const getImageSrc = (url?: string) => {
     if (!url) return "";
     if (url.startsWith("http")) {
