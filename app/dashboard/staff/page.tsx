@@ -223,7 +223,7 @@ export default function StaffPage() {
       </div>
       <button
         onClick={() => router.push("/dashboard/staff/new")}
-        className="fixed bottom-20 right-4 p-2 rounded-full border-2 border-pink-500 text-white shadow-lg hover:bg-pink-600 transition-colors"
+        className="fixed bottom-20 right-4 p-2 rounded-md bg-pink-500 text-white  shadow-md shadow-black hover:bg-pink-600 transition-colors"
       >
         <FiUserPlus className="text-3xl" />
       </button>

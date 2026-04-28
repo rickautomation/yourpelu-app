@@ -182,7 +182,7 @@ export default function AddOwnOffering() {
       {/* Tarjeta Categoría */}
       <div
         onClick={() => setShowCategoryPopup(true)}
-        className="px-4 py-3 bg-gray-700 text-white rounded-lg flex justify-between items-center cursor-pointer"
+        className="px-4 py-3 bg-ligthBrandBlue text-white rounded-lg flex justify-between items-center cursor-pointer"
       >
         <span>{selectedCategory ? selectedCategory.name : "Categoría"}</span>
         <FiChevronDown className="text-xl" />
@@ -191,7 +191,7 @@ export default function AddOwnOffering() {
       {showCategoryPopup && (
         <div className="fixed inset-0 backdrop-blur-sm bg-opacity-50 flex items-center justify-center z-50">
           <div
-            className="border border-pink-600 bg-gray-800 rounded-lg p-6 w-80"
+            className="bg-luminiBrandBlue shadow-lg shadow-black rounded-lg p-6 w-80"
             ref={categoryRef}
           >
             <h2 className="text-center text-white text-lg mb-4">
@@ -206,7 +206,7 @@ export default function AddOwnOffering() {
                     setSelectedClientType(null); // reset clientType al cambiar categoría
                     setShowCategoryPopup(false);
                   }}
-                  className="px-3 py-2 bg-gray-700 text-white rounded cursor-pointer hover:bg-gray-600"
+                  className="px-3 py-2 bg-ligthBrandBlue text-white rounded cursor-pointer hover:bg-gray-600"
                 >
                   {cat.name}
                 </li>
@@ -220,7 +220,7 @@ export default function AddOwnOffering() {
       {selectedCategory && (
         <div
           onClick={() => setShowClientTypePopup(true)}
-          className="px-4 py-3 bg-gray-700 text-white rounded-lg flex justify-between items-center cursor-pointer"
+          className="px-4 py-3 bg-ligthBrandBlue text-white rounded-lg flex justify-between items-center cursor-pointer"
         >
           <span>
             {selectedClientType ? selectedClientType.name : "Servicio"}
@@ -232,7 +232,7 @@ export default function AddOwnOffering() {
       {showClientTypePopup && selectedCategory && (
         <div className="fixed inset-0 backdrop-blur-sm bg-opacity-50 flex items-center justify-center z-50">
           <div
-            className="border border-pink-600 bg-gray-800 rounded-lg p-6 w-80"
+            className="bg-luminiBrandBlue shadow-md shadow-black rounded-lg p-6 w-80"
             ref={clientTypeRef}
           >
             <h2 className="text-center text-white text-lg mb-4">
@@ -246,7 +246,7 @@ export default function AddOwnOffering() {
                     setSelectedClientType(service);
                     setShowClientTypePopup(false);
                   }}
-                  className="px-3 py-2 bg-gray-700 text-white rounded cursor-pointer hover:bg-gray-600"
+                  className="px-3 py-2 bg-ligthBrandBlue text-white rounded cursor-pointer hover:bg-gray-600"
                 >
                   {service.name} — ${service.price}
                 </li>
@@ -259,7 +259,7 @@ export default function AddOwnOffering() {
       {/* Tarjeta PaymentMethod */}
       <div
         onClick={() => setShowPaymentPopup(true)}
-        className="px-4 py-3 bg-gray-700 text-white rounded-lg flex justify-between items-center cursor-pointer"
+        className="px-4 py-3 bg-ligthBrandBlue text-white rounded-lg flex justify-between items-center cursor-pointer"
       >
         <span>
           {selectedPaymentMethod
@@ -272,7 +272,7 @@ export default function AddOwnOffering() {
       {showPaymentPopup && (
         <div className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50">
           <div
-            className="border border-pink-600 bg-gray-800 rounded-lg p-6 w-80"
+            className="bg-luminiBrandBlue shadow-md shadow-black rounded-lg p-6 w-80"
             ref={paymentRef}
           >
             <h2 className="text-center text-white text-lg mb-4">
@@ -286,7 +286,7 @@ export default function AddOwnOffering() {
                     setSelectedPaymentMethod(method);
                     setShowPaymentPopup(false);
                   }}
-                  className="px-3 py-2 bg-gray-700 text-white rounded cursor-pointer hover:bg-gray-600"
+                  className="px-3 py-2 bg-ligthBrandBlue text-white rounded cursor-pionter hover:bg-gray-600"
                 >
                   {method.type}
                 </li>
@@ -299,7 +299,7 @@ export default function AddOwnOffering() {
       {settings?.clients_in_offerings && (
         <div
           onClick={() => setShowClientPopup(true)}
-          className="px-4 py-3 bg-gray-700 text-white rounded-lg flex justify-between items-center cursor-pointer"
+          className="px-4 py-3 bg-darkBrandBlue text-white rounded-lg flex justify-between items-center cursor-pointer"
         >
           <span>
             {selectedClient
@@ -487,7 +487,7 @@ export default function AddOwnOffering() {
       )}
 
       {/* Card resumen al final */}
-      <div className="mt-8 bg-gray-800 text-white rounded-lg shadow-lg p-6 space-y-4">
+      <div className="mt-8 bg-exposeBrandBlue text-white rounded-lg shadow-lg p-6 space-y-4">
         <div className="flex justify-between">
           <p className="font-semibold">
             {selectedCategory?.name || "Categoría"}
@@ -534,7 +534,7 @@ export default function AddOwnOffering() {
 
         {showSuccessPopup && (
           <div className="fixed inset-0 backdrop-blur-sm bg-opacity-70 flex items-center justify-center z-50">
-            <div className="border border-green-500 bg-gray-800 text-white rounded-lg shadow-lg p-6 flex items-center space-x-3">
+            <div className="border border-green-500 bg-darkBrandBlue text-white rounded-lg shadow-lg p-6 flex items-center space-x-3">
               <FiCheckCircle className="text-green-400 text-3xl" />
               <span className="font-semibold">
                 {selectedCategory?.name} creado con éxito!

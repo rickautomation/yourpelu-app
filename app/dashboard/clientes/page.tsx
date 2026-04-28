@@ -2,6 +2,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useClients } from "@/app/hooks/useClients";
+import { FiUserPlus } from "react-icons/fi";
+import { useRouter } from "next/navigation";
 
 export default function ClientsPage() {
   const { clients, loading, message, addClient, deleteClient } = useClients();
@@ -12,6 +14,8 @@ export default function ClientsPage() {
   const [lastname, setLastname] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+
+  const router = useRouter()
 
   const filteredClients = clients.filter((client) =>
     `${client.name} ${client.lastname} ${client.email ?? ""} ${client.phone ?? ""}`
@@ -37,8 +41,6 @@ export default function ClientsPage() {
     );
   }
 
-  console.log("clients: ", clients.length)
-
   if (clients.length === 0 ) {
     <div className="flex items-center justify-center h-screen">
       No hay Clientes 
@@ -61,7 +63,7 @@ export default function ClientsPage() {
 
             <button
               onClick={() => setShowAdd(true)}
-              className="flex items-center gap-2 justify-center px-2 border border-pink-600 text-pink-600 rounded-md hover:bg-pink-500 transition-colors font-bold"
+              className="flex items-center gap-2 justify-center px-2 border-2 border-pink-600 rounded-md hover:bg-pink-500 transition-colors font-bold"
             >
               <span>nuevo</span>
               <span className="text-4xl">+</span>
@@ -183,21 +185,21 @@ export default function ClientsPage() {
                     <div className="flex w-full gap-2">
                       <button
                         onClick={() => deleteClient(client.id)}
-                        className="flex-1 border border-red-600 text-red-600 px-3 py-2 rounded hover:bg-red-700 transition-colors text-sm font-semibold"
+                        className="flex-1 bg-rose-700 px-3 py-2 rounded hover:bg-red-700 transition-colors text-sm font-semibold"
                       >
                         Eliminar
                       </button>
 
                       <Link
                         href={`/dashboard/clientes/edit/${client.id}`}
-                        className="flex-1 text-center border border-blue-600 text-blue-600 px-3 py-2 rounded hover:bg-blue-500 transition-colors text-sm font-semibold"
+                        className="flex-1 text-center bg-blue-600 px-3 py-2 rounded hover:bg-blue-500 transition-colors text-sm font-semibold"
                       >
                         Editar
                       </Link>
 
                       <Link
                         href={`/dashboard/clientes/info/${client.id}`}
-                        className="flex-1 text-center border-2 border-pink-600 text-pink-600 px-3 py-2 rounded hover:bg-pink-500 transition-colors text-sm font-semibold"
+                        className="flex-1 text-center bg-pink-600 px-3 py-2 rounded hover:bg-pink-500 transition-colors text-sm font-semibold"
                       >
                         Ver más
                       </Link>
@@ -219,6 +221,14 @@ export default function ClientsPage() {
           {message.text}
         </p>
       )}
+
+         <button
+              //onClick={() => router.push("/dashboard/staff/new")}
+               onClick={() => setShowAdd(showAdd ? false : true)}
+              className="fixed bottom-20 right-4 p-2 rounded-md bg-pink-500 text-white shadow-lg hover:bg-pink-600 transition-colors"
+            >
+              <FiUserPlus className="text-3xl" />
+            </button>
     </div>
   );
 }

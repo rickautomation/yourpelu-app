@@ -99,7 +99,7 @@ export default function SidebarNav({
     <aside
       className="
     fixed top-0 left-0 h-full w-full
-    bg-slate-900 px-3 py-4 flex flex-col gap-3 z-40
+    bg-darkBrandBlue px-3 py-4 flex flex-col gap-3 z-40
     transform transition-transform duration-300
     translate-x-0
   "
