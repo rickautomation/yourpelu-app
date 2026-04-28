@@ -23,7 +23,7 @@ export type CreateOfferingDto = {
 export default function AddOwnOffering() {
   const { user } = useAuth();
   const { activeEstablishment, settings} = useUserEstablishment(user)
-  const { clientCategories, paymentMethods } = useOfferingsCategories(
+  const { clientCategories, paymentMethods, loading } = useOfferingsCategories(
     activeEstablishment?.id,
   );
   const { createOffering, error } = useOfferingsCrud();
@@ -54,8 +54,6 @@ export default function AddOwnOffering() {
   const [selectedClient, setSelectedClient] = useState<any>(null);
   const clientRef = useRef<HTMLDivElement>(null);
 
-  const [loading, setLoading] = useState(true)
-
   const filteredClients = clients.filter((client) =>
     `${client.name} ${client.lastname} ${client.email ?? ""} ${client.phone ?? ""}`
       .toLowerCase()
@@ -84,7 +82,6 @@ export default function AddOwnOffering() {
       );
       setSelectedClientType(defaultType || selectedCategory.clientTypes[0]);
     }
-    setLoading(false);
   }, [selectedCategory, selectedClientType]);
 
   useEffect(() => {
