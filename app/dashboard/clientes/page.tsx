@@ -16,7 +16,7 @@ export default function ClientsPage() {
   const filteredClients = clients.filter((client) =>
     `${client.name} ${client.lastname} ${client.email ?? ""} ${client.phone ?? ""}`
       .toLowerCase()
-      .includes(searchTerm.toLowerCase())
+      .includes(searchTerm.toLowerCase()),
   );
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -29,19 +29,35 @@ export default function ClientsPage() {
     setShowAdd(false);
   };
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="w-12 h-12 border-4 border-pink-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  console.log("clients: ", clients.length)
+
+  if (clients.length === 0 ) {
+    <div className="flex items-center justify-center h-screen">
+      No hay Clientes 
+    </div>
+  }
+
   return (
     <div className="flex flex-col gap-3 px-4 py-2">
       {/* Card para agregar cliente */}
       <div className="flex flex-col gap-3">
         {!showAdd && (
           <div className="flex justify-between items-center gap-3 rounded-lg py-2">
-              <input
-                type="text"
-                placeholder="Buscar cliente..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value.trim())}
-                className="px-2 py-2 rounded bg-gray-800 text-white w-full  max-w-xs focus:outline-none focus:ring-2 focus:ring-pink-600"
-              />
+            <input
+              type="text"
+              placeholder="Buscar cliente..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value.trim())}
+              className="px-2 py-2 rounded bg-gray-800 text-white w-full  max-w-xs focus:outline-none focus:ring-2 focus:ring-pink-600"
+            />
 
             <button
               onClick={() => setShowAdd(true)}
@@ -127,8 +143,8 @@ export default function ClientsPage() {
       {/* Lista de clientes (solo si el form está cerrado) */}
       {!showAdd && (
         <>
-          {loading ? (
-            <p className="text-gray-400">Cargando clientes...</p>
+          {clients.length === 0 ? (
+            <p className="text-gray-400">Aun no se agregaron clientes</p>
           ) : (
             <div className="space-y-3">
               {filteredClients.map((client) => {

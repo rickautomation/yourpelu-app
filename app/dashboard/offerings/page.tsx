@@ -11,9 +11,8 @@ import { useUserEstablishment } from "@/app/hooks/useUserEstablishment";
 export default function OfferingPage() {
   const { user } = useAuth();
   const { activeEstablishment } = useUserEstablishment(user);
-  const { clientOfferings, updatePrice, deleteOffering } = useOfferings(
-    activeEstablishment?.id,
-  );
+  const { clientOfferings, updatePrice, deleteOffering, loading } =
+    useOfferings(activeEstablishment?.id);
 
   const [showDropdown, setShowDropdown] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<any | null>(null);
@@ -54,6 +53,14 @@ export default function OfferingPage() {
         return categoryId === selectedCategory?.id;
       })
     : clientOfferings;
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="w-12 h-12 border-4 border-pink-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="px-4 py-2">
