@@ -81,7 +81,7 @@ export default function ReportsPage() {
         <div className="relative flex-1">
           <button
             onClick={() => setShowReportDropdown(!showReportDropdown)}
-            className="w-full px-3 py-2 bg-slate-900 text-white rounded flex justify-between items-center text-lg"
+            className="w-full px-3 py-2 bg-slate-800 text-white rounded flex justify-between items-center text-lg"
           >
             {reportType === "summary" ? "Resumen" : "Detalle"}
             <FiChevronDown
@@ -91,13 +91,13 @@ export default function ReportsPage() {
             />
           </button>
           {showReportDropdown && (
-            <ul className="absolute border border-0.5 border-pink-600 top-full left-0 mt-1 w-full max-h-60 overflow-y-auto bg-gray-800 rounded shadow-lg z-10">
+            <ul className="absolute border border-0.5 border-pink-600 top-full left-0 mt-1 w-full max-h-60 overflow-y-auto bg-gray-800 rounded shadow-lg z-10 ">
               <li
                 onClick={() => {
                   setReportType("summary");
                   setShowReportDropdown(false);
                 }}
-                className="px-3 py-2 text-white hover:bg-gray-600 cursor-pointer"
+                className="px-3 py-2 text-white hover:bg-gray-600 activate:bg-slate-900 cursor-pointer"
               >
                 Resumen
               </li>
@@ -106,7 +106,7 @@ export default function ReportsPage() {
                   setReportType("detail");
                   setShowReportDropdown(false);
                 }}
-                className="px-3 py-2 text-white hover:bg-gray-600 cursor-pointer"
+                className="px-3 py-2 text-white hover:bg-gray-600 activate:bg-slate-900 cursor-pointer"
               >
                 Detalle
               </li>
@@ -118,7 +118,7 @@ export default function ReportsPage() {
         <div className="relative flex-1">
           <button
             onClick={() => setShowDropdown(!showDropdown)}
-            className="w-full px-3 py-2 bg-slate-900 text-white rounded flex justify-between items-center text-lg"
+            className="w-full px-3 py-2 bg-slate-800 text-white rounded flex justify-between items-center text-lg"
           >
             {selectedRange.label}
             <FiChevronDown
@@ -136,7 +136,7 @@ export default function ReportsPage() {
                     setRangeType(r.id as any);
                     setShowDropdown(false);
                   }}
-                  className="px-3 py-2 text-white hover:bg-gray-600 cursor-pointer"
+                  className="px-3 py-2 text-white hover:bg-gray-600 activate:bg-slate-900 cursor-pointer"
                 >
                   {r.label}
                 </li>
@@ -150,8 +150,8 @@ export default function ReportsPage() {
         // 🔹 Render actual de Resumen
         summary && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-6">
-            <div className="flex-1 bg-slate-900 shadow-md rounded-lg p-6 flex flex-col gap-1 items-center">
-              <p className="text-5xl font-bold text-blue-500">
+            <div className="flex-1 bg-slate-800 shadow-md rounded-lg p-6 flex flex-col gap-1 items-center">
+              <p className="text-5xl font-bold text-blue-600">
                 {summary.servicesCount}
               </p>
               <div className="flex text-center text-xl">
@@ -159,7 +159,7 @@ export default function ReportsPage() {
               </div>
             </div>
 
-            <div className="flex-1 bg-slate-900 shadow-md rounded-lg p-6 flex flex-col gap-1 items-center">
+            <div className="flex-1 bg-slate-800 shadow-md rounded-lg p-6 flex flex-col gap-1 items-center">
               <p className="text-5xl font-bold text-green-600">
                 ${Number(summary.totalRevenue).toLocaleString("es-AR")}
               </p>
@@ -223,7 +223,7 @@ export default function ReportsPage() {
                 {categories.map((cat) => (
                   <div
                     key={cat.id}
-                    className="text-white border rounded-md px-2"
+                    className="text-white border rounded-md p-2"
                   >
                     {/* Cabecera de la categoría */}
                     <div className="grid grid-cols-3 gap-4 font-bold mb-2 border-b border-gray-600">

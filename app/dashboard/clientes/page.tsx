@@ -143,7 +143,7 @@ export default function ClientsPage() {
       {/* Lista de clientes (solo si el form está cerrado) */}
       {!showAdd && (
         <>
-          {clients.length === 0 ? (
+          {clients.length === 0 && loading ? (
             <p className="text-gray-400">Aun no se agregaron clientes</p>
           ) : (
             <div className="space-y-3">
