@@ -26,7 +26,7 @@ export default function AddOwnOffering() {
   const { clientCategories, paymentMethods } = useOfferingsCategories(
     activeEstablishment?.id,
   );
-  const { createOffering, loading, error } = useOfferingsCrud();
+  const { createOffering, error } = useOfferingsCrud();
   const { clients, addClient } = useClients();
 
   const [selectedCategory, setSelectedCategory] = useState<any | null>(null);
@@ -53,6 +53,8 @@ export default function AddOwnOffering() {
   const [showClientPopup, setShowClientPopup] = useState(false);
   const [selectedClient, setSelectedClient] = useState<any>(null);
   const clientRef = useRef<HTMLDivElement>(null);
+
+  const [loading, setLoading] = useState(true)
 
   const filteredClients = clients.filter((client) =>
     `${client.name} ${client.lastname} ${client.email ?? ""} ${client.phone ?? ""}`
@@ -82,6 +84,7 @@ export default function AddOwnOffering() {
       );
       setSelectedClientType(defaultType || selectedCategory.clientTypes[0]);
     }
+    setLoading(false);
   }, [selectedCategory, selectedClientType]);
 
   useEffect(() => {
@@ -166,12 +169,13 @@ export default function AddOwnOffering() {
     }
   }
 
-  if (loading)
+  if (loading) {
     return (
-      <div className="absolute inset-0 flex items-center justify-center ">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white"></div>
+      <div className="flex items-center justify-center h-screen">
+        <div className="w-12 h-12 border-4 border-pink-500 border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
+  }
 
   return (
     <div className="py-2 px-4 space-y-4">
