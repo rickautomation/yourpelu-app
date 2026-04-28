@@ -13,7 +13,7 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { user, loading } = useAuth();
+  const { user, loading, router} = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const {
@@ -38,11 +38,25 @@ export default function DashboardLayout({
   }, []);
 
   if (loading || shopsLoading) {
-    return <div className="p-6 text-white">Cargando...</div>;
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="w-12 h-12 border-4 border-pink-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
   }
 
-  if (!user) {
-    return <div className="p-6 text-white">No autorizado</div>;
+   if (!user) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen bg-gray-900 text-white">
+        <p className="text-xl mb-4">No autorizado</p>
+        <button
+          onClick={() => router.push("/login")}
+          className="px-4 py-2 bg-pink-600 rounded hover:bg-pink-700 transition-colors"
+        >
+          Iniciar sesión
+        </button>
+      </div>
+    );
   }
 
   return (

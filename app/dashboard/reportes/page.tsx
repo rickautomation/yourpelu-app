@@ -64,7 +64,14 @@ export default function ReportsPage() {
     error,
   } = useAnalytics(activeEstablishment?.id, dayRange);
 
-  if (loading) return <p>Cargando reportes...</p>;
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="w-12 h-12 border-4 border-pink-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
   if (error) return <p>Error: {error}</p>;
 
   return (
@@ -74,7 +81,7 @@ export default function ReportsPage() {
         <div className="relative flex-1">
           <button
             onClick={() => setShowReportDropdown(!showReportDropdown)}
-            className="w-full px-3 py-2 bg-gray-700 text-white rounded flex justify-between items-center text-lg"
+            className="w-full px-3 py-2 bg-slate-900 text-white rounded flex justify-between items-center text-lg"
           >
             {reportType === "summary" ? "Resumen" : "Detalle"}
             <FiChevronDown
@@ -111,7 +118,7 @@ export default function ReportsPage() {
         <div className="relative flex-1">
           <button
             onClick={() => setShowDropdown(!showDropdown)}
-            className="w-full px-3 py-2 bg-gray-700 text-white rounded flex justify-between items-center text-lg"
+            className="w-full px-3 py-2 bg-slate-900 text-white rounded flex justify-between items-center text-lg"
           >
             {selectedRange.label}
             <FiChevronDown
@@ -142,28 +149,50 @@ export default function ReportsPage() {
       {reportType === "summary" ? (
         // 🔹 Render actual de Resumen
         summary && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-6">
-            <div className=" bg-gray-800 shadow-md rounded-lg p-6 flex flex-col items-center">
-              <p className="text-4xl font-bold text-blue-500">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-6">
+            <div className="flex-1 bg-slate-900 shadow-md rounded-lg p-6 flex flex-col gap-1 items-center">
+              <p className="text-5xl font-bold text-blue-500">
                 {summary.servicesCount}
               </p>
-              <h3 className="text-lg font-semibold text-white mb-2">
-                Servicios registrados
-              </h3>
+              <div className="flex text-center text-xl">
+                <h3 className="font-semibold text-white mb-2">Servicios</h3>
+              </div>
             </div>
-            <div className="bg-gray-800 shadow-md rounded-lg p-6 flex flex-col items-center">
-              <p className="text-4xl font-bold text-green-600">
+
+            <div className="flex-1 bg-slate-900 shadow-md rounded-lg p-6 flex flex-col gap-1 items-center">
+              <p className="text-5xl font-bold text-green-600">
                 ${Number(summary.totalRevenue).toLocaleString("es-AR")}
               </p>
-              <h3 className="text-lg font-semibold text-white mb-2">
-                Total acumulado
-              </h3>
+              <div className="flex gap-1 text-center text-xl">
+                <h3 className="font-semibold text-white mb-2">Total</h3>
+                <h3 className="font-semibold text-white mb-2">acumulado</h3>
+              </div>
             </div>
           </div>
         )
       ) : (
         // 🔹 Vista de detalle
         <div className="space-y-3 py-2">
+          {/* Barberos/Usuarios */}
+          {usersSummary.length > 0 && user?.rol === "admin" && (
+            <div className="bg-gray-800 shadow-md rounded-lg p-4">
+              <h3 className="text-lg font-semibold text-white mb-4 border-b">
+                Barberos
+              </h3>
+              <div className="grid grid-cols-3 gap-4 text-white">
+                {usersSummary.map((user) => (
+                  <div key={user.userId} className="contents">
+                    <span>{user.userName}</span>
+                    <span className="text-center">x{user.servicesCount}</span>
+                    <span>
+                      $ {Number(user.totalRevenue).toLocaleString("es-AR")}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Métodos de pago */}
           {paymentMethods.length > 0 && (
             <div className="bg-gray-800 shadow-md rounded-lg p-4">
@@ -243,26 +272,6 @@ export default function ReportsPage() {
                     <span className="text-center">x{client.servicesCount}</span>
                     <span>
                       $ {Number(client.totalRevenue).toLocaleString("es-AR")}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Barberos/Usuarios */}
-          {usersSummary.length > 0 && user?.rol === "admin" && (
-            <div className="bg-gray-800 shadow-md rounded-lg p-4">
-              <h3 className="text-lg font-semibold text-white mb-4 border-b">
-                Barberos
-              </h3>
-              <div className="grid grid-cols-3 gap-4 text-white">
-                {usersSummary.map((user) => (
-                  <div key={user.userId} className="contents">
-                    <span>{user.userName}</span>
-                    <span className="text-center">x{user.servicesCount}</span>
-                    <span>
-                      $ {Number(user.totalRevenue).toLocaleString("es-AR")}
                     </span>
                   </div>
                 ))}

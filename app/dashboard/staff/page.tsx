@@ -7,8 +7,8 @@ import { useUserEstablishment } from "@/app/hooks/useUserEstablishment";
 import { FiUserPlus } from "react-icons/fi";
 
 export default function StaffPage() {
-  const { user, loading, isUnauthorized, router } = useAuth();
-  const {activeEstablishment } = useUserEstablishment(user)
+  const { user, isUnauthorized, router } = useAuth();
+  const { activeEstablishment, loading } = useUserEstablishment(user);
 
   const [staff, setStaff] = useState<
     {
@@ -35,7 +35,7 @@ export default function StaffPage() {
         setStaff(res);
       }
     } catch (err) {
-      console.error("Error cargando barberos", err);
+      console.error("Error cargando miembro", err);
     }
   };
 
@@ -56,7 +56,14 @@ export default function StaffPage() {
     }
   }, [activeEstablishment?.id]);
 
-  if (loading) return <p>Cargando...</p>;
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="w-12 h-12 border-4 border-pink-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
   if (isUnauthorized) {
     router.push("/login");
     return null;
@@ -80,7 +87,8 @@ export default function StaffPage() {
           onClick={() => router.push("/dashboard/staff/new")}
           className="flex items-center gap-2 p-2 text-4xl border-2 border-pink-600 rounded-md"
         >
-          <p className="text-lg">invitar </p><FiUserPlus />
+          <p className="text-lg">invitar </p>
+          <FiUserPlus />
         </button>
       </div>
 
@@ -184,7 +192,7 @@ export default function StaffPage() {
                             await apiDelete(`/user/staff/soft/${member.id}`);
                             fetchStaff(activeEstablishment!.id);
                           } catch (err) {
-                            console.error("Error cancelando barbero", err);
+                            console.error("Error cancelando miembro", err);
                           }
                         }}
                         className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 transition-colors text-sm font-semibold"
@@ -213,6 +221,12 @@ export default function StaffPage() {
           ))
         )}
       </div>
+      <button
+        onClick={() => router.push("/dashboard/staff/new")}
+        className="fixed bottom-20 right-4 p-2 rounded-full border-2 border-pink-500 text-white shadow-lg hover:bg-pink-600 transition-colors"
+      >
+        <FiUserPlus className="text-3xl" />
+      </button>
     </div>
   );
 }

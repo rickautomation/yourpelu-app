@@ -39,7 +39,7 @@ type Establishment = {
   id: string;
   name: string;
   address?: string;
-  type?: EstablishmentType
+  type?: EstablishmentType;
 };
 
 type EstablishmentType = {
@@ -59,15 +59,18 @@ export default function SidebarNav({
   userId,
   sessionId,
 }: {
-  establishments: Establishment[];              // 👈 antes barbershops
-  activeEstablishment: Establishment | null;   // 👈 antes activeBarbershop
+  establishments: Establishment[]; // 👈 antes barbershops
+  activeEstablishment: Establishment | null; // 👈 antes activeBarbershop
   setActiveEstablishment: (shop: Establishment) => void;
   setSidebarOpen: (open: boolean) => void;
   userRole: UserRole;
   userId: string;
   sessionId: string;
 }) {
-  const { clientOfferings, loading } = useOfferings(activeEstablishment?.id, activeEstablishment?.type?.id);
+  const { clientOfferings, loading } = useOfferings(
+    activeEstablishment?.id,
+    activeEstablishment?.type?.id,
+  );
 
   const [showSelector, setShowSelector] = useState(false);
 
@@ -103,7 +106,7 @@ export default function SidebarNav({
     >
       <nav className="flex flex-col gap-2 px-3">
         <div className="text-center">
-          <div className="text-xl font-bold w-full flex items-center justify-center gap-1 pb-2">
+          <div className="text-xl font-bold w-full flex items-center justify-center gap-1 pb-6">
             <Link
               href="/dashboard"
               onClick={() => setSidebarOpen(false)}
@@ -123,7 +126,7 @@ export default function SidebarNav({
               <>
                 {/* Botón para abrir/cerrar selector */}
                 <button
-                  className="flex items-center justify-between w-full px-4 py-2 text-lg font-semibold text-pink-600 border border-pink-600 rounded-md hover:bg-pink-600 hover:text-white transition"
+                  className="flex items-center justify-between w-full px-4 py-2 text-2xl text-pink-600 border border-pink-600 rounded-md hover:bg-pink-600 hover:text-white transition"
                   onClick={() => setShowSelector(!showSelector)}
                 >
                   {activeEstablishment?.name || "Seleccionar barbería"}
@@ -217,7 +220,6 @@ export default function SidebarNav({
                 d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
               ></path>
             </svg>
-            <span className="ml-2 text-pink-600 text-sm">Cargando...</span>
           </div>
         )}
 
@@ -226,12 +228,12 @@ export default function SidebarNav({
           <div className="flex flex-col gap-2 mt-4 text-pink-600">
             {userRole === "admin" && (
               <>
-                <div className="flex justify-between">
+                {/* <div className="flex justify-between">
                   <SidebarLink
                     href="/dashboard/staff"
                     setSidebarOpen={setSidebarOpen}
                   >
-                    <div className="flex w-26  border rounded-md p-2 px-2 py-4 items-end text-xs text-end">
+                    <div className="flex w-40  border rounded-md p-2 px-2 py-4 items-end text-xs text-end">
                       <FiUsers className="inline w-8 h-8 mr-1" />
                       <p>Team</p>
                     </div>
@@ -240,7 +242,7 @@ export default function SidebarNav({
                     href="/dashboard/barbershop-profile-settings"
                     setSidebarOpen={setSidebarOpen}
                   >
-                    <div className="flex w-26  border rounded-md p-2 px-2 py-4 items-end text-xs text-end">
+                    <div className="flex w-40 border rounded-md p-2 px-2 py-4 items-end text-xs text-end">
                       <FiImage className="inline w-8 h-8 mr-2" />
                       <p>Feed</p>
                     </div>
@@ -254,6 +256,25 @@ export default function SidebarNav({
                       <p>Chat</p>
                     </div>
                   </SidebarLink>
+                </div> */}
+                <div className="flex gap-3">
+                  <SidebarLink
+                    href="/dashboard/staff"
+                    setSidebarOpen={setSidebarOpen}
+                    className="basis-1/2 flex items-center text-end justify-start gap-2 border rounded-md p-4 text-xl hover:text-white transition-colors cursor-pointer"
+                  >
+                    <FiUsers className="w-8 h-8" />
+                    <p >Team</p>
+                  </SidebarLink>
+
+                  <SidebarLink
+                    href="/dashboard/barbershop-profile-settings"
+                    setSidebarOpen={setSidebarOpen}
+                    className="basis-1/2 flex items-center justify-start gap-2 border rounded-md p-4 text-xl hover:text-white transition-colors cursor-pointer"
+                  >
+                    <FiImage className="w-8 h-8" />
+                    <p>Feed</p>
+                  </SidebarLink>
                 </div>
               </>
             )}
@@ -262,20 +283,18 @@ export default function SidebarNav({
               userRole === "staff" ||
               userRole === "user") && (
               <>
-                <div className="flex justify-between">
+                <div className="flex justify-between gap-3">
                   <SidebarLink
                     href="/dashboard/offerings"
                     setSidebarOpen={setSidebarOpen}
+                    className="basis-1/2 flex items-center justify-start gap-2 border rounded-md p-4 text-lg hover:text-white transition-colors cursor-pointer"
                   >
-                    <div className="flex w-26  border rounded-md px-2 py-4 items-end text-xs text-center">
-                      <FiList className="inline w-8 h-8 mr-2" />
-                      <div className="text-start">
-                        <p>Lista de </p>
-                        <p>Servicios</p>
-                      </div>
+                    <FiList className="inline w-8 h-8" />
+                    <div>
+                      <p>Servicios</p>
                     </div>
                   </SidebarLink>
-                  <SidebarLink
+                  {/* <SidebarLink
                     href="/dashboard/offerings/categories"
                     setSidebarOpen={setSidebarOpen}
                   >
@@ -286,41 +305,35 @@ export default function SidebarNav({
                         <p>rias</p>
                       </div>
                     </div>
-                  </SidebarLink>
+                  </SidebarLink> */}
                   <SidebarLink
                     href="/dashboard/offerings/add"
                     setSidebarOpen={setSidebarOpen}
+                    className="basis-1/2 flex items-center justify-start gap-2 border rounded-md p-4 text-lg hover:text-white transition-colors cursor-pointer"
                   >
-                    <div className="flex w-26  border rounded-md p-2 px-2 py-4 items-end text-xs text-end">
-                      <FiPlusCircle className="inline w-8 h-8 mr-2" />
-                      <div>
-                        <p>Registrar </p>
-                        <p>Servicio</p>
-                      </div>
-                    </div>
+                    <FiPlusCircle className="inline w-8 h-8" />
+                      <p>Registrar </p>
                   </SidebarLink>
                 </div>
 
-                <div className="flex justify-between">
+                <div className="flex justify-between gap-3">
                   <SidebarLink
                     href="/dashboard/appointments"
                     setSidebarOpen={setSidebarOpen}
+                    className="basis-1/2 flex items-center justify-start gap-2 border rounded-md p-4 text-xl hover:text-white transition-colors cursor-pointer"
                   >
-                    <div className="flex w-26  border rounded-md p-2 px-2 py-4 items-end text-xs text-end">
-                      <FiCalendar className="inline w-8 h-8 mr-2" />
-                      <p>Turnos</p>
-                    </div>
+                    <FiCalendar className="inline w-8 h-8" />
+                    <p>Turnos</p>
                   </SidebarLink>
                   <SidebarLink
                     href="/dashboard/clientes"
                     setSidebarOpen={setSidebarOpen}
+                    className="basis-1/2 flex items-center justify-start gap-2 border rounded-md p-4 text-xl hover:text-white transition-colors cursor-pointer"
                   >
-                    <div className="flex w-26  border rounded-md p-2 px-2 py-4 items-end text-xs text-end">
-                      <BiMaleFemale className="w-8 h-8 mr-2" />
-                      <p>Clientes</p>
-                    </div>
+                    <BiMaleFemale className="w-8 h-8" />
+                    <p>Clientes</p>
                   </SidebarLink>
-                  <SidebarLink
+                  {/* <SidebarLink
                     href="/dashboard/promotions"
                     setSidebarOpen={setSidebarOpen}
                   >
@@ -331,10 +344,10 @@ export default function SidebarNav({
                         <p>ciones</p>
                       </div>
                     </div>
-                  </SidebarLink>
+                  </SidebarLink> */}
                 </div>
 
-                <div className="flex justify-between">
+                {/* <div className="flex justify-between">
                   <SidebarLink
                     href="/dashboard/insumos"
                     setSidebarOpen={setSidebarOpen}
@@ -362,9 +375,9 @@ export default function SidebarNav({
                       <p>Inventario</p>
                     </div>
                   </SidebarLink>
-                </div>
+                </div> */}
 
-                <div className="flex justify-between">
+                {/* <div className="flex justify-between">
                   <SidebarLink
                     href="/dashboard/reportes"
                     setSidebarOpen={setSidebarOpen}
@@ -392,17 +405,17 @@ export default function SidebarNav({
                       <p>Cierre de caja</p>
                     </div>
                   </SidebarLink>
-                </div>
+                </div> */}
 
-                <div className="flex justify-end">
+                <div className="flex justify-start">
                   <SidebarLink
                     href="/dashboard/settings"
                     setSidebarOpen={setSidebarOpen}
+                    className="flex items-center justify-start gap-2 border rounded-md p-4 text-xl hover:text-white transition-colors cursor-pointer"
+                    style={{ width: "calc(50% - 0.375rem)" }}
                   >
-                    <div className="flex w-26  border rounded-md p-2 px-2 py-4 items-end text-xs text-end">
-                      <FiSettings className="inline w-8 h-8 mr-2" />
-                      <p>Config</p>
-                    </div>
+                    <FiSettings className="inline w-8 h-8" />
+                    <p>Config</p>
                   </SidebarLink>
                 </div>
               </>
