@@ -81,7 +81,7 @@ export default function ReportsPage() {
         <div className="relative flex-1">
           <button
             onClick={() => setShowReportDropdown(!showReportDropdown)}
-            className="w-full px-3 py-2 bg-slate-800 text-white rounded flex justify-between items-center text-lg"
+            className="w-full px-3 py-2 bg-ligthBrandBlue text-white rounded flex justify-between items-center text-lg"
           >
             {reportType === "summary" ? "Resumen" : "Detalle"}
             <FiChevronDown
@@ -91,13 +91,13 @@ export default function ReportsPage() {
             />
           </button>
           {showReportDropdown && (
-            <ul className="absolute border border-0.5 border-pink-600 top-full left-0 mt-1 w-full max-h-60 overflow-y-auto bg-gray-800 rounded shadow-lg z-10 ">
+            <ul className="absolute border top-full left-0 mt-1 w-full max-h-60 overflow-y-auto bg-exposeBrandBlue rounded shadow-lg z-10 ">
               <li
                 onClick={() => {
                   setReportType("summary");
                   setShowReportDropdown(false);
                 }}
-                className="px-3 py-2 text-white hover:bg-gray-600 activate:bg-slate-900 cursor-pointer"
+                className="px-3 py-2 text-white hover:bg-gray-600 activate:bg-slate-900 cursor-pointer border border-t border-gray-700"
               >
                 Resumen
               </li>
@@ -118,7 +118,7 @@ export default function ReportsPage() {
         <div className="relative flex-1">
           <button
             onClick={() => setShowDropdown(!showDropdown)}
-            className="w-full px-3 py-2 bg-slate-800 text-white rounded flex justify-between items-center text-lg"
+            className="w-full px-3 py-2 bg-ligthBrandBlue text-white rounded flex justify-between items-center text-lg"
           >
             {selectedRange.label}
             <FiChevronDown
@@ -128,7 +128,7 @@ export default function ReportsPage() {
             />
           </button>
           {showDropdown && (
-            <ul className="absolute top-full left-0 mt-1 w-full max-h-60 overflow-y-auto bg-gray-800 border border-0.5 border-pink-600 rounded shadow-lg z-10">
+            <ul className="absolute top-full left-0 mt-1 w-full max-h-60 overflow-y-auto bg-exposeBrandBlue border rounded shadow-lg z-10">
               {ranges.map((r) => (
                 <li
                   key={r.id}
@@ -136,7 +136,7 @@ export default function ReportsPage() {
                     setRangeType(r.id as any);
                     setShowDropdown(false);
                   }}
-                  className="px-3 py-2 text-white hover:bg-gray-600 activate:bg-slate-900 cursor-pointer"
+                  className="px-3 py-2 text-white hover:bg-gray-600 activate:bg-slate-900 cursor-pointer border-t border-gray-700"
                 >
                   {r.label}
                 </li>
@@ -150,7 +150,7 @@ export default function ReportsPage() {
         // 🔹 Render actual de Resumen
         summary && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-6">
-            <div className="flex-1 bg-slate-800 shadow-md rounded-lg p-6 flex flex-col gap-1 items-center">
+            <div className="flex-1 bg-exposeBrandBlue shadow-md rounded-lg p-6 flex flex-col gap-1 items-center">
               <p className="text-5xl font-bold text-blue-600">
                 {summary.servicesCount}
               </p>
@@ -159,7 +159,7 @@ export default function ReportsPage() {
               </div>
             </div>
 
-            <div className="flex-1 bg-slate-800 shadow-md rounded-lg p-6 flex flex-col gap-1 items-center">
+            <div className="flex-1 bg-exposeBrandBlue shadow-md rounded-lg p-6 flex flex-col gap-1 items-center">
               <p className="text-5xl font-bold text-green-600">
                 ${Number(summary.totalRevenue).toLocaleString("es-AR")}
               </p>
@@ -175,7 +175,7 @@ export default function ReportsPage() {
         <div className="space-y-3 py-2">
           {/* Barberos/Usuarios */}
           {usersSummary.length > 0 && user?.rol === "admin" && (
-            <div className="bg-gray-800 shadow-md rounded-lg p-4">
+            <div className="bg-exposeBrandBlue shadow-md rounded-lg p-4">
               <h3 className="text-lg font-semibold text-white mb-4 border-b">
                 Barberos
               </h3>
@@ -195,7 +195,7 @@ export default function ReportsPage() {
 
           {/* Métodos de pago */}
           {paymentMethods.length > 0 && (
-            <div className="bg-gray-800 shadow-md rounded-lg p-4">
+            <div className="bg-exposeBrandBlue shadow-md rounded-lg p-4">
               <h3 className="text-lg font-semibold text-white mb-4 border-b">
                 Métodos de pago
               </h3>
@@ -215,7 +215,7 @@ export default function ReportsPage() {
 
           {/* Categorías */}
           {categories.length > 0 && (
-            <div className="bg-gray-800 shadow-md rounded-lg p-3">
+            <div className="bg-exposeBrandBlue shadow-md rounded-lg p-3">
               <h3 className="text-lg font-semibold text-white mb-4">
                 Categorías
               </h3>
@@ -258,7 +258,7 @@ export default function ReportsPage() {
 
           {/* Clientes */}
           {clientsSummary.length > 0 && (
-            <div className="bg-gray-800 shadow-md rounded-lg p-4">
+            <div className="bg-exposeBrandBlue shadow-md rounded-lg p-4">
               <h3 className="text-lg font-semibold text-white mb-4 border-b">
                 Clientes
               </h3>

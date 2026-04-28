@@ -7,6 +7,7 @@ import { useAuth } from "@/app/lib/useAuth";
 
 import Link from "next/link";
 import { useUserEstablishment } from "@/app/hooks/useUserEstablishment";
+import { IoAddSharp } from "react-icons/io5";
 
 export default function OfferingPage() {
   const { user } = useAuth();
@@ -67,7 +68,7 @@ export default function OfferingPage() {
       <div className="mb-4 relative flex items-center justify-between">
         <button
           onClick={() => setShowDropdown(!showDropdown)}
-          className="px-4 py-2 bg-gray-700 text-white rounded flex justify-between items-center text-xl"
+          className="px-4 py-2 bg-ligthBrandBlue text-white rounded flex justify-between items-center text-xl"
         >
           {selectedCategory ? selectedCategory.name : "Todas las categorías"}
           <FiChevronDown
@@ -77,13 +78,13 @@ export default function OfferingPage() {
           />
         </button>
         {showDropdown && (
-          <ul className="absolute top-full left-0 mt-1 w-full max-h-60 overflow-y-auto bg-gray-800 rounded shadow-lg z-10">
+          <ul className="absolute top-full left-0 mt-1 w-full max-h-100 overflow-y-auto bg-luminiBrandBlue rounded shadow-lg shadow-black z-10">
             <li
               onClick={() => {
                 setSelectedCategory(null);
                 setShowDropdown(false);
               }}
-              className="px-3 py-2 text-white hover:bg-gray-600 cursor-pointer"
+              className="px-3 py-4 text-white hover:bg-gray-600 cursor-pointer border border-t border-gray-700"
             >
               Todas las categorías
             </li>
@@ -94,7 +95,7 @@ export default function OfferingPage() {
                   setSelectedCategory(cat);
                   setShowDropdown(false);
                 }}
-                className="px-3 py-2 text-white hover:bg-gray-600 cursor-pointer"
+                className="px-3 py-4 text-white hover:bg-gray-600 cursor-pointer border border-t border-gray-700"
               >
                 {cat?.name}
               </li>
@@ -116,7 +117,7 @@ export default function OfferingPage() {
           onClick={() => setShowModal(false)} // 👈 cierra al hacer click fuera
         >
           <div
-            className="bg-gray-800 p-6 rounded-lg shadow-lg w-96"
+            className="bg-darkBrandBlue p-6 rounded-lg shadow-lg shadow-black w-96"
             onClick={(e) => e.stopPropagation()} // 👈 evita que se cierre al hacer click dentro
           >
             <div className="flex flex-col gap-3">
@@ -143,7 +144,7 @@ export default function OfferingPage() {
         {offeringsToShow.map((co) => (
           <div
             key={co.id}
-            className="px-6 py-4 bg-gray-800 rounded-lg shadow-md flex flex-col gap-2"
+            className="px-6 py-4 bg-exposeBrandBlue rounded-lg shadow-md flex flex-col gap-2"
           >
             <div className="flex items-center justify-between">
               <div>
@@ -240,6 +241,14 @@ export default function OfferingPage() {
           </div>
         </div>
       )}
+
+        <button
+                    //onClick={() => router.push("/dashboard/staff/new")}
+                   
+                    className="fixed bottom-20 right-4 p-2 rounded-md bg-pink-500 text-white shadow-md shadow-black hover:bg-pink-600 transition-colors"
+                  >
+                    <IoAddSharp className="text-3xl " />
+                  </button>
     </div>
   );
 }

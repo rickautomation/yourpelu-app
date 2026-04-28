@@ -1,4 +1,47 @@
-@import "tailwindcss";
+/* globals.css */
+@import "tailwindcss/preflight";   /* antes era @tailwind base */
+@import "tailwindcss/theme";       /* antes era @tailwind components */
+@import "tailwindcss/utilities";   /* antes era @tailwind utilities */
+
+/* tus estilos personalizados */
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* ejemplo de clase custom */
+.bg-brandBlue {
+  background-color: #1b1b45;
+}
+
+.bg-darkBrandBlue {
+  background-color: #15153a;
+}
+
+.bg-ligthBrandBlue {
+  background-color: #4e4e86;
+}
+
+.bg-exposeBrandBlue {
+  background-color: #313156;
+}
+
+.bg-luminiBrandBlue {
+  background-color: #31316a;
+}
 
 :root {
   --background: #ffffff;

@@ -47,7 +47,7 @@ export default function DashboardLayout({
 
    if (!user) {
     return (
-      <div className="flex flex-col items-center justify-center h-screen bg-gray-900 text-white">
+      <div className="flex flex-col items-center justify-center h-screen bg-brandBlue text-white">
         <p className="text-xl mb-4">No autorizado</p>
         <button
           onClick={() => router.push("/login")}
@@ -60,7 +60,7 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-950 text-white relative">
+    <div className="min-h-screen flex flex-col bg-brandBlue text-white relative">
       {!sidebarOpen && (
         <Navbar
           onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}

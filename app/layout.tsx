@@ -27,7 +27,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="es" className="min-h-screen overflow-x-hidden bg-slate-900">
+    <html lang="es" className="min-h-screen overflow-x-hidden bg-brandBlue">
       <head>
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#1800ad" />
