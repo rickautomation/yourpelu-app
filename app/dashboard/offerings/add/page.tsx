@@ -54,6 +54,8 @@ export default function AddOwnOffering() {
   const [selectedClient, setSelectedClient] = useState<any>(null);
   const clientRef = useRef<HTMLDivElement>(null);
 
+  const [componetLoading, setComponentLoading] = useState(true)
+
   const filteredClients = clients.filter((client) =>
     `${client.name} ${client.lastname} ${client.email ?? ""} ${client.phone ?? ""}`
       .toLowerCase()
@@ -68,6 +70,7 @@ export default function AddOwnOffering() {
       );
       setSelectedCategory(defaultCat || clientCategories[0]);
     }
+    setComponentLoading(false)
   }, [clientCategories, selectedCategory]);
 
   // 👇 Setear clientType por defecto o primera opción
@@ -166,7 +169,7 @@ export default function AddOwnOffering() {
     }
   }
 
-  if (loading) {
+  if (loading && !componetLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="w-12 h-12 border-4 border-pink-500 border-t-transparent rounded-full animate-spin"></div>
