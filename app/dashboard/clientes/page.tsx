@@ -15,7 +15,7 @@ export default function ClientsPage() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
 
-  const router = useRouter()
+  const router = useRouter();
 
   const filteredClients = clients.filter((client) =>
     `${client.name} ${client.lastname} ${client.email ?? ""} ${client.phone ?? ""}`
@@ -41,10 +41,10 @@ export default function ClientsPage() {
     );
   }
 
-  if (clients.length === 0 ) {
+  if (clients.length === 0) {
     <div className="flex items-center justify-center h-screen">
-      No hay Clientes 
-    </div>
+      No hay Clientes
+    </div>;
   }
 
   return (
@@ -52,22 +52,14 @@ export default function ClientsPage() {
       {/* Card para agregar cliente */}
       <div className="flex flex-col gap-3">
         {!showAdd && (
-          <div className="flex justify-between items-center gap-3 rounded-lg py-2">
+          <div className="flex justify-center items-center gap-3 rounded-lg py-2">
             <input
               type="text"
               placeholder="Buscar cliente..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value.trim())}
-              className="px-2 py-2 rounded bg-gray-800 text-white w-full  max-w-xs focus:outline-none focus:ring-2 focus:ring-pink-600"
+              className="px-2 py-2 rounded bg-ligthBrandBlue text-white w-full  max-w-xs focus:outline-none focus:ring-2 focus:ring-pink-600"
             />
-
-            <button
-              onClick={() => setShowAdd(true)}
-              className="flex items-center gap-2 justify-center px-2 border-2 border-pink-600 rounded-md hover:bg-pink-500 transition-colors font-bold"
-            >
-              <span>nuevo</span>
-              <span className="text-4xl">+</span>
-            </button>
           </div>
         )}
 
@@ -81,7 +73,7 @@ export default function ClientsPage() {
                 onChange={(e) => setName(e.target.value.trim())}
                 placeholder="Nombre del cliente"
                 required
-                className="px-3 py-2 rounded bg-gray-800 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
+                className="px-3 py-2 rounded bg-exposeBrandBlue text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
               />
             </div>
 
@@ -92,7 +84,7 @@ export default function ClientsPage() {
                 onChange={(e) => setLastname(e.target.value.trim())}
                 placeholder="Apellido del cliente"
                 required
-                className="px-3 py-2 rounded bg-gray-800 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
+                className="px-3 py-2 rounded bg-exposeBrandBlue text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
               />
             </div>
 
@@ -102,7 +94,7 @@ export default function ClientsPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value.trim())}
                 placeholder="Correo electrónico (opcional)"
-                className="px-3 py-2 rounded bg-gray-800 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
+                className="px-3 py-2 rounded bg-exposeBrandBlue text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
               />
             </div>
 
@@ -112,7 +104,7 @@ export default function ClientsPage() {
                 value={phone}
                 onChange={(e) => setPhone(e.target.value.trim())}
                 placeholder="Número de contacto (opcional)"
-                className="px-3 py-2 rounded bg-gray-800 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
+                className="px-3 py-2 rounded bg-exposeBrandBlue text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
               />
             </div>
 
@@ -126,7 +118,7 @@ export default function ClientsPage() {
                   setEmail("");
                   setPhone("");
                 }}
-                className="flex-1 bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-500 transition-colors font-semibold"
+                className="flex-1 bg-ligthBrandBlue text-white px-4 py-2 rounded hover:bg-gray-500 transition-colors font-semibold"
               >
                 Cancelar
               </button>
@@ -153,7 +145,7 @@ export default function ClientsPage() {
                 return (
                   <div
                     key={client.id}
-                    className="flex flex-col px-5 py-4 bg-gray-800 rounded-lg shadow-md"
+                    className="flex flex-col px-5 py-4 bg-exposeBrandBlue rounded-lg shadow-md"
                   >
                     {/* Nombre centrado */}
                     <div className="flex justify-center items-center mb-2">
@@ -199,7 +191,7 @@ export default function ClientsPage() {
 
                       <Link
                         href={`/dashboard/clientes/info/${client.id}`}
-                        className="flex-1 text-center bg-pink-600 px-3 py-2 rounded hover:bg-pink-500 transition-colors text-sm font-semibold"
+                        className="flex-1 text-center bg-pink-500 px-3 py-2 rounded hover:bg-pink-500 transition-colors text-sm font-semibold"
                       >
                         Ver más
                       </Link>
@@ -222,13 +214,13 @@ export default function ClientsPage() {
         </p>
       )}
 
-         <button
-              //onClick={() => router.push("/dashboard/staff/new")}
-               onClick={() => setShowAdd(showAdd ? false : true)}
-              className="fixed bottom-20 right-4 p-2 rounded-md bg-pink-500 text-white shadow-lg hover:bg-pink-600 transition-colors"
-            >
-              <FiUserPlus className="text-3xl" />
-            </button>
+      <button
+        //onClick={() => router.push("/dashboard/staff/new")}
+        onClick={() => setShowAdd(showAdd ? false : true)}
+        className="fixed bottom-20 right-4 p-2 rounded-md bg-pink-500 text-white shadow-lg hover:bg-pink-600 transition-colors"
+      >
+        <FiUserPlus className="text-3xl" />
+      </button>
     </div>
   );
 }
