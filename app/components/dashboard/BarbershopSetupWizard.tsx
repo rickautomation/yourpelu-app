@@ -7,6 +7,7 @@ import { useAuth } from "@/app/hooks/useAuth";
 import { WizardProvider } from "@/app/context/WizardContext";
 import { useRouter } from "next/navigation";
 import { apiGet } from "@/app/lib/apiGet";
+import { MdUploadFile } from "react-icons/md";
 
 interface WizardProps {
   onFinish?: () => void;
@@ -101,7 +102,7 @@ export default function BarbershopSetupWizard({
 
   return (
     <WizardProvider>
-      <div className="text-white rounded-lg shadow-md">
+      <div className="text-white">
         {step === 0 && (
           <div className="text-center">
             <h2 className="text-2xl font-bold mb-4">Hola {userName}!</h2>
@@ -130,9 +131,9 @@ export default function BarbershopSetupWizard({
                   key={t.id}
                   onClick={() => {
                     setFormData({ ...formData, typeId: t.id });
-                    setStep(2); 
+                    setStep(2);
                   }}
-                  className="bg-slate-900 text-white px-4 py-4 rounded hover:bg-pink-500 transition-colors font-semibold"
+                  className="bg-darkBrandBlue shadow-lg text-white px-4 py-4 rounded hover:bg-pink-500 transition-colors font-semibold"
                 >
                   <p>{t.name}</p>
                 </button>
@@ -149,7 +150,7 @@ export default function BarbershopSetupWizard({
                 onSubmit={async (e) => {
                   e.preventDefault();
                   await handleSubmit();
-                  setSuccess(true); 
+                  setSuccess(true);
                 }}
               >
                 <h2 className="text-xl text-center font-bold mb-4">
@@ -163,7 +164,7 @@ export default function BarbershopSetupWizard({
                     onChange={(e) => handleChange("name", e.target.value)}
                     placeholder="Nombre"
                     required
-                    className="px-3 py-2 rounded bg-gray-800 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
+                    className="px-3 py-2 rounded bg-luminiBrandBlue text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
                   />
                 </div>
 
@@ -174,7 +175,7 @@ export default function BarbershopSetupWizard({
                     onChange={(e) => handleChange("address", e.target.value)}
                     placeholder="Dirección o ciudad"
                     required
-                    className="px-3 py-2 rounded bg-gray-800 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
+                    className="px-3 py-2 rounded bg-luminiBrandBlue text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
                   />
                 </div>
 
@@ -187,7 +188,7 @@ export default function BarbershopSetupWizard({
                     }
                     placeholder="Número de contacto"
                     required
-                    className="px-3 py-2 rounded bg-gray-800 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
+                    className="px-3 py-2 rounded bg-luminiBrandBlue text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
                   />
                 </div>
 
@@ -200,68 +201,94 @@ export default function BarbershopSetupWizard({
               </form>
             ) : (
               <div className="mt-4 text-center">
-                <p className="text-green-400 font-semibold mb-4">
-                  Establecimiento creado con éxito ✅
-                </p>
-
                 {/* 👇 Nuevo bloque para subir logo */}
-                <form
-                  className="flex flex-col gap-4 mb-6"
-                  onSubmit={async (e) => {
-                    e.preventDefault();
-                    if (!formData.logoFile || !formData.id) return;
+                {!formData.logoUploaded && (
+                  <form
+                    className="flex flex-col gap-4 mb-6"
+                    onSubmit={async (e) => {
+                      e.preventDefault();
+                      if (!formData.logoFile || !formData.id) return;
 
-                    const fd = new FormData();
-                    fd.append("logo", formData.logoFile);
+                      const fd = new FormData();
+                      fd.append("logo", formData.logoFile);
 
-                    try {
-                      const res = await fetch(
-                        `${process.env.NEXT_PUBLIC_API_URL}/establishment/${formData.id}/upload-logo`,
-                        {
-                          method: "POST",
-                          body: fd,
-                          credentials: "include",
-                        },
-                      );
+                      try {
+                        const res = await fetch(
+                          `${process.env.NEXT_PUBLIC_API_URL}/establishment/${formData.id}/upload-logo`,
+                          {
+                            method: "POST",
+                            body: fd,
+                            credentials: "include",
+                          },
+                        );
 
-                      if (!res.ok) {
-                        throw new Error(`Error HTTP ${res.status}`);
+                        if (!res.ok) {
+                          throw new Error(`Error HTTP ${res.status}`);
+                        }
+
+                        alert("Logo subido con éxito ✅");
+                        setFormData({ ...formData, logoUploaded: true }); // 👈 habilita el botón
+                      } catch (err: any) {
+                        alert(err.message || "Error al subir logo");
                       }
-
-                      alert("Logo subido con éxito ✅");
-                      setFormData({ ...formData, logoUploaded: true }); // 👈 habilita el botón
-                    } catch (err: any) {
-                      alert(err.message || "Error al subir logo");
-                    }
-                  }}
-                >
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        logoFile: e.target.files?.[0],
-                      })
-                    }
-                    className="px-3 py-2 rounded bg-gray-800 text-white w-full"
-                  />
-                  <button
-                    type="submit"
-                    className="bg-pink-400 text-white px-4 py-2 rounded hover:bg-pink-500 transition-colors font-semibold"
+                    }}
                   >
-                    Subir Logo
-                  </button>
-                </form>
+                    <div className="relative w-full h-32 border-2 border-dashed border-gray-600 rounded flex items-center justify-center bg-luminiBrandBlue overflow-hidden">
+                      {/* Input invisible pero funcional */}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            logoFile: e.target.files?.[0],
+                          })
+                        }
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                      />
+
+                      {/* Ícono o vista previa */}
+                      {!formData.logoFile ? (
+                        <div className="flex flex-col items-center justify-center gap-2 text-pink-500">
+                          <MdUploadFile className=" text-5xl pointer-events-none" />
+                          <p>Subir Logo</p>
+                        </div>
+                      ) : (
+                        <img
+                          src={URL.createObjectURL(formData.logoFile)}
+                          alt="Vista previa del logo"
+                          className="absolute inset-0 w-full h-full object-contain rounded pointer-events-none"
+                        />
+                      )}
+                    </div>
+
+                    <button
+                      type="submit"
+                      className="bg-pink-400 text-white px-4 py-2 rounded hover:bg-pink-500 transition-colors font-semibold mt-4"
+                    >
+                      Guardar
+                    </button>
+                  </form>
+                )}
 
                 {/* 👇 Botón para pasar a configurar servicios */}
                 {formData.logoUploaded && (
-                  <button
-                    onClick={() => setStep(3)}
-                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors font-semibold"
-                  >
-                    Configurar servicios
-                  </button>
+                  <div className="flex flex-col gap-3">
+                    <p className="text-lg mb-4">
+                      ¡Logo agregado con éxito! Ahora vamos a configurar los
+                      servicios que ofrecerás.
+                    </p>
+
+                    <button
+                      onClick={() => {
+                        setStep(3);
+                        router.push("/dashboard/initial-setup?step=3");
+                      }}
+                      className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors font-semibold"
+                    >
+                      Configurar servicios
+                    </button>
+                  </div>
                 )}
               </div>
             )}

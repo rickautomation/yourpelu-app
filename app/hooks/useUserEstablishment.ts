@@ -8,7 +8,7 @@ type Establishment = {
   address?: string;
   phoneNumber?: string;
   profile?: ProfileData;
-  type?: EstablishmentType 
+  type?: EstablishmentType;
 };
 
 type EstablishmentImage = { id: string; imageUrl: string };
@@ -53,12 +53,20 @@ export function useUserEstablishment(user: User | null) {
           const current = await apiGet<{ establishment: Establishment }>(
             `/current-establishments/user/${user.id}/last`,
           );
-          if (current?.establishment) setActiveEstablishment(current.establishment);
 
-          const all = await apiGet<Establishment[]>(
-            `/establishment/user/${user.id}/all`,
-          );
-          setEstablishments(all);
+          if (current?.establishment) {
+            setActiveEstablishment(current.establishment);
+          } else {
+            const all = await apiGet<Establishment[]>(
+              `/establishment/user/${user.id}/all`,
+            );
+            setEstablishments(all);
+
+            // 👇 si no hay current, usar el primero de all
+            if (all.length > 0) {
+              setActiveEstablishment(all[0]);
+            }
+          }
         }
 
         if (user.rol === "staff" || user.rol === "client") {

@@ -65,48 +65,49 @@ export default function NewOfferingFromTemplatePage({
 
   return (
     <div className="py-2 px-4">
-      <div className="flex justify-between items-center py-2 mb-2">
-        <div className="relative flex-1">
-          <button
-            onClick={() => setShowDropdown(!showDropdown)}
-            className="w-68 px-3 py-2 bg-gray-700 text-white rounded flex justify-between items-center text-xl"
+     <div className="flex w-full gap-2 items-center py-2 mb-2">
+  <div className="relative flex-1">
+    <button
+      onClick={() => setShowDropdown(!showDropdown)}
+      className="flex-1 px-3 py-2 bg-ligthBrandBlue text-white rounded flex justify-between items-center text-xl w-full"
+    >
+      {selectedCategory ? selectedCategory.name : "Categoría"}
+      <FiChevronDown
+        className={`ml-2 text-xl transition-transform duration-200 ${
+          showDropdown ? "rotate-180" : "rotate-0"
+        }`}
+      />
+    </button>
+    {showDropdown && (
+      <ul className="absolute top-full left-0 mt-1 w-full max-h-70 overflow-y-auto bg-ligthBrandBlue rounded shadow-lg z-10">
+        {globalCategories.map((cat: any) => (
+          <li
+            key={cat.id}
+            onClick={() => {
+              setSelectedCategory(cat);
+              setShowDropdown(false);
+            }}
+            className="p-3 text-white hover:bg-gray-600 cursor-pointer border border-t border-gray-300"
           >
-            {selectedCategory ? selectedCategory.name : "Categoría"}
-            <FiChevronDown
-              className={`ml-2 text-xl transition-transform duration-200 ${
-                showDropdown ? "rotate-180" : "rotate-0"
-              }`}
-            />
-          </button>
-          {showDropdown && (
-            <ul className="absolute top-full left-0 mt-1 w-68 max-h-60 overflow-y-auto bg-gray-800 rounded shadow-lg z-10">
-              {globalCategories.map((cat: any) => (
-                <li
-                  key={cat.id}
-                  onClick={() => {
-                    setSelectedCategory(cat);
-                    setShowDropdown(false);
-                  }}
-                  className="px-3 py-2 text-white hover:bg-gray-600 cursor-pointer"
-                >
-                  {cat.name}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
+            {cat.name}
+          </li>
+        ))}
+      </ul>
+    )}
+  </div>
 
-        {inWizard && (
-          <div className="ml-2">
-            <Link
-              href="/dashboard/offerings/new/from-custom?inWizard=true"
-              className="px-4 py-3 bg-pink-500 text-white text-xl font-bold rounded hover:bg-pink-600 transition-colors"
-            >
-              +
-            </Link>
-          </div>
-        )}
-      </div>
+  {inWizard && (
+    <div className="flex-1">
+      <Link
+        href="/dashboard/offerings/new/from-custom?inWizard=true"
+        className="w-full px-4 py-3 bg-pink-500 text-white text-sm rounded hover:bg-pink-600 transition-colors text-center block"
+      >
+        Crear desde cero
+      </Link>
+    </div>
+  )}
+</div>
+
 
       <div className="flex flex-col gap-2">
         {selectedCategory &&
@@ -132,7 +133,7 @@ export default function NewOfferingFromTemplatePage({
               ) : (
                 <div
                   key={service.id}
-                  className="px-6 py-4 bg-gray-700 rounded-lg shadow-md flex flex-col gap-2"
+                  className="px-6 py-4 bg-luminiBrandBlue rounded-lg shadow-md flex flex-col gap-2"
                 >
                   <div className="flex items-center justify-between">
                     <div>
@@ -150,7 +151,7 @@ export default function NewOfferingFromTemplatePage({
                             openPriceInput === service.id ? null : service.id,
                           )
                         }
-                        className="ml-auto w-28 text-center px-2 py-3 bg-pink-400 text-white rounded hover:bg-pink-500 transition-colors text-lg font-semibold"
+                        className="ml-auto w-28 text-center p-2 bg-pink-400 text-white rounded hover:bg-pink-500 transition-colors text-lg font-semibold"
                       >
                         Añadir
                       </button>
@@ -158,13 +159,13 @@ export default function NewOfferingFromTemplatePage({
                   </div>
 
                   {openPriceInput === service.id && (
-                    <div className="flex flex-col gap-2 bg-gray-800 p-3 rounded-lg">
+                    <div className="flex flex-col gap-2 p-3 rounded-lg">
                       <input
                         type="number"
                         placeholder="Precio"
                         value={price}
                         onChange={(e) => setPrice(e.target.value)}
-                        className="px-2 py-1 rounded bg-gray-700 text-white text-lg"
+                        className="px-2 py-1 rounded bg-ligthBrandBlue text-white text-lg"
                       />
                       <div className="flex gap-2">
                         <button
@@ -172,7 +173,7 @@ export default function NewOfferingFromTemplatePage({
                             setOpenPriceInput(null);
                             setPrice("");
                           }}
-                          className="flex-1 bg-gray-600 text-white px-3 py-2 rounded hover:bg-gray-700 transition-colors text-sm font-semibold"
+                          className="flex-1 bg-ligthBrandBlue text-white px-3 py-2 rounded hover:bg-gray-700 transition-colors text-sm font-semibold"
                         >
                           Cancelar
                         </button>
