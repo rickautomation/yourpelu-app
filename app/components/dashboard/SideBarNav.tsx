@@ -117,7 +117,7 @@ export default function SidebarNav({
                 alt="Yourpelu Logo"
                 width={68}
                 height={68}
-                className="h-10 w-auto"
+                className="h-16 w-auto"
               />
             </Link>
           </div>
@@ -150,13 +150,13 @@ export default function SidebarNav({
                 {/* Dropdown selector */}
                 {showSelector && (
                   <>
-                    <div className="mt-2 bg-gray-800 border border-gray-700 rounded-md shadow-lg">
+                    <div className="mt-2 bg-exposeBrandBlue border border-gray-700 rounded-md shadow-lg">
                       {establishments.map((shop) => (
                         <button
                           key={shop.id}
-                          className={`w-full text-left px-4 py-2 hover:bg-gray-700 ${
+                          className={`w-full text-left px-4 py-2 hover:bg-gray-700 border border-b border-gray-600 ${
                             activeEstablishment?.id === shop.id
-                              ? "bg-gray-900 text-pink-400"
+                              ? "bg-brandBlue text-pink-400"
                               : "text-white"
                           }`}
                           onClick={() => handleSelectBarbershop(shop)}

@@ -94,7 +94,7 @@ export default function NewOfferingFromCustomPage() {
   return (
     <div
       className={
-        "flex flex-col gap-2 max-w-lg mx-auto rounded-lg shadow-md px-4 py-2"
+        "flex flex-col gap-2 max-w-lg mx-auto px-4 py-2"
       }
     >
       {/* Mensaje de éxito temporal */}
