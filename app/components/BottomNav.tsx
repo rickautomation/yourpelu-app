@@ -152,25 +152,25 @@ export default function BottomNav({ onToggleSidebar, setSidebarOpen }: any) {
           </button>
 
           {menuOpen && (
-            <div className="absolute bottom-12 right-0 bg-gray-800 text-white rounded shadow-lg w-52">
+            <div className="absolute bottom-full right-0 mb-2 bg-exposeBrandBlue text-lg text-white rounded shadow-lg w-72">
               <Link
                 href="/dashboard/perfil"
                 onClick={() => setMenuOpen(false)}
-                className="flex items-center gap-2 px-4 py-2 hover:bg-gray-700"
+                className="flex items-center gap-2 p-4 border border-t border-gray-700 hover:bg-gray-700"
               >
                 <FiUser /> Perfil
               </Link>
               <Link
                 href="/dashboard/tutoriales"
                 onClick={() => setMenuOpen(false)}
-                className="flex items-center gap-2 px-4 py-2 hover:bg-gray-700"
+                className="flex items-center gap-2 p-4 border border-t border-gray-700 hover:bg-gray-700"
               >
                 <FiBookOpen /> Tutoriales
               </Link>
               <Link
                 href="/dashboard/comentarios"
                 onClick={() => setMenuOpen(false)}
-                className="flex items-center gap-2 px-4 py-2 hover:bg-gray-700"
+                className="flex items-center gap-2 p-4 border border-t border-gray-700 hover:bg-gray-700"
               >
                 <FiMessageSquare /> Enviar comentarios
               </Link>
@@ -179,7 +179,7 @@ export default function BottomNav({ onToggleSidebar, setSidebarOpen }: any) {
                   logout();
                   setMenuOpen(false);
                 }}
-                className="flex items-center gap-2 w-full text-left px-4 py-2 hover:bg-gray-700"
+                className="flex items-center gap-2 w-full text-left p-4 border border-t border-gray-700 hover:bg-gray-700"
               >
                 <FiLogOut /> Cerrar sesión
               </button>

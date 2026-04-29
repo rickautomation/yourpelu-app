@@ -114,7 +114,7 @@ export default function NewOfferingFromCustomPage() {
           <button
             type="button"
             onClick={() => setShowDropdown(!showDropdown)}
-            className="h-full px-4 py-2 bg-gray-700 text-white rounded flex justify-between items-center text-xl w-full"
+            className="h-full px-4 py-2 bg-ligthBrandBlue text-white rounded flex justify-between items-center text-xl w-full"
           >
             {selectedCategory ? selectedCategory.name : "Categoría"}
             <FiChevronDown
@@ -124,7 +124,7 @@ export default function NewOfferingFromCustomPage() {
             />
           </button>
           {showDropdown && (
-            <ul className="absolute top-full left-0 mt-1 w-full max-h-60 overflow-y-auto bg-gray-800 rounded shadow-lg z-10">
+            <ul className="absolute top-full left-0 mt-1 w-full max-h-70 overflow-y-auto bg-ligthBrandBlue rounded shadow-lg z-10">
               {categories.map((cat: any) => (
                 <li
                   key={cat.id}
@@ -133,7 +133,7 @@ export default function NewOfferingFromCustomPage() {
                     setShowDropdown(false);
                     setCategoryError(false); // 👈 ocultamos error al seleccionar
                   }}
-                  className="px-3 py-2 text-white hover:bg-gray-600 cursor-pointer"
+                  className="p-3 text-white hover:bg-gray-600 border border-t border-gray-400 cursor-pointer"
                 >
                   {cat.name}
                 </li>
@@ -185,14 +185,14 @@ export default function NewOfferingFromCustomPage() {
             placeholder="Nombre categoría"
             value={newCategoryName}
             onChange={(e) => setNewCategoryName(e.target.value)}
-            className="px-3 py-2 rounded bg-gray-700 text-white"
+            className="px-3 py-2 rounded bg-exposeBrandBlue text-white"
             required
           />
           <textarea
             placeholder="Descripción categoría"
             value={newCategoryDescription}
             onChange={(e) => setNewCategoryDescription(e.target.value)}
-            className="px-3 py-2 rounded bg-gray-700 text-white"
+            className="px-3 py-2 rounded bg-exposeBrandBlue text-white"
           />
 
           <div className="flex gap-2 mt-6">
@@ -204,7 +204,7 @@ export default function NewOfferingFromCustomPage() {
                 setNewCategoryDescription("");
                 setShowCategoryForm(false);
               }}
-              className="flex-1 bg-gray-600 text-white font-bold px-4 py-2 rounded hover:bg-gray-700 transition-colors"
+              className="flex-1 bg-ligthBrandBlue text-white font-bold px-4 py-2 rounded hover:bg-gray-700 transition-colors"
             >
               Cancelar
             </button>
@@ -232,21 +232,21 @@ export default function NewOfferingFromCustomPage() {
             placeholder="Nombre"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="px-3 py-2 rounded bg-gray-700 text-white"
+            className="px-3 py-2 rounded bg-exposeBrandBlue text-white"
             required
           />
           <textarea
             placeholder="Descripción"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="px-3 py-2 rounded bg-gray-700 text-white"
+            className="px-3 py-2 rounded bg-exposeBrandBlue text-white"
           />
           <input
             type="number"
             placeholder="Precio"
             value={price}
             onChange={(e) => setPrice(e.target.value)}
-            className="px-3 py-2 rounded bg-gray-700 text-white"
+            className="px-3 py-2 rounded bg-exposeBrandBlue text-white"
             required
           />
 

@@ -81,15 +81,8 @@ export default function StaffPage() {
         </div>
       )}
 
-      <div className="flex justify-between  items-center px-2 py-4">
-        <p className="text-2xl">{activeEstablishment?.name} Team</p>
-        <button
-          onClick={() => router.push("/dashboard/staff/new")}
-          className="flex items-center gap-2 p-2 text-4xl border-2 border-pink-600 rounded-md"
-        >
-          <p className="text-lg">invitar </p>
-          <FiUserPlus />
-        </button>
+      <div className="flex justify-center  items-center px-2 py-4">
+        <p className="text-3xl">{activeEstablishment?.name} Team</p>
       </div>
 
       <div className="flex flex-col space-y-2 mt-2">
@@ -99,7 +92,7 @@ export default function StaffPage() {
           staff.map((member) => (
             <div
               key={member.id}
-              className="flex flex-col px-2 py-2 rounded-lg shadow-md"
+              className="flex flex-col px-2 py-2 rounded-lg bg-exposeBrandBlue shadow-md"
             >
               <div className="flex items-center gap-3">
                 {/* Avatar o iniciales */}
@@ -162,7 +155,7 @@ export default function StaffPage() {
               </div>
 
               {expandedStaffId === member.id && (
-                <div className="mt-2 text-gray-200 text-sm space-y-1">
+                <div className="mt-2 text-center text-gray-200 text-sm space-y-1">
                   <p>Teléfono: {member.phoneNumber}</p>
                   {member.email && <p>Email: {member.email}</p>}
                   {member.needsSetup && (
@@ -171,20 +164,7 @@ export default function StaffPage() {
                     </p>
                   )}
 
-                  <div className="flex gap-2 mt-2">
-                    {member.activationLink && (
-                      <button
-                        onClick={() => {
-                          navigator.clipboard.writeText(member.activationLink!);
-                          setShowPopup(true);
-                          setTimeout(() => setShowPopup(false), 2000);
-                        }}
-                        className="bg-pink-500 text-white px-3 py-1 rounded hover:bg-pink-600 transition-colors text-sm font-semibold"
-                      >
-                        Copiar enlace
-                      </button>
-                    )}
-
+                  <div className="flex w-full gap-2 mt-2 text-lg">
                     {member.needsSetup ? (
                       <button
                         onClick={async () => {
@@ -195,23 +175,54 @@ export default function StaffPage() {
                             console.error("Error cancelando miembro", err);
                           }
                         }}
-                        className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 transition-colors text-sm font-semibold"
+                        className="flex-1 bg-rose-700 text-white p-2 rounded hover:bg-red-700 transition-colors font-semibold"
                       >
                         Cancelar cuenta
                       </button>
                     ) : (
+                      <div className="flex w-full gap-2 text-lg">
+                        <button
+                          onClick={async () => {
+                            try {
+                              await apiDelete(`/user/staff/soft/${member.id}`);
+                              fetchStaff(activeEstablishment!.id);
+                            } catch (err) {
+                              console.error("Error eliminando miembro", err);
+                            }
+                          }}
+                          className="flex-1 bg-rose-700 text-white p-2 rounded hover:bg-red-700 transition-colors font-semibold"
+                        >
+                          Eliminar
+                        </button>
+
+                        <button
+                          onClick={async () => {
+                            try {
+                              await apiDelete(
+                                `/user/staff/activity/${member.id}`,
+                              );
+                              fetchStaff(activeEstablishment!.id);
+                            } catch (err) {
+                              console.error("Error eliminando miembro", err);
+                            }
+                          }}
+                          className="flex-1 bg-pink-600 text-white px-3 py-1 rounded hover:bg-red-700 transition-colors font-semibold"
+                        >
+                          Actividad
+                        </button>
+                      </div>
+                    )}
+
+                    {member.activationLink && (
                       <button
-                        onClick={async () => {
-                          try {
-                            await apiDelete(`/user/staff/soft/${member.id}`);
-                            fetchStaff(activeEstablishment!.id);
-                          } catch (err) {
-                            console.error("Error eliminando miembro", err);
-                          }
+                        onClick={() => {
+                          navigator.clipboard.writeText(member.activationLink!);
+                          setShowPopup(true);
+                          setTimeout(() => setShowPopup(false), 2000);
                         }}
-                        className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 transition-colors text-sm font-semibold"
+                        className="flex-1 bg-pink-500 text-white p-2 rounded hover:bg-pink-600 transition-colors font-semibold"
                       >
-                        Eliminar miembro
+                        Copiar enlace
                       </button>
                     )}
                   </div>
