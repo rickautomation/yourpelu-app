@@ -40,6 +40,19 @@ type Establishment = {
   name: string;
   address?: string;
   type?: EstablishmentType;
+  profile?: Profile;
+};
+
+type Profile = {
+  id: string;
+  lema?: string | null;
+  description?: string | null;
+  openingHours?: string | null;
+  openingHours2?: string | null;
+  adressCoordinates?: string | null;
+  logoUrl?: string | null;
+  websiteUrl?: string | null;
+  images: string[];
 };
 
 type EstablishmentType = {
@@ -95,6 +108,16 @@ export default function SidebarNav({
     }
   };
 
+  console.log("establishment: ", activeEstablishment);
+
+  const getImageSrc = (url?: string | null) => {
+    if (!url) return "";
+    if (url.startsWith("http")) {
+      return url;
+    }
+    return `${process.env.NEXT_PUBLIC_API_URL}${url}`;
+  };
+
   return (
     <aside
       className="
@@ -126,10 +149,20 @@ export default function SidebarNav({
               <>
                 {/* Botón para abrir/cerrar selector */}
                 <button
-                  className="flex items-center justify-between w-full px-4 py-2 text-2xl text-pink-600 border border-pink-600 rounded-md hover:bg-pink-600 hover:text-white transition"
+                  className="flex items-center justify-between w-full px-4 py-2 text-2xl text-white border-2 border-pink-500 rounded-md hover:bg-pink-600 hover:text-white transition"
                   onClick={() => setShowSelector(!showSelector)}
                 >
-                  {activeEstablishment?.name || "Seleccionar barbería"}
+                  <div className="flex gap-6 items-center">
+                    <Image
+                    src={getImageSrc(activeEstablishment?.profile?.logoUrl)}
+                    alt={`${activeEstablishment?.name} logo`}
+                    width={40}
+                    height={40}
+                    className="rounded-md bg-white"
+                    unoptimized
+                  />
+                  <p className="font-semibold text-2xl">{activeEstablishment?.name || "Seleccionar barbería"}</p>
+                  </div>
                   <svg
                     className={`w-5 h-5 ml-2 transform transition-transform ${
                       showSelector ? "rotate-180" : "rotate-0"
@@ -225,7 +258,7 @@ export default function SidebarNav({
 
         {/* Links del sidebar */}
         {!showSelector && clientOfferings.length > 0 && (
-          <div className="flex flex-col gap-2 mt-4 text-pink-600">
+          <div className="flex flex-col gap-2 mt-2 text-pink-600">
             {userRole === "admin" && (
               <>
                 {/* <div className="flex justify-between">
@@ -264,7 +297,7 @@ export default function SidebarNav({
                     className="basis-1/2 flex items-center text-end justify-start gap-2 border rounded-md p-4 text-xl hover:text-white transition-colors cursor-pointer"
                   >
                     <FiUsers className="w-8 h-8" />
-                    <p >Team</p>
+                    <p>Team</p>
                   </SidebarLink>
 
                   <SidebarLink
@@ -312,7 +345,7 @@ export default function SidebarNav({
                     className="basis-1/2 flex items-center justify-start gap-2 border rounded-md p-4 text-lg hover:text-white transition-colors cursor-pointer"
                   >
                     <FiPlusCircle className="inline w-8 h-8" />
-                      <p>Registrar </p>
+                    <p>Registrar </p>
                   </SidebarLink>
                 </div>
 

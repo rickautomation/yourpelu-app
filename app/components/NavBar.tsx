@@ -5,12 +5,37 @@ import { useState, useRef, useEffect } from "react";
 import { apiPost } from "../lib/apiPost";
 import Image from "next/image";
 
-export interface Establishment {
+type Barbershop = {
   id: string;
   name: string;
-  phoneNumber?: string;
   address?: string;
-}
+};
+
+type EstablishmentType = {
+  id: string;
+  name: string;
+  description: string;
+};
+
+type Establishment = {
+  id: string;
+  name: string;
+  address?: string;
+  type?: EstablishmentType;
+  profile?: Profile;
+};
+
+type Profile = {
+  id: string;
+  lema?: string | null;
+  description?: string | null;
+  openingHours?: string | null;
+  openingHours2?: string | null;
+  adressCoordinates?: string | null;
+  logoUrl?: string | null;
+  websiteUrl?: string | null;
+  images: string[];
+};
 
 export default function Navbar({
   onToggleSidebar,
@@ -23,7 +48,7 @@ export default function Navbar({
 }: {
   onToggleSidebar?: () => void;
   activeEstablishment?: Establishment | null;
-  setActiveEstablishment?: (shop: Establishment) => void;
+  setActiveEstablishment: (shop: Establishment) => void;
   establishments?: Establishment[];
   userId?: string;
   sessionId?: string;
@@ -48,6 +73,33 @@ export default function Navbar({
     }
   };
 
+  const handleSelectBarbershop = async (shop: Barbershop) => {
+    try {
+      await apiPost("/current-establishments/set", {
+        userId,
+        barbershopId: shop.id,
+        sessionId,
+      });
+
+      // 👇 actualizar estado local
+      setActiveEstablishment(shop);
+      setShowSelector(false);
+
+      // 👇 notificar al resto de la app
+      window.dispatchEvent(new Event("barbershop-changed"));
+    } catch (err) {
+      console.error("Error cambiando barbería activa", err);
+    }
+  };
+
+  const getImageSrc = (url?: string | null) => {
+    if (!url) return "";
+    if (url.startsWith("http")) {
+      return url;
+    }
+    return `${process.env.NEXT_PUBLIC_API_URL}${url}`;
+  };
+
   // 👇 cerrar dropdown al hacer click fuera
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -67,7 +119,7 @@ export default function Navbar({
   }, [showSelector]);
 
   return (
-    <header className="w-full flex items-center justify-between text-white px-4 py-2 relative z-50">
+    <header className="w-full flex items-center justify-between text-white p-4 relative z-50">
       {/* Lado izquierdo: menú + logo */}
       <div className="flex items-center gap-1">
         <div className="text-xl font-bold">
@@ -94,49 +146,59 @@ export default function Navbar({
       {/* Lado derecho: barbería activa + avatar */}
       {isAuthenticated && (
         <div className="flex items-center gap-3 relative">
-          {activeEstablishment && !sidebarOpen && (establishments?.length ?? 0) > 1 && (
-            <div className="relative" ref={dropdownRef}>
-              <button
-                onClick={() => setShowSelector(!showSelector)}
-                className="px-1 py-2 border border-pink-300 rounded-md text-sm text-pink-300 font-semibold flex items-center gap-2 hover:bg-pink-600 hover:text-white transition"
-              >
-                {activeEstablishment.name}
-                <svg
-                  className={`w-4 h-4 transform transition-transform ${
-                    showSelector ? "rotate-180" : "rotate-0"
-                  }`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+          {activeEstablishment &&
+            !sidebarOpen &&
+            (establishments?.length ?? 0) > 1 && (
+              <div className="relative" ref={dropdownRef}>
+                <button
+                  onClick={() => setShowSelector(!showSelector)}
+                  className="px-1 text-lg font-semibold flex items-center gap-2 hover:bg-pink-600 hover:text-white transition"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 9l-7 7-7-7"
+                  <Image
+                    src={getImageSrc(activeEstablishment?.profile?.logoUrl)}
+                    alt={`${activeEstablishment?.name} logo`}
+                    width={30}
+                    height={30}
+                    className="rounded-md bg-white"
+                    unoptimized
                   />
-                </svg>
-              </button>
+                  {activeEstablishment.name}
+                  <svg
+                    className={`w-4 h-4 transform transition-transform ${
+                      showSelector ? "rotate-180" : "rotate-0"
+                    }`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </button>
 
-              {showSelector && establishments && (
-                <div className="absolute mt-2 w-40 bg-gray-800 border border-gray-700 rounded-md shadow-lg z-50 right-0">
-                  {establishments.map((shop) => (
-                    <button
-                      key={shop.id}
-                      onClick={() => handleSelectEstablishment(shop)}
-                      className={`w-full text-left px-4 py-2 hover:bg-gray-700 ${
-                        activeEstablishment?.id === shop.id
-                          ? "bg-gray-900 text-pink-400"
-                          : "text-white"
-                      }`}
-                    >
-                      <p className="font-bold">{shop.name}</p>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
+                {showSelector && establishments && (
+                  <div className="absolute mt-2 w-40 bg-exposeBrandBlue border border-gray-700 rounded-md shadow-lg z-50 right-0">
+                    {establishments.map((shop) => (
+                      <button
+                        key={shop.id}
+                        onClick={() => handleSelectBarbershop(shop)}
+                        className={`w-full text-left px-4 py-2 hover:bg-gray-700 ${
+                          activeEstablishment?.id === shop.id
+                            ? "bg-darkBrandBlue text-pink-400"
+                            : "text-white"
+                        }`}
+                      >
+                        <p className="font-bold">{shop.name}</p>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
         </div>
       )}
     </header>

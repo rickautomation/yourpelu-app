@@ -17,7 +17,7 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
             />
           </Link>
         </header>
-        <main className="flex-1 pb-4 h-full">{children}</main>
+        <main className="flex-1 pb-4 min-h-screen">{children}</main>
       </body>
     </html>
   );

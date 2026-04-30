@@ -31,7 +31,7 @@ export default function LoginPage({ setView }: Props) {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen px-4">
+    <div className="flex flex-col items-center justify-center p-4">
       {/* Sección superior con fondo gris */}
       <div className="w-full flex flex-col items-center pb-10">
         <p className="text-gray-300 mb-6 text-center max-w-md">
@@ -50,7 +50,7 @@ export default function LoginPage({ setView }: Props) {
             placeholder="Teléfono o Email"
             value={form.identifier}
             onChange={(e) => setForm({ ...form, identifier: e.target.value })}
-            className="px-3 py-2 rounded bg-gray-800 text-white"
+            className="px-3 py-2 rounded bg-ligthBrandBlue text-white"
             required
           />
           <input
@@ -58,7 +58,7 @@ export default function LoginPage({ setView }: Props) {
             placeholder="Contraseña"
             value={form.password}
             onChange={(e) => setForm({ ...form, password: e.target.value })}
-            className="px-3 py-2 rounded bg-gray-800 text-white"
+            className="px-3 py-2 rounded bg-ligthBrandBlue text-white"
             required
           />
           <button
@@ -71,9 +71,6 @@ export default function LoginPage({ setView }: Props) {
 
         {message && <p className="mt-4">{message}</p>}
       </div>
-
-      {/* Sección inferior con fondo negro */}
-      <div className="bg-gray-950 w-full flex-1"></div>
     </div>
   );
 }

@@ -67,7 +67,7 @@ export default function LoginPage({ setView }: Props) {
           placeholder="Teléfono o Email" // 👈 ahora puede ser cualquiera
           value={form.identifier}
           onChange={(e) => setForm({ ...form, identifier: e.target.value.trim() })}
-          className="px-3 py-2 rounded bg-gray-800 text-white"
+          className="px-3 py-2 rounded bg-luminiBrandBlue text-white"
           required
         />
         <input
@@ -75,12 +75,12 @@ export default function LoginPage({ setView }: Props) {
           placeholder="Contraseña"
           value={form.password}
           onChange={(e) => setForm({ ...form, password: e.target.value.trim() })}
-          className="px-3 py-2 rounded bg-gray-800 text-white"
+          className="px-3 py-2 rounded bg-luminiBrandBlue text-white"
           required
         />
         <button
           type="submit"
-          className="border border-pink-400 px-4 py-2 rounded text-pink-400 hover:bg-pink-400 hover:text-white transition-colors"
+          className="bg-pink-500 px-4 py-2 rounded text-white hover:bg-pink-400 hover:text-white transition-colors"
         >
           Entrar
         </button>

@@ -55,7 +55,7 @@ export default function RegisterPage({ setView }: Props) {
           placeholder="Nombre"
           value={form.name}
           onChange={(e) => setForm({ ...form, name: e.target.value.trim() })}
-          className="px-3 py-2 rounded bg-gray-800 text-white"
+          className="px-3 py-2 rounded bg-luminiBrandBlue text-white"
           required
         />
         <input
@@ -63,7 +63,7 @@ export default function RegisterPage({ setView }: Props) {
           placeholder="Apellido"
           value={form.lastname}
           onChange={(e) => setForm({ ...form, lastname: e.target.value.trim() })}
-          className="px-3 py-2 rounded bg-gray-800 text-white"
+          className="px-3 py-2 rounded bg-luminiBrandBlue text-white"
           required
         />
         <input
@@ -71,7 +71,7 @@ export default function RegisterPage({ setView }: Props) {
           placeholder="Teléfono"
           value={form.phoneNumber}
           onChange={(e) => setForm({ ...form, phoneNumber: e.target.value.trim() })}
-          className="px-3 py-2 rounded bg-gray-800 text-white"
+          className="px-3 py-2 rounded bg-luminiBrandBlue text-white"
           required
         />
         <input
@@ -79,7 +79,7 @@ export default function RegisterPage({ setView }: Props) {
           placeholder="Email" // 👈 nuevo campo
           value={form.email}
           onChange={(e) => setForm({ ...form, email: e.target.value.trim() })}
-          className="px-3 py-2 rounded bg-gray-800 text-white"
+          className="px-3 py-2 rounded bg-luminiBrandBlue text-white"
           required
         />
         <input
@@ -87,12 +87,12 @@ export default function RegisterPage({ setView }: Props) {
           placeholder="Contraseña"
           value={form.password}
           onChange={(e) => setForm({ ...form, password: e.target.value.trim() })}
-          className="px-3 py-2 rounded bg-gray-800 text-white"
+          className="px-3 py-2 rounded bg-luminiBrandBlue text-white"
           required
         />
         <button
           type="submit"
-          className="border border-pink-400 px-4 py-2 rounded text-pink-400 hover:bg-pink-400 hover:text-white transition-colors"
+          className="bg-pink-500 px-4 py-2 rounded text-white hover:bg-pink-400 hover:text-white transition-colors"
         >
           Registrarse
         </button>

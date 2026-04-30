@@ -75,7 +75,7 @@ export default function SetupAccountPage() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center gap-4 p-4">
+    <div className="flex flex-col items-center justify-center gap-4 p-4 h-full">
       <div className="text-center max-w-md">
         <h1 className="text-2xl text-white mb-2">
           ¡Bienvenido <span className="text-pink-600">{userData?.name}</span>!
@@ -98,7 +98,7 @@ export default function SetupAccountPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-pink-400 pr-10"
+              className="w-full px-4 py-2 rounded bg-ligthBrandBlue text-white focus:outline-none focus:ring-2 focus:ring-pink-400 pr-10"
             />
             <button
               type="button"
@@ -117,7 +117,7 @@ export default function SetupAccountPage() {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
-              className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-pink-400 pr-10"
+              className="w-full px-4 py-2 rounded bg-ligthBrandBlue text-white focus:outline-none focus:ring-2 focus:ring-pink-400 pr-10"
             />
             <button
               type="button"
