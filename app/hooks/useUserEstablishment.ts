@@ -13,6 +13,14 @@ type Establishment = {
 
 type EstablishmentImage = { id: string; imageUrl: string };
 
+type Schedule = {
+  id: string;
+  dayOfWeek: number;
+  start?: string;
+  end?: string;
+};
+
+
 type ProfileData = {
   id: string;
   lema?: string;
@@ -22,6 +30,7 @@ type ProfileData = {
   logoUrl?: string;
   websiteUrl?: string | null;
   images?: EstablishmentImage[];
+  schedules?: Schedule[];
 };
 
 type EstablishmentType = {

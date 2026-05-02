@@ -8,6 +8,14 @@ import { WizardProvider } from "@/app/context/WizardContext";
 import { useRouter } from "next/navigation";
 import { apiGet } from "@/app/lib/apiGet";
 import { MdUploadFile } from "react-icons/md";
+import { useUserEstablishment } from "@/app/hooks/useUserEstablishment";
+
+type Schedule = {
+  id: string;
+  dayOfWeek: number;
+  start: string | null;
+  end: string | null;
+};
 
 interface WizardProps {
   onFinish?: () => void;
@@ -22,17 +30,29 @@ type EstablishmentType = {
   description: string;
 };
 
+type Interval = { start: string; end: string };
+
+type DaySchedule = {
+  dayOfWeek: number; // 1 = lunes, 7 = domingo
+  intervals: Interval[];
+};
+
 export default function BarbershopSetupWizard({
   userName,
   userId,
   step: initialStep = 0,
 }: WizardProps) {
   const { user } = useAuth();
+  const { activeEstablishment } = useUserEstablishment(user);
   const [types, setTypes] = useState<EstablishmentType[]>([]);
+  const [hours, setHours] = useState<
+    { dayOfWeek: number; start: string; end: string }[]
+  >([]);
 
   const router = useRouter();
 
-  console.log("types: ", types);
+  console.log("user: ", user);
+  console.log("activeEstablishment: ", activeEstablishment);
 
   const [step, setStep] = useState(initialStep); // Si ya se está renderizando, salta al paso 2
   const [formData, setFormData] = useState<{
@@ -50,6 +70,18 @@ export default function BarbershopSetupWizard({
     typeId: "",
   });
   const [success, setSuccess] = useState(false);
+  const [selectedDays, setSelectedDays] = useState<string[]>([]);
+  const [bookingEnabled, setBookingEnabled] = useState<boolean | null>(null);
+  const [schedules, setSchedules] = useState<DaySchedule[]>([]);
+
+  const [tempStart, setTempStart] = useState<string>("");
+  const [tempEnd, setTempEnd] = useState<string>("");
+
+  const toggleDay = (day: string) => {
+    setSelectedDays((prev) =>
+      prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day],
+    );
+  };
 
   const sessionId = useMemo(() => {
     return typeof crypto.randomUUID === "function"
@@ -59,6 +91,46 @@ export default function BarbershopSetupWizard({
 
   const handleChange = (field: string, value: string) => {
     setFormData({ ...formData, [field]: value });
+  };
+
+  // agregar un intervalo a un día
+  function addInterval(dayOfWeek: number, start: string, end: string) {
+    setSchedules((prev) => {
+      const existing = prev.find((s) => s.dayOfWeek === dayOfWeek);
+      if (existing) {
+        return prev.map((s) =>
+          s.dayOfWeek === dayOfWeek
+            ? { ...s, intervals: [...s.intervals, { start, end }] }
+            : s,
+        );
+      } else {
+        return [...prev, { dayOfWeek, intervals: [{ start, end }] }];
+      }
+    });
+  }
+
+  async function saveSchedules(profileId: string) {
+    for (const schedule of schedules) {
+      await apiPost(
+        `/establishment/${profileId}/schedules/${schedule.dayOfWeek}`,
+        {
+          intervals: schedule.intervals,
+        },
+      );
+    }
+  }
+
+  const saveHours = async (
+    profileId: string,
+    hours: { dayOfWeek: number; start: string; end: string }[],
+  ) => {
+    try {
+      await apiPost(`/profiles/${profileId}/opening-hours`, hours);
+      alert("Horarios guardados correctamente");
+    } catch (err: any) {
+      alert("Error: " + err.message);
+      throw err;
+    }
   };
 
   const handleSubmit = async () => {
@@ -78,12 +150,65 @@ export default function BarbershopSetupWizard({
       const establishment = response.establishment;
       console.log("Establecimiento creado:", establishment);
 
+      await apiPost("/current-establishments/set", {
+        userId,
+        barbershopId: response.establishment.id,
+        sessionId,
+      });
+
+      router.refresh();
+
       setFormData((prev) => ({ ...prev, id: establishment.id })); // 👈 guardar id
       setSuccess(true);
     } catch (error) {
       console.error("Error creando barbería:", error);
     }
   };
+
+  function groupByDay(schedules: Schedule[]) {
+    const grouped: Record<number, { start: string; end: string }[]> = {};
+    schedules.forEach((s) => {
+      if (!grouped[s.dayOfWeek]) grouped[s.dayOfWeek] = [];
+      if (s.start && s.end) {
+        grouped[s.dayOfWeek].push({ start: s.start, end: s.end });
+      }
+    });
+    return grouped;
+  }
+
+  // Función separada
+  const handleAddScheduleDays = async () => {
+    if (activeEstablishment?.profile?.id) {
+      // Mapeamos nombres de días a números (ej: lunes=1, domingo=7)
+      const dayMap: Record<string, number> = {
+        Lunes: 1,
+        Martes: 2,
+        Miércoles: 3,
+        Jueves: 4,
+        Viernes: 5,
+        Sábado: 6,
+        Domingo: 7,
+      };
+
+      const days = selectedDays.map((d) => dayMap[d]);
+      await addScheduleDays(activeEstablishment.profile.id, days);
+
+      setStep(6); // avanzar al siguiente paso
+      router.push("/dashboard/initial-setup?step=6");
+    } else {
+      router.refresh()
+      alert("Todavía no se creó el establecimiento");
+    }
+  };
+
+  // 👇 función que usa tu helper apiPost
+  async function enableBooking(establishmentId: string) {
+    return apiPost(`/establishment/${establishmentId}/enable-booking`, {});
+  }
+
+  async function addScheduleDays(profileId: string, days: number[]) {
+    return apiPost(`/establishment/${profileId}/schedule-days`, { days });
+  }
 
   useEffect(() => {
     const loadTypes = async () => {
@@ -98,7 +223,7 @@ export default function BarbershopSetupWizard({
 
     setStep(initialStep);
     loadTypes();
-  }, [initialStep]);
+  }, [initialStep, activeEstablishment]);
 
   return (
     <WizardProvider>
@@ -302,6 +427,202 @@ export default function BarbershopSetupWizard({
         )}
 
         {step === 4 && (
+          <div className="text-center p-4 ">
+            <h2 className="text-xl font-semibold mb-4">
+              ¿Deseas manejar turnos desde la app?
+            </h2>
+            <div className="flex justify-center gap-4">
+              <button
+                type="button"
+                onClick={() => setBookingEnabled(true)}
+                className={`border border-pink-600 px-6 py-2 rounded font-medium transition-colors
+          ${bookingEnabled === true && "bg-pink-600 text-white"}`}
+              >
+                Sí
+              </button>
+              <button
+                type="button"
+                onClick={() => setBookingEnabled(false)}
+                className={`border border-pink-600 px-6 py-2 rounded font-medium transition-colors
+          ${bookingEnabled === false && "bg-pink-600 text-white"}`}
+              >
+                No
+              </button>
+            </div>
+            <div className="p-4 mt-8">
+              <button
+                className="bg-pink-600 px-8 py-2 rounded text-lg"
+                onClick={async () => {
+                  if (bookingEnabled === true) {
+                    const establishmentId =
+                      formData.id ?? activeEstablishment?.profile?.id; // usa el primero definido
+
+                    if (establishmentId) {
+                      await enableBooking(establishmentId);
+                      setStep(5);
+                      router.push("/dashboard/initial-setup?step=5");
+                    } else {
+                      alert("Todavía no se creó el establecimiento");
+                    }
+                  } else {
+                    setStep(7);
+                  }
+                }}
+              >
+                Continuar
+              </button>
+            </div>
+          </div>
+        )}
+
+        {step === 5 && (
+          <div className="text-center p-4">
+            <h2 className="text-xl font-semibold mb-4">
+              Seleccioná los días de atención
+            </h2>
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                "Lunes",
+                "Martes",
+                "Miércoles",
+                "Jueves",
+                "Viernes",
+                "Sábado",
+                "Domingo",
+              ].map((day) => (
+                <div
+                  key={day}
+                  onClick={() =>
+                    setSelectedDays((prev) =>
+                      prev.includes(day)
+                        ? prev.filter((d) => d !== day)
+                        : [...prev, day],
+                    )
+                  }
+                  className={`cursor-pointer border border-pink-600 text-pink-600 rounded p-4 font-medium transition-colors
+            ${selectedDays.includes(day) && "bg-pink-600 text-white"}`}
+                >
+                  {day}
+                </div>
+              ))}
+            </div>
+
+            <div className="flex justify-center p-4 mt-8">
+              <button
+                className="bg-pink-600 px-12 py-2 rounded text-lg"
+                onClick={handleAddScheduleDays}
+              >
+                Hecho
+              </button>
+            </div>
+          </div>
+        )}
+
+        {step === 6 && (
+          <div className="text-center p-4">
+            <h2 className="text-xl font-semibold mb-4">
+              Definí los horarios de atención
+            </h2>
+
+            {(() => {
+              // agrupamos los schedules por día
+              const groupedSchedules: Record<
+                number,
+                { start: string; end: string }[]
+              > = {};
+              (activeEstablishment?.profile?.schedules ?? []).forEach((s) => {
+                if (!groupedSchedules[s.dayOfWeek])
+                  groupedSchedules[s.dayOfWeek] = [];
+                if (s.start && s.end) {
+                  groupedSchedules[s.dayOfWeek].push({
+                    start: s.start,
+                    end: s.end,
+                  });
+                }
+              });
+
+              return Object.entries(groupedSchedules).map(
+                ([dayOfWeek, intervals]) => (
+                  <div key={dayOfWeek} className="mb-6">
+                    <h3 className="text-lg font-medium mb-2">
+                      {
+                        [
+                          "Domingo",
+                          "Lunes",
+                          "Martes",
+                          "Miércoles",
+                          "Jueves",
+                          "Viernes",
+                          "Sábado",
+                        ][Number(dayOfWeek)]
+                      }
+                    </h3>
+
+                    {/* Mostrar intervalos ya agregados */}
+                    {intervals.map((interval, idx) => (
+                      <div key={idx} className="flex justify-center gap-4 mb-2">
+                        <span>
+                          {interval.start} - {interval.end}
+                        </span>
+                      </div>
+                    ))}
+
+                    {/* Inputs para agregar un nuevo intervalo */}
+                    <div className="flex justify-center gap-4">
+                      <input
+                        type="time"
+                        value={tempStart}
+                        onChange={(e) => setTempStart(e.target.value)}
+                        className="border rounded px-2 py-1"
+                      />
+                      <input
+                        type="time"
+                        value={tempEnd}
+                        onChange={(e) => setTempEnd(e.target.value)}
+                        className="border rounded px-2 py-1"
+                      />
+                      <button
+                        className="bg-pink-600 text-white px-4 py-1 rounded"
+                        onClick={() => {
+                          if (tempStart && tempEnd) {
+                            addInterval(Number(dayOfWeek), tempStart, tempEnd);
+                            setTempStart("");
+                            setTempEnd("");
+                          }
+                        }}
+                      >
+                        Agregar intervalo
+                      </button>
+                    </div>
+                  </div>
+                ),
+              );
+            })()}
+
+            {/* Botón para guardar todos los horarios */}
+            <div className="flex justify-center p-4 mt-8">
+              <button
+                className="bg-pink-600 px-12 py-2 rounded text-lg"
+                onClick={async () => {
+                  const id = formData.id ?? activeEstablishment?.profile?.id;
+
+                  if (!id) {
+                    alert("Todavía no se creó el establecimiento");
+                    return;
+                  }
+
+                  await saveSchedules(id); // ahora id es seguro string
+                  setStep(7); // avanzar al siguiente paso
+                  router.push("/dashboard/initial-setup?step=7");
+                }}
+              >
+                Guardar horarios
+              </button>
+            </div>
+          </div>
+        )}
+
+        {step === 7 && (
           <div className="text-center">
             <h2 className="text-2xl font-bold mb-4">¡Listo!</h2>
             <p className="mb-6">
