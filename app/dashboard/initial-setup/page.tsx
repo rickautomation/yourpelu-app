@@ -1,6 +1,5 @@
 "use client";
 import { useSearchParams } from "next/navigation";
-import BarbershopSetupWizard from "@/app/components/dashboard/BarbershopSetupWizard";
 import { useAuth } from "@/app/hooks/useAuth";
 import EstablishmentSetupWizard from "./components/EstablishmentSetupWizard";
 
