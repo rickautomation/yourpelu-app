@@ -13,6 +13,18 @@ type Establishment = {
 
 type EstablishmentImage = { id: string; imageUrl: string };
 
+interface TimeRange {
+  id: string;
+  start: string;
+  end: string;
+}
+
+interface Schedule {
+  id: string;
+  dayOfWeek: number;
+  timeRanges: TimeRange[]; // 👈 agregar esta propiedad
+}
+
 type ProfileData = {
   id: string;
   lema?: string;
@@ -22,6 +34,7 @@ type ProfileData = {
   logoUrl?: string;
   websiteUrl?: string | null;
   images?: EstablishmentImage[];
+  schedules?: Schedule[];
 };
 
 type EstablishmentType = {

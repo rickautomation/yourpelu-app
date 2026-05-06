@@ -264,9 +264,9 @@ export default function NewOfferingFromCustomPage() {
           <button
             onClick={() => {
               if (setStep) {
-                setStep(4);
+                setStep(5);
               }
-              router.push("/dashboard/initial-setup?step=4");
+              router.push("/dashboard/initial-setup?step=5");
             }}
             disabled={clientOfferings.length === 0}
             className={`px-4 py-2 rounded 
