@@ -2,6 +2,7 @@
 import { useSearchParams } from "next/navigation";
 import BarbershopSetupWizard from "@/app/components/dashboard/BarbershopSetupWizard";
 import { useAuth } from "@/app/hooks/useAuth";
+import EstablishmentSetupWizard from "./components/EstablishmentSetupWizard";
 
 export default function BarbershopWizard() {
   const { user, refreshUser, router } = useAuth();
@@ -11,7 +12,7 @@ export default function BarbershopWizard() {
 
   return (
    <div className="">
-     <BarbershopSetupWizard
+     <EstablishmentSetupWizard
       onFinish={async () => {
         await refreshUser();
         router.push("/dashboard");

@@ -6,14 +6,15 @@ import { useAuth } from "@/app/hooks/useAuth";
 
 import { FiChevronDown } from "react-icons/fi";
 import { FiCheckCircle } from "react-icons/fi";
-import { useWizard } from "@/app/context/WizardContext";
 
 import { useOfferings } from "@/app/hooks/useOfferings";
 import Link from "next/link";
 import { useUserEstablishment } from "@/app/hooks/useUserEstablishment";
+import { useWizard } from "@/app/context/WizardContext";
 
 interface OfferingPageProps {
   inWizard?: boolean;
+  setStep?: (step: number) => void;
 }
 
 type OfferingCategory = {
@@ -32,9 +33,10 @@ type OfferingType = {
 
 export default function NewOfferingFromTemplatePage({
   inWizard,
+  setStep
 }: OfferingPageProps) {
   const { user } = useAuth();
-  const {activeEstablishment} = useUserEstablishment(user)
+  const { activeEstablishment } = useUserEstablishment(user);
   const {
     addOffering,
     clientOfferings,
@@ -43,7 +45,6 @@ export default function NewOfferingFromTemplatePage({
     setSelectedCategory,
     globalCategories,
   } = useOfferings(activeEstablishment?.id, activeEstablishment?.type?.id);
-  const { step, setStep } = useWizard();
 
   const router = useRouter();
 
@@ -65,49 +66,48 @@ export default function NewOfferingFromTemplatePage({
 
   return (
     <div className="py-2 px-4">
-     <div className="flex w-full gap-2 items-center py-2 mb-2">
-  <div className="relative flex-1">
-    <button
-      onClick={() => setShowDropdown(!showDropdown)}
-      className="flex-1 px-3 py-2 bg-ligthBrandBlue text-white rounded flex justify-between items-center text-xl w-full"
-    >
-      {selectedCategory ? selectedCategory.name : "Categoría"}
-      <FiChevronDown
-        className={`ml-2 text-xl transition-transform duration-200 ${
-          showDropdown ? "rotate-180" : "rotate-0"
-        }`}
-      />
-    </button>
-    {showDropdown && (
-      <ul className="absolute top-full left-0 mt-1 w-full max-h-70 overflow-y-auto bg-ligthBrandBlue rounded shadow-lg z-10">
-        {globalCategories.map((cat: any) => (
-          <li
-            key={cat.id}
-            onClick={() => {
-              setSelectedCategory(cat);
-              setShowDropdown(false);
-            }}
-            className="p-3 text-white hover:bg-gray-600 cursor-pointer border border-t border-gray-300"
+      <div className="flex w-full gap-2 items-center py-2 mb-2">
+        <div className="relative flex-1">
+          <button
+            onClick={() => setShowDropdown(!showDropdown)}
+            className="flex-1 px-3 py-2 bg-ligthBrandBlue text-white rounded flex justify-between items-center text-xl w-full"
           >
-            {cat.name}
-          </li>
-        ))}
-      </ul>
-    )}
-  </div>
+            {selectedCategory ? selectedCategory.name : "Categoría"}
+            <FiChevronDown
+              className={`ml-2 text-xl transition-transform duration-200 ${
+                showDropdown ? "rotate-180" : "rotate-0"
+              }`}
+            />
+          </button>
+          {showDropdown && (
+            <ul className="absolute top-full left-0 mt-1 w-full max-h-70 overflow-y-auto bg-ligthBrandBlue rounded shadow-lg z-10">
+              {globalCategories.map((cat: any) => (
+                <li
+                  key={cat.id}
+                  onClick={() => {
+                    setSelectedCategory(cat);
+                    setShowDropdown(false);
+                  }}
+                  className="p-3 text-white hover:bg-gray-600 cursor-pointer border border-t border-gray-300"
+                >
+                  {cat.name}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
 
-  {inWizard && (
-    <div className="flex-1">
-      <Link
-        href="/dashboard/offerings/new/from-custom?inWizard=true"
-        className="w-full px-4 py-3 bg-pink-500 text-white text-sm rounded hover:bg-pink-600 transition-colors text-center block"
-      >
-        Crear desde cero
-      </Link>
-    </div>
-  )}
-</div>
-
+        {inWizard && (
+          <div className="flex-1">
+            <Link
+              href="/dashboard/offerings/new/from-custom?inWizard=true"
+              className="w-full px-4 py-3 bg-pink-500 text-white text-sm rounded hover:bg-pink-600 transition-colors text-center block"
+            >
+              Crear desde cero
+            </Link>
+          </div>
+        )}
+      </div>
 
       <div className="flex flex-col gap-2">
         {selectedCategory &&
@@ -177,7 +177,7 @@ export default function NewOfferingFromTemplatePage({
                         >
                           Cancelar
                         </button>
-                         <button
+                        <button
                           onClick={async () => {
                             if (!price || Number(price) <= 0) {
                               setShowErrorPopup(true);
@@ -231,9 +231,9 @@ export default function NewOfferingFromTemplatePage({
           <button
             onClick={() => {
               if (setStep) {
-                setStep(4);
+                setStep(5);
               }
-              router.push("/dashboard/initial-setup?step=4");
+              router.push("/dashboard/initial-setup?step=5");
             }}
             disabled={clientOfferings.length === 0}
             className={`px-4 py-2 rounded 

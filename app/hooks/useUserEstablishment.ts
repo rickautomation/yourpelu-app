@@ -13,6 +13,7 @@ type Establishment = {
 
 type EstablishmentImage = { id: string; imageUrl: string };
 
+<<<<<<< Updated upstream
 type Schedule = {
   id: string;
   dayOfWeek: number;
@@ -20,6 +21,19 @@ type Schedule = {
   end?: string;
 };
 
+=======
+interface TimeRange {
+  id: string;
+  start: string;
+  end: string;
+}
+
+interface Schedule {
+  id: string;
+  dayOfWeek: number;
+  timeRanges: TimeRange[]; // 👈 agregar esta propiedad
+}
+>>>>>>> Stashed changes
 
 type ProfileData = {
   id: string;
