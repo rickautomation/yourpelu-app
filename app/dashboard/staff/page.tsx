@@ -10,6 +10,8 @@ export default function StaffPage() {
   const { user, isUnauthorized, router } = useAuth();
   const { activeEstablishment, loading } = useUserEstablishment(user);
 
+  console.log("active: ", activeEstablishment )
+
   const [staff, setStaff] = useState<
     {
       id: string;
@@ -50,7 +52,7 @@ export default function StaffPage() {
   useEffect(() => {
     if (activeEstablishment?.id) {
       setExpandedStaffId(null);
-      fetchStaff(activeEstablishment?.id);
+      fetchStaff(activeEstablishment?.slug);
     } else {
       setStaff([]);
     }
