@@ -7,6 +7,7 @@ import Image from "next/image";
 
 export interface Establishment {
   id: string;
+  slug: string;
   name: string;
   phoneNumber?: string;
   address?: string;

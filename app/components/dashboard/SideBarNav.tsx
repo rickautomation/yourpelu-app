@@ -40,6 +40,7 @@ type Establishment = {
   name: string;
   address?: string;
   type?: EstablishmentType;
+  slug: string;
 };
 
 type EstablishmentType = {
@@ -76,7 +77,7 @@ export default function SidebarNav({
 
   const router = useRouter();
 
-  const handleSelectBarbershop = async (shop: Barbershop) => {
+  const handleSelectBarbershop = async (shop: Establishment) => {
     try {
       await apiPost("/current-establishments/set", {
         userId,
