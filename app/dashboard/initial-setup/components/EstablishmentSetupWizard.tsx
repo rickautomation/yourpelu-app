@@ -11,6 +11,13 @@ import StepThree from "./steps/StepThree";
 import StepFive from "./steps/StepFive";
 import StepSix from "./steps/StepSix";
 import StepSeven from "./steps/StepSeven";
+import SelectEstablishmentType from "./steps/SelectEstablishmentType";
+import EstablishmentCreationForm from "./steps/EstablishmentCreationForm";
+import ActsStaffToggle from "./steps/ActsStaffToggle";
+import UploadLogo from "./steps/UploadLogo";
+import BookingEnabled from "./steps/BookingEnabled";
+import SelectScheduleDays from "./steps/SelectScheduleDays";
+import SchedulesSetup from "./steps/SchedulesSetup";
 
 interface WizardProps {
   onFinish?: () => void;
@@ -67,7 +74,7 @@ export default function EstablishmentSetupWizard({
         )}
 
         {step === 1 && user && (
-          <StepOne
+          <SelectEstablishmentType
             user={user}
             setStep={setStep}
             selectedType={selectedType}
@@ -76,7 +83,7 @@ export default function EstablishmentSetupWizard({
         )}
 
         {step === 2 && user && selectedType && (
-          <StepTwo
+          <EstablishmentCreationForm
             userId={user.id}
             sessionId={sessionId}
             selectedType={selectedType} // 👈 ahora siempre es string
@@ -84,21 +91,23 @@ export default function EstablishmentSetupWizard({
           />
         )}
 
-        {step === 3 && user && <StepThree setStep={setStep} user={user} />}
+        {step === 3 && user && <ActsStaffToggle user={user} setStep={setStep}/>}
 
-        {step === 4 && (
+        {step === 4 && user && <UploadLogo setStep={setStep} user={user} />}
+
+        {step === 5 && (
           <>
             <NewOfferingFromTemplatePage inWizard={true} setStep={setStep} />
           </>
         )}
 
-        {step === 5 && user && <StepFive setStep={setStep} user={user} />}
+        {step === 6 && user && <BookingEnabled setStep={setStep} user={user} />}
 
-        {step === 6 && user && <StepSix setStep={setStep} user={user} />}
+        {step === 7 && user && <SelectScheduleDays setStep={setStep} user={user} />}
 
-        {step === 7 && user && <StepSeven setStep={setStep} user={user} />}
+        {step === 8 && user && <SchedulesSetup setStep={setStep} user={user} />}
 
-        {step === 8 && (
+        {step === 9 && (
           <div className="text-center">
             <h2 className="text-2xl font-bold mb-4">¡Listo!</h2>
             <p className="mb-6">

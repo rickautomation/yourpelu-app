@@ -27,7 +27,7 @@ interface StepSevenProps {
   user: User;
 }
 
-const StepSeven: React.FC<StepSevenProps> = ({ setStep, user }) => {
+const SchedulesSetup: React.FC<StepSevenProps> = ({ setStep, user }) => {
   const router = useRouter();
   const { activeEstablishment } = useUserEstablishment(user);
 
@@ -266,7 +266,7 @@ const StepSeven: React.FC<StepSevenProps> = ({ setStep, user }) => {
               Editar
             </button>
             <button
-              onClick={() => setStep(8)} // 👈 avanza al siguiente paso
+              onClick={() => setStep(9)} // 👈 avanza al siguiente paso
               className="flex-1 bg-blue-600 text-white px-6 py-2 rounded font-semibold hover:bg-blue-700 transition-colors"
             >
               Continuar
@@ -277,4 +277,4 @@ const StepSeven: React.FC<StepSevenProps> = ({ setStep, user }) => {
   );
 };
 
-export default StepSeven;
+export default SchedulesSetup;

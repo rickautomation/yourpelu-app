@@ -27,7 +27,7 @@ interface StepFiveProps {
   user: User;
 }
 
-const StepFive: React.FC<StepFiveProps> = ({ setStep, user }) => {
+const BookingEnabled: React.FC<StepFiveProps> = ({ setStep, user }) => {
   const router = useRouter();
   const { activeEstablishment } = useUserEstablishment(user);
 
@@ -56,8 +56,8 @@ const StepFive: React.FC<StepFiveProps> = ({ setStep, user }) => {
           type="button"
           onClick={async () => {
             setBookingEnabled(false);
-            setStep(8);
-            router.push("/dashboard/initial-setup?step=8");
+            setStep(9);
+            router.push("/dashboard/initial-setup?step=9");
           }}
           className={`border border-pink-600 px-6 py-2 rounded font-medium transition-colors
             ${bookingEnabled === false ? "bg-pink-600 text-white" : ""}`}
@@ -74,8 +74,8 @@ const StepFive: React.FC<StepFiveProps> = ({ setStep, user }) => {
 
               if (establishmentId) {
                 await enableBooking(establishmentId);
-                setStep(6);
-                router.push("/dashboard/initial-setup?step=6");
+                setStep(7);
+                router.push("/dashboard/initial-setup?step=7");
               } else {
                 alert("Todavía no se creó el establecimiento");
               }
@@ -88,4 +88,4 @@ const StepFive: React.FC<StepFiveProps> = ({ setStep, user }) => {
   );
 };
 
-export default StepFive;
+export default BookingEnabled;

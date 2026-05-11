@@ -12,7 +12,7 @@ interface Props {
 
 export default function LoginPage({ setView }: Props) {
   const router = useRouter();
-  const [form, setForm] = useState({ identifier: "", password: "" }); // 👈 usamos identifier
+  const [form, setForm] = useState({ identifier: "", password: "" });
   const [message, setMessage] = useState("");
 
   async function handleSubmit(e: React.FormEvent) {
@@ -64,7 +64,7 @@ export default function LoginPage({ setView }: Props) {
       >
         <input
           type="text"
-          placeholder="Teléfono o Email" // 👈 ahora puede ser cualquiera
+          placeholder="Teléfono o Email"
           value={form.identifier}
           onChange={(e) => setForm({ ...form, identifier: e.target.value.trim() })}
           className="px-3 py-2 rounded bg-gray-800 text-white"
