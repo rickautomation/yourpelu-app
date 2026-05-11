@@ -16,7 +16,21 @@ type ProfileData = {
   logoUrl?: string;
   websiteUrl?: string | null;
   images?: BarberImage[];
+  schedules?: Schedule[];
 };
+
+export type TimeRange = {
+  id: string;
+  start: string; // formato "HH:mm"
+  end: string;   // formato "HH:mm"
+};
+
+export type Schedule = {
+  id: string;
+  dayOfWeek: number; // 1 = lunes, 2 = martes, etc.
+  timeRanges: TimeRange[];
+};
+
 
 type UserProfile = {
   id: string;
@@ -41,25 +55,25 @@ type Establishment = {
   profile?: ProfileData;
   staff?: Staff[];
 };
-export function usePublicBarbershopFeed(establishmentId: string) {
+export function usePublicBarbershopFeed(slug: string) {
   const [establishment, setEstablishment] = useState<Establishment | null>(null);
   const [staff, setStaff] = useState<Staff[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!establishmentId) return;
+    if (!slug) return;
 
     const load = async () => {
       setLoading(true);
       try {
         const data = await apiGet<{ establishment: Establishment }>(
-          `/public-data/establishment/${establishmentId}/feed`,
+          `/public-data/establishment/${slug}/feed`,
         );
         setEstablishment(data.establishment);
 
         const staffData = await apiGet<Staff[]>(
-          `/public-data/establishment/${establishmentId}/staff`,
+          `/public-data/establishment/${slug}/staff`,
         );
         setStaff(staffData);
       } catch (err: any) {
@@ -70,7 +84,7 @@ export function usePublicBarbershopFeed(establishmentId: string) {
     };
 
     load();
-  }, [establishmentId]);
+  }, [slug]);
 
   return { establishment, staff, loading, error };
 }
