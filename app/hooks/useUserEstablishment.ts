@@ -9,6 +9,7 @@ type Establishment = {
   phoneNumber?: string;
   profile?: ProfileData;
   type?: EstablishmentType;
+  slug: string
 };
 
 type EstablishmentImage = { id: string; imageUrl: string };
