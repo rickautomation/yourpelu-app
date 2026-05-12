@@ -96,19 +96,19 @@ export default function BottomNav({ onToggleSidebar, setSidebarOpen }: any) {
 
   return (
     <>
-      <nav className="fixed bottom-0 left-0 w-full bg-darkBrandBlue border-t border-gray-700 flex justify-around items-center py-2 z-50">
+      <nav className="fixed bottom-0 left-0 w-full bg-darkBrandBlue border-t border-gray-700 flex justify-around items-center px-5 py-2 z-50 text-pink-500">
         <button
           onClick={onToggleSidebar}
-          className="flex items-center justify-center w-10 h-10 border-2 border-pink-600 rounded-md hover:bg-gray-800 focus:outline-none"
+          className="flex items-center justify-center w-10 h-10 border-4 border-pink-500 rounded-md hover:bg-gray-800 focus:outline-none"
         >
-          <FiMenu className="w-6 h-6 text-pink-600" />
+          <FiMenu className="w-6 h-6" />
         </button>
 
         {/* Turnos */}
         <Link
           href="/dashboard/appointments"
           onClick={(e) => handleProtectedClick(e, "/dashboard/turnos")}
-          className="flex items-center justify-center text-pink-600"
+          className="flex items-center justify-center"
         >
           <FiCalendar className="w-10 h-10" />
         </Link>
@@ -117,7 +117,7 @@ export default function BottomNav({ onToggleSidebar, setSidebarOpen }: any) {
         <Link
           href="/dashboard/offerings/add"
           onClick={(e) => handleProtectedClick(e, "/dashboard/offerings/add")}
-          className="flex items-center justify-center text-pink-600"
+          className="flex items-center justify-center"
         >
           <FiPlusCircle className="w-10 h-10" />
         </Link>
@@ -125,9 +125,9 @@ export default function BottomNav({ onToggleSidebar, setSidebarOpen }: any) {
         <Link
           href="/dashboard/reportes"
           onClick={(e) => handleProtectedClick(e, "/dashboard/clientes")}
-          className="flex items-center justify-center text-pink-600 border-2 rounded-lg"
+          className="flex items-center justify-center border-4 rounded-lg"
         >
-          <BiBarChart className="w-9 h-9" />
+          <BiBarChart className="w-8 h-8" />
         </Link>
 
         {/* Avatar con menú */}
