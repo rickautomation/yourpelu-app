@@ -43,6 +43,18 @@ body {
   background-color: #31316a;
 }
 
+.text-darkBrandBlue {
+  color: #15153a;
+}
+
+.text-luminiBrandBlue {
+  color: #212140;
+}
+
+.border-ligthBrandBlue {
+  color: #3d3d6e
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;

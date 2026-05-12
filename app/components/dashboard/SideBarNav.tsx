@@ -127,12 +127,12 @@ export default function SidebarNav({
               <>
                 {/* Botón para abrir/cerrar selector */}
                 <button
-                  className="flex items-center justify-between w-full px-4 py-2 text-2xl text-pink-600 border border-pink-600 rounded-md hover:bg-pink-600 hover:text-white transition"
+                  className="flex items-center justify-between w-full px-4 py-2 text-2xl bg-pink-500 text-darkBrandBlue border-2 border-ligthBrandBlue rounded-md hover:bg-pink-600 transition"
                   onClick={() => setShowSelector(!showSelector)}
                 >
                   {activeEstablishment?.name || "Seleccionar barbería"}
                   <svg
-                    className={`w-5 h-5 ml-2 transform transition-transform ${
+                    className={`w-5 h-5 ml-2 transform transition-transform text-darkBrandBlue ${
                       showSelector ? "rotate-180" : "rotate-0"
                     }`}
                     fill="none"
@@ -175,11 +175,8 @@ export default function SidebarNav({
                       <Link
                         href="/dashboard/initial-setup?step=1"
                         onClick={() => setSidebarOpen(false)}
-                        className="flex items-center justify-start gap-2 w-full px-4 py-1 border border-pink-600 rounded-md text-xl font-semibold text-white hover:bg-pink-600 hover:text-white transition"
+                        className="flex items-center justify-center gap-2 w-full px-4 py-2 border-2 border-ligthBrandBlue bg-pink-500 rounded-md text-xl font-semibold text-darkBrandBlue hover:bg-pink-600 transition"
                       >
-                        <span className="text-3xl text-pink-600 font-semibold">
-                          +
-                        </span>
                         Nuevo establecimiento
                       </Link>
                     </div>
@@ -226,7 +223,7 @@ export default function SidebarNav({
 
         {/* Links del sidebar */}
         {!showSelector && clientOfferings.length > 0 && (
-          <div className="flex flex-col gap-2 mt-4 text-pink-600">
+          <div className="flex flex-col gap-2 mt-4 text-exposeBrandBlue">
             {userRole === "admin" && (
               <>
                 {/* <div className="flex justify-between">
@@ -262,7 +259,7 @@ export default function SidebarNav({
                   <SidebarLink
                     href="/dashboard/staff"
                     setSidebarOpen={setSidebarOpen}
-                    className="basis-1/2 flex items-center text-end justify-start gap-2 border rounded-md p-4 text-xl hover:text-white transition-colors cursor-pointer"
+                    className="basis-1/2 flex items-center text-end justify-start gap-2 border rounded-md p-4 text-xl transition-colors cursor-pointer"
                   >
                     <FiUsers className="w-8 h-8" />
                     <p >Team</p>
@@ -271,7 +268,7 @@ export default function SidebarNav({
                   <SidebarLink
                     href="/dashboard/barbershop-profile-settings"
                     setSidebarOpen={setSidebarOpen}
-                    className="basis-1/2 flex items-center justify-start gap-2 border rounded-md p-4 text-xl hover:text-white transition-colors cursor-pointer"
+                    className="basis-1/2 flex items-center justify-start gap-2 border rounded-md p-4 text-xl transition-colors cursor-pointer"
                   >
                     <FiImage className="w-8 h-8" />
                     <p>Feed</p>
@@ -288,7 +285,7 @@ export default function SidebarNav({
                   <SidebarLink
                     href="/dashboard/offerings"
                     setSidebarOpen={setSidebarOpen}
-                    className="basis-1/2 flex items-center justify-start gap-2 border rounded-md p-4 text-lg hover:text-white transition-colors cursor-pointer"
+                    className="basis-1/2 flex items-center justify-start gap-2 border rounded-md p-4 text-lg transition-colors cursor-pointer"
                   >
                     <FiList className="inline w-8 h-8" />
                     <div>
@@ -310,7 +307,7 @@ export default function SidebarNav({
                   <SidebarLink
                     href="/dashboard/offerings/add"
                     setSidebarOpen={setSidebarOpen}
-                    className="basis-1/2 flex items-center justify-start gap-2 border rounded-md p-4 text-lg hover:text-white transition-colors cursor-pointer"
+                    className="basis-1/2 flex items-center justify-start gap-2 border rounded-md p-4 text-lg transition-colors cursor-pointer"
                   >
                     <FiPlusCircle className="inline w-8 h-8" />
                       <p>Registrar </p>
@@ -321,7 +318,7 @@ export default function SidebarNav({
                   <SidebarLink
                     href="/dashboard/appointments"
                     setSidebarOpen={setSidebarOpen}
-                    className="basis-1/2 flex items-center justify-start gap-2 border rounded-md p-4 text-xl hover:text-white transition-colors cursor-pointer"
+                    className="basis-1/2 flex items-center justify-start gap-2 border rounded-md p-4 text-xl transition-colors cursor-pointer"
                   >
                     <FiCalendar className="inline w-8 h-8" />
                     <p>Turnos</p>
@@ -329,7 +326,7 @@ export default function SidebarNav({
                   <SidebarLink
                     href="/dashboard/clientes"
                     setSidebarOpen={setSidebarOpen}
-                    className="basis-1/2 flex items-center justify-start gap-2 border rounded-md p-4 text-xl hover:text-white transition-colors cursor-pointer"
+                    className="basis-1/2 flex items-center justify-start gap-2 border rounded-md p-4 text-xl transition-colors cursor-pointer"
                   >
                     <BiMaleFemale className="w-8 h-8" />
                     <p>Clientes</p>
@@ -412,7 +409,7 @@ export default function SidebarNav({
                   <SidebarLink
                     href="/dashboard/settings"
                     setSidebarOpen={setSidebarOpen}
-                    className="flex items-center justify-start gap-2 border rounded-md p-4 text-xl hover:text-white transition-colors cursor-pointer"
+                    className="flex items-center justify-start gap-2 border rounded-md p-4 text-xl transition-colors cursor-pointer"
                     style={{ width: "calc(50% - 0.375rem)" }}
                   >
                     <FiSettings className="inline w-8 h-8" />

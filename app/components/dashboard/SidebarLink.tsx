@@ -17,7 +17,11 @@ function SidebarLink({
     <Link
       href={href}
       onClick={() => setSidebarOpen(false)}
-      className={`flex items-center gap-2 hover:bg-gray-800 rounded-md transition ${className}`}
+        className={`flex items-center gap-2 px-4 py-2 
+              border-2 border-ligthBrandBlue bg-pink-500 text-darkBrandBlue 
+              font-semibold rounded-md cursor-pointer 
+              hover:bg-pink-500 hover:text-white 
+              transition-colors duration-200 ${className}`}
       style={style}
     >
       {children}
