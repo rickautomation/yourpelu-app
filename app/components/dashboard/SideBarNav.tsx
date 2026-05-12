@@ -259,7 +259,7 @@ export default function SidebarNav({
                   <SidebarLink
                     href="/dashboard/staff"
                     setSidebarOpen={setSidebarOpen}
-                    className="basis-1/2 flex items-center text-end justify-start gap-2 border rounded-md p-4 text-xl transition-colors cursor-pointer"
+                    className="basis-1/2 flex items-center text-end justify-start gap-2 rounded-md p-4 text-xl transition-colors cursor-pointer"
                   >
                     <FiUsers className="w-8 h-8" />
                     <p >Team</p>
@@ -268,7 +268,7 @@ export default function SidebarNav({
                   <SidebarLink
                     href="/dashboard/barbershop-profile-settings"
                     setSidebarOpen={setSidebarOpen}
-                    className="basis-1/2 flex items-center justify-start gap-2 border rounded-md p-4 text-xl transition-colors cursor-pointer"
+                    className="basis-1/2 flex items-center justify-start gap-2 rounded-md p-4 text-xl transition-colors cursor-pointer"
                   >
                     <FiImage className="w-8 h-8" />
                     <p>Feed</p>
@@ -285,7 +285,7 @@ export default function SidebarNav({
                   <SidebarLink
                     href="/dashboard/offerings"
                     setSidebarOpen={setSidebarOpen}
-                    className="basis-1/2 flex items-center justify-start gap-2 border rounded-md p-4 text-lg transition-colors cursor-pointer"
+                    className="basis-1/2 flex items-center justify-start gap-2 rounded-md p-4 text-lg transition-colors cursor-pointer"
                   >
                     <FiList className="inline w-8 h-8" />
                     <div>
@@ -307,7 +307,7 @@ export default function SidebarNav({
                   <SidebarLink
                     href="/dashboard/offerings/add"
                     setSidebarOpen={setSidebarOpen}
-                    className="basis-1/2 flex items-center justify-start gap-2 border rounded-md p-4 text-lg transition-colors cursor-pointer"
+                    className="basis-1/2 flex items-center justify-start gap-2 rounded-md p-4 text-lg transition-colors cursor-pointer"
                   >
                     <FiPlusCircle className="inline w-8 h-8" />
                       <p>Registrar </p>
@@ -318,7 +318,7 @@ export default function SidebarNav({
                   <SidebarLink
                     href="/dashboard/appointments"
                     setSidebarOpen={setSidebarOpen}
-                    className="basis-1/2 flex items-center justify-start gap-2 border rounded-md p-4 text-xl transition-colors cursor-pointer"
+                    className="basis-1/2 flex items-center justify-start gap-2 rounded-md p-4 text-xl transition-colors cursor-pointer"
                   >
                     <FiCalendar className="inline w-8 h-8" />
                     <p>Turnos</p>
@@ -326,7 +326,7 @@ export default function SidebarNav({
                   <SidebarLink
                     href="/dashboard/clientes"
                     setSidebarOpen={setSidebarOpen}
-                    className="basis-1/2 flex items-center justify-start gap-2 border rounded-md p-4 text-xl transition-colors cursor-pointer"
+                    className="basis-1/2 flex items-center justify-start gap-2 rounded-md p-4 text-xl transition-colors cursor-pointer"
                   >
                     <BiMaleFemale className="w-8 h-8" />
                     <p>Clientes</p>
@@ -409,7 +409,7 @@ export default function SidebarNav({
                   <SidebarLink
                     href="/dashboard/settings"
                     setSidebarOpen={setSidebarOpen}
-                    className="flex items-center justify-start gap-2 border rounded-md p-4 text-xl transition-colors cursor-pointer"
+                    className="flex items-center justify-start gap-2 rounded-md p-4 text-xl transition-colors cursor-pointer"
                     style={{ width: "calc(50% - 0.375rem)" }}
                   >
                     <FiSettings className="inline w-8 h-8" />
