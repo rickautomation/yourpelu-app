@@ -10,6 +10,7 @@ type Establishment = {
   profile?: ProfileData;
   type?: EstablishmentType;
   slug: string
+  bookingLink?: string;
 };
 
 type EstablishmentImage = { id: string; imageUrl: string };

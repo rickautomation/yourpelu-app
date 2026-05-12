@@ -130,7 +130,7 @@ export default function SidebarNav({
               <>
                 {/* Botón para abrir/cerrar selector */}
                 <button
-                  className="flex items-center justify-between w-full px-4 py-2 text-2xl font-semibold bg-pink-500 text-white rounded-md hover:bg-pink-600 transition"
+                  className="flex items-center justify-between w-full px-4 py-2 text-2xl font-semibold bg-exposeBrandBlue text-white rounded-md hover:bg-pink-600 transition"
                   onClick={() => setShowSelector(!showSelector)}
                 >
                   {activeEstablishment?.name || "Seleccionar barbería"}
@@ -215,7 +215,7 @@ export default function SidebarNav({
 
         {/* Links del sidebar */}
         {!showSelector && clientOfferings.length > 0 && (
-          <div className="flex flex-col gap-2 mt-4 text-exposeBrandBlue">
+          <div className="flex flex-col gap-3 mt-4 text-exposeBrandBlue">
             {userRole === "admin" && (
               <>
                 {/* <div className="flex justify-between">
@@ -433,7 +433,7 @@ export default function SidebarNav({
           router.push("/dashboard/initial-setup?step=1");
           setSidebarOpen(false);
         }}
-        className="fixed bottom-20 right-4 p-2 rounded-md bg-pink-500 text-white  shadow-md shadow-black hover:bg-pink-600 transition-colors"
+        className="fixed bottom-20 right-6 p-2 rounded-md bg-pink-500 text-white  shadow-md shadow-black hover:bg-pink-600 transition-colors"
       >
         <MdOutlineAddHomeWork className="text-3xl" />
       </button>

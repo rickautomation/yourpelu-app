@@ -5,8 +5,14 @@ import { apiGet } from "@/app/lib/apiGet";
 import { apiPatch } from "@/app/lib/apiPatch"; // 👈 importamos tu helper
 import { FaRegCalendarDays } from "react-icons/fa6";
 import { IoMdClock } from "react-icons/io";
-import { FaCheckCircle, FaHourglassHalf, FaTimesCircle } from "react-icons/fa";
+import {
+  FaCheckCircle,
+  FaHourglassHalf,
+  FaRegCopy,
+  FaTimesCircle,
+} from "react-icons/fa";
 import { useAuth } from "@/app/hooks/useAuth";
+import { useUserEstablishment } from "@/app/hooks/useUserEstablishment";
 
 type Appointment = {
   id: string;
@@ -32,12 +38,14 @@ type Appointment = {
 
 export default function AppointmentsPage() {
   const { user } = useAuth();
+  const { activeEstablishment } = useUserEstablishment(user);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   console.log("user: ", user);
   console.log("appointments: ", appointments);
+  console.log("active: ", activeEstablishment);
 
   const [popupMessage, setPopupMessage] = useState<string | null>(null);
 
@@ -125,6 +133,31 @@ export default function AppointmentsPage() {
 
   return (
     <div className="p-4">
+      {activeEstablishment?.bookingLink && user?.rol === "admin" && (
+        <div className="mt-4 py-4 rounded bg-luminiBrandBlue text-center text-lg mb-2">
+          <p className="text-sm text-start p-2 font-semibold">
+            📎 Comparte tu link de reservas:
+          </p>
+          <div className="flex items-center justify-center gap-2">
+            <p className="text-pink-500 break-all">
+              {activeEstablishment.bookingLink}
+            </p>
+            <button
+              onClick={() => {
+                if (activeEstablishment?.bookingLink) {
+                  navigator.clipboard.writeText(
+                    activeEstablishment.bookingLink,
+                  );
+                  alert("Link copiado al portapapeles ✅"); // feedback rápido
+                }
+              }}
+              className="flex items-center gap-1 px-2 py-1 rounded border border-pink-500 hover:bg-pink-100 text-pink-500 transition"
+            >
+              <FaRegCopy />
+            </button>
+          </div>
+        </div>
+      )}
       {appointments.length === 0 ? (
         <p>No hay citas</p>
       ) : (
@@ -209,7 +242,6 @@ export default function AppointmentsPage() {
           })}
         </div>
       )}
-
       {/* Popup modal */}
       {popupMessage && (
         <div
