@@ -34,6 +34,7 @@ export default function StaffPage() {
         const res = await apiGet<typeof staff>(
           `/user/establishment/${shopId}/staff`,
         );
+        console.log("res staff: ", res)
         setStaff(res);
       }
     } catch (err) {
@@ -52,7 +53,7 @@ export default function StaffPage() {
   useEffect(() => {
     if (activeEstablishment?.id) {
       setExpandedStaffId(null);
-      fetchStaff(activeEstablishment?.slug);
+      fetchStaff(activeEstablishment?.id);
     } else {
       setStaff([]);
     }
