@@ -93,6 +93,7 @@ export default function SidebarNav({
 
       // 👇 notificar al resto de la app
       window.dispatchEvent(new Event("barbershop-changed"));
+      router.refresh();
     } catch (err) {
       console.error("Error cambiando barbería activa", err);
     }
