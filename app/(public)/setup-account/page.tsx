@@ -78,7 +78,7 @@ export default function SetupAccountPage() {
     <div className="flex flex-col items-center justify-center gap-4 p-4">
       <div className="text-center max-w-md">
         <h1 className="text-2xl text-white mb-2">
-          ¡Bienvenido <span className="text-pink-600">{userData?.name}</span>!
+          ¡Hola <span className="text-pink-600">{userData?.name}</span>!
         </h1>
         <p className="text-gray-300">
           Por favor, establece tu nueva contraseña para activar tu cuenta en{" "}
