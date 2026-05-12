@@ -18,6 +18,7 @@ import {
   FiShoppingCart,
   FiLayers,
   FiGrid,
+  FiUserPlus,
 } from "react-icons/fi";
 import SidebarLink from "./SidebarLink";
 import Image from "next/image";
@@ -28,6 +29,7 @@ import {
   IoGiftOutline,
 } from "react-icons/io5";
 import { BiMaleFemale } from "react-icons/bi";
+import { MdOutlineAddHomeWork } from "react-icons/md";
 
 type Barbershop = {
   id: string;
@@ -107,7 +109,7 @@ export default function SidebarNav({
     >
       <nav className="flex flex-col gap-2 px-3">
         <div className="text-center">
-          <div className="text-xl font-bold w-full flex items-center justify-center gap-1 pb-6">
+          <div className="text-xl font-bold w-full flex items-center justify-center gap-1 pt-4 pb-6">
             <Link
               href="/dashboard"
               onClick={() => setSidebarOpen(false)}
@@ -127,12 +129,12 @@ export default function SidebarNav({
               <>
                 {/* Botón para abrir/cerrar selector */}
                 <button
-                  className="flex items-center justify-between w-full px-4 py-2 text-2xl bg-pink-500 text-darkBrandBlue border-2 border-ligthBrandBlue rounded-md hover:bg-pink-600 transition"
+                  className="flex items-center justify-between w-full px-4 py-2 text-2xl font-semibold bg-pink-500 text-white rounded-md hover:bg-pink-600 transition"
                   onClick={() => setShowSelector(!showSelector)}
                 >
                   {activeEstablishment?.name || "Seleccionar barbería"}
                   <svg
-                    className={`w-5 h-5 ml-2 transform transition-transform text-darkBrandBlue ${
+                    className={`w-5 h-5 ml-2 transform transition-transform ${
                       showSelector ? "rotate-180" : "rotate-0"
                     }`}
                     fill="none"
@@ -142,7 +144,7 @@ export default function SidebarNav({
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      strokeWidth={2}
+                      strokeWidth={4}
                       d="M19 9l-7 7-7-7"
                     />
                   </svg>
@@ -151,7 +153,7 @@ export default function SidebarNav({
                 {/* Dropdown selector */}
                 {showSelector && (
                   <>
-                    <div className="mt-2 bg-exposeBrandBlue border border-gray-700 rounded-md shadow-lg">
+                    <div className="rounded-b-md bg-exposeBrandBlue border border-gray-700 shadow-lg">
                       {establishments.map((shop) => (
                         <button
                           key={shop.id}
@@ -168,17 +170,6 @@ export default function SidebarNav({
                           </p>
                         </button>
                       ))}
-                    </div>
-
-                    {/* Botón Nueva Barbería separado */}
-                    <div className="mt-3">
-                      <Link
-                        href="/dashboard/initial-setup?step=1"
-                        onClick={() => setSidebarOpen(false)}
-                        className="flex items-center justify-center gap-2 w-full px-4 py-2 border-2 border-ligthBrandBlue bg-pink-500 rounded-md text-xl font-semibold text-darkBrandBlue hover:bg-pink-600 transition"
-                      >
-                        Nuevo establecimiento
-                      </Link>
                     </div>
                   </>
                 )}
@@ -262,7 +253,7 @@ export default function SidebarNav({
                     className="basis-1/2 flex items-center text-end justify-start gap-2 rounded-md p-4 text-xl transition-colors cursor-pointer"
                   >
                     <FiUsers className="w-8 h-8" />
-                    <p >Team</p>
+                    <p>Team</p>
                   </SidebarLink>
 
                   <SidebarLink
@@ -310,7 +301,7 @@ export default function SidebarNav({
                     className="basis-1/2 flex items-center justify-start gap-2 rounded-md p-4 text-lg transition-colors cursor-pointer"
                   >
                     <FiPlusCircle className="inline w-8 h-8" />
-                      <p>Registrar </p>
+                    <p>Registrar </p>
                   </SidebarLink>
                 </div>
 
@@ -435,6 +426,16 @@ export default function SidebarNav({
           </div>
         )}
       </nav>
+
+      <button
+        onClick={() => {
+          router.push("/dashboard/initial-setup?step=1");
+          setSidebarOpen(false);
+        }}
+        className="fixed bottom-20 right-4 p-2 rounded-md bg-pink-500 text-white  shadow-md shadow-black hover:bg-pink-600 transition-colors"
+      >
+        <MdOutlineAddHomeWork className="text-3xl" />
+      </button>
     </aside>
   );
 }
