@@ -83,7 +83,7 @@ export default function SidebarNav({
     try {
       await apiPost("/current-establishments/set", {
         userId,
-        barbershopId: shop.id,
+        establishmentsId: shop.id,
         sessionId,
       });
 
