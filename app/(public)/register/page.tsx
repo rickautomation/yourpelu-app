@@ -38,24 +38,24 @@ export default function RegisterPage({ setView }: Props) {
   }
 
   return (
-    <div className="flex flex-col items-center animate-slideIn min-h-screen px-4">
-      <p className="text-gray-500 text-center max-w-md">
-        Registrate para empezar a gestionar tu peluquería. Vas a poder organizar
-        turnos, clientes y cortes de manera simple y rápida, todo desde tu
+    <div className="flex flex-col items-center animate-slideIn min-h-screen px-2">
+      <p className="text-gray-500 text-center max-w-md px-2 mb-2">
+        Registrate para empezar a gestionar tu local. Vas a poder organizar
+        turnos, clientes y mas de manera simple y rápida, todo desde tu
         celular.
       </p>
 
       {/* Formulario */}
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-sm flex flex-col gap-3 px-4"
+        className="w-full max-w-sm flex flex-col gap-3 px-6"
       >
         <input
           type="text"
           placeholder="Nombre"
           value={form.name}
           onChange={(e) => setForm({ ...form, name: e.target.value.trim() })}
-          className="px-3 py-2 rounded bg-gray-800 text-white"
+          className="px-3 py-2 rounded bg-luminiBrandBlue text-white"
           required
         />
         <input
@@ -63,7 +63,7 @@ export default function RegisterPage({ setView }: Props) {
           placeholder="Apellido"
           value={form.lastname}
           onChange={(e) => setForm({ ...form, lastname: e.target.value.trim() })}
-          className="px-3 py-2 rounded bg-gray-800 text-white"
+          className="px-3 py-2 rounded bg-luminiBrandBlue text-white"
           required
         />
         <input
@@ -71,7 +71,7 @@ export default function RegisterPage({ setView }: Props) {
           placeholder="Teléfono"
           value={form.phoneNumber}
           onChange={(e) => setForm({ ...form, phoneNumber: e.target.value.trim() })}
-          className="px-3 py-2 rounded bg-gray-800 text-white"
+          className="px-3 py-2 rounded bg-luminiBrandBlue text-white"
           required
         />
         <input
@@ -79,7 +79,7 @@ export default function RegisterPage({ setView }: Props) {
           placeholder="Email" // 👈 nuevo campo
           value={form.email}
           onChange={(e) => setForm({ ...form, email: e.target.value.trim() })}
-          className="px-3 py-2 rounded bg-gray-800 text-white"
+          className="px-3 py-2 rounded bg-luminiBrandBlue text-white"
           required
         />
         <input
@@ -87,12 +87,12 @@ export default function RegisterPage({ setView }: Props) {
           placeholder="Contraseña"
           value={form.password}
           onChange={(e) => setForm({ ...form, password: e.target.value.trim() })}
-          className="px-3 py-2 rounded bg-gray-800 text-white"
+          className="px-3 py-2 rounded bg-luminiBrandBlue text-white"
           required
         />
         <button
           type="submit"
-          className="border border-pink-400 px-4 py-2 rounded text-pink-400 hover:bg-pink-400 hover:text-white transition-colors"
+          className="px-4 py-2 rounded bg-pink-400 font-semibold hover:bg-pink-400 hover:text-white transition-colors"
         >
           Registrarse
         </button>

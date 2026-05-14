@@ -5,7 +5,7 @@ import Link from "next/link";
 export default function PublicLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="es" className="h-full">
-      <body className="h-full flex flex-col overflow-hidden">
+      <body className="h-full flex flex-col overflow-hidden bg-darkBrandBlue">
         <header className="pt-10">
           <Link href="/">
             <Image
