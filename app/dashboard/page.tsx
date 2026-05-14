@@ -20,6 +20,8 @@ export default function DashboardPage() {
     return null;
   }
 
+  console.log("active establishment: ", activeEstablishment)
+
   return (
     <div className="flex flex-col space-y-4 p-4">
       {/* Caso 1: sin barbería activa */}

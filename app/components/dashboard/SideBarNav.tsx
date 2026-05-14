@@ -176,7 +176,6 @@ export default function SidebarNav({
                 )}
               </>
             ) : (
-              // 👇 Si no hay barberías, mostrar solo el botón Nueva Barbería
               <Link
                 href="/dashboard/initial-setup?step=1"
                 onClick={() => setSidebarOpen(false)}

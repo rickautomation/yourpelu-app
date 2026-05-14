@@ -79,7 +79,7 @@ export function useUserEstablishment(user: User | null) {
 
         if (user.rol === "staff" || user.rol === "client") {
           const all = await apiGet<Establishment[]>(
-            `/user/establishment/${user.id}/all`,
+            `/user/establishments/${user.id}/all`,
           );
           setEstablishments(all);
           setActiveEstablishment(all.length > 0 ? all[0] : null);
