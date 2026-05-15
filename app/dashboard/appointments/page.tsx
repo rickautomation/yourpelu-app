@@ -12,7 +12,7 @@ import {
   FaTimesCircle,
 } from "react-icons/fa";
 import { useAuth } from "@/app/hooks/useAuth";
-import { useUserEstablishment } from "@/app/hooks/useUserEstablishment";
+import { useEstablishment } from "@/app/context/EstablishmentContext";
 
 type Appointment = {
   id: string;
@@ -38,20 +38,20 @@ type Appointment = {
 
 export default function AppointmentsPage() {
   const { user } = useAuth();
-  const { activeEstablishment } = useUserEstablishment(user);
+  const { activeEstablishment } = useEstablishment();
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  console.log("user: ", user);
-  console.log("appointments: ", appointments);
-  console.log("active: ", activeEstablishment);
-
   const [popupMessage, setPopupMessage] = useState<string | null>(null);
 
   const fetchAppointments = async () => {
+    if (!activeEstablishment?.id) return; // 👈 aseguramos que haya barbería activa
+    setLoading(true);
     try {
-      const data = await apiGet<Appointment[]>("/appointments/all");
+      const data = await apiGet<Appointment[]>(
+        `/appointments/all?establishmentId=${activeEstablishment.id}`,
+      );
       setAppointments(data);
     } catch (err: any) {
       setError(err.message);
@@ -62,7 +62,7 @@ export default function AppointmentsPage() {
 
   useEffect(() => {
     fetchAppointments();
-  }, []);
+  }, [activeEstablishment?.id]);
 
   const formatArgPhone = (phone: string) => {
     let clean = phone.replace(/\D/g, "");

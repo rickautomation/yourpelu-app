@@ -1,11 +1,10 @@
 "use client";
 
-import { useAuth } from "@/app/hooks/useAuth";
 import { apiUpdate } from "@/app/lib/apiUpdate";
 import { apiGet } from "@/app/lib/apiGet";
 import { useState, useEffect } from "react";
 import { FiCheckCircle } from "react-icons/fi";
-import { useUserEstablishment } from "@/app/hooks/useUserEstablishment";
+import { useEstablishment } from "@/app/context/EstablishmentContext";
 
 function OnOffToggle({
   value,
@@ -47,8 +46,7 @@ function OnOffToggle({
 }
 
 export default function SettingsPage() {
-  const { user } = useAuth();
-  const {activeEstablishment} = useUserEstablishment(user)
+  const {activeEstablishment} = useEstablishment()
 
   // Estados
   const [feedActivo, setFeedActivo] = useState(false);

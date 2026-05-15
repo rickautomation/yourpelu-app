@@ -4,7 +4,7 @@ import ButtonNav from "../components/BottomNav";
 import SidebarNav from "../components/dashboard/SideBarNav";
 import { useState, useMemo } from "react";
 import { useAuth } from "../hooks/useAuth";
-import { useUserEstablishment } from "../hooks/useUserEstablishment";
+import { EstablishmentProvider } from "../context/EstablishmentContext";
 
 type UserRole = "admin" | "staff" | "client" | "user";
 
@@ -13,15 +13,8 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { user, loading, router} = useAuth();
+  const { user, loading, router } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-
-  const {
-    activeEstablishment,
-    establishments,
-    setActiveEstablishment,
-    loading: shopsLoading,
-  } = useUserEstablishment(user);
 
   const role: UserRole =
     user?.rol === "admin" ||
@@ -37,7 +30,7 @@ export default function DashboardLayout({
       : String(Date.now());
   }, []);
 
-  if (loading || shopsLoading) {
+  if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="w-12 h-12 border-4 border-pink-500 border-t-transparent rounded-full animate-spin"></div>
@@ -45,7 +38,7 @@ export default function DashboardLayout({
     );
   }
 
-   if (!user) {
+  if (!user) {
     return (
       <div className="flex flex-col items-center justify-center h-screen bg-brandBlue text-white">
         <p className="text-xl mb-4">No autorizado</p>
@@ -60,47 +53,43 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-brandBlue text-white relative">
-      {!sidebarOpen && (
-        <Navbar
-          onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
-          activeEstablishment={activeEstablishment}
-          setActiveEstablishment={setActiveEstablishment}
-          establishments={establishments}
-          userId={user.id}
-          sessionId={sessionId}
-          sidebarOpen={sidebarOpen}
-        />
-      )}
-
-      <div className="flex-1 relative">
-        {sidebarOpen && (
-          <div
-            className="fixed top-14 left-64 h-[calc(100%-56px)] w-[calc(100%-16rem)] z-30"
-            onClick={() => setSidebarOpen(false)}
-          />
-        )}
-
-        {sidebarOpen && (
-          <SidebarNav
-            establishments={establishments}
-            activeEstablishment={activeEstablishment}
-            setActiveEstablishment={setActiveEstablishment}
-            setSidebarOpen={setSidebarOpen}
-            userRole={role}
+    <EstablishmentProvider>
+      <div className="min-h-screen flex flex-col bg-brandBlue text-white relative">
+        {!sidebarOpen && (
+          <Navbar
+            onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
             userId={user.id}
             sessionId={sessionId}
+            sidebarOpen={sidebarOpen}
           />
         )}
 
-        <main className="relative z-20 pb-16">{children}</main>
-      </div>
+        <div className="flex-1 relative">
+          {sidebarOpen && (
+            <div
+              className="fixed top-14 left-64 h-[calc(100%-56px)] w-[calc(100%-16rem)] z-30"
+              onClick={() => setSidebarOpen(false)}
+            />
+          )}
 
-      <ButtonNav
-        onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
-        sessionId={sessionId}
-        setSidebarOpen={setSidebarOpen}
-      />
-    </div>
+          {sidebarOpen && (
+            <SidebarNav
+              setSidebarOpen={setSidebarOpen}
+              userRole={role}
+              userId={user.id}
+              sessionId={sessionId}
+            />
+          )}
+
+          <main className="relative z-20 pb-16">{children}</main>
+        </div>
+
+        <ButtonNav
+          onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+          sessionId={sessionId}
+          setSidebarOpen={setSidebarOpen}
+        />
+      </div>
+    </EstablishmentProvider>
   );
 }

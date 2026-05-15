@@ -3,14 +3,12 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/app/hooks/useAuth";
 import { apiGet } from "@/app/lib/apiGet";
 import { apiDelete } from "@/app/lib/apiDelete";
-import { useUserEstablishment } from "@/app/hooks/useUserEstablishment";
 import { FiUserPlus } from "react-icons/fi";
+import { useEstablishment } from "@/app/context/EstablishmentContext";
 
 export default function StaffPage() {
   const { user, isUnauthorized, router } = useAuth();
-  const { activeEstablishment, loading } = useUserEstablishment(user);
-
-  console.log("active: ", activeEstablishment )
+  const { activeEstablishment, loading } = useEstablishment();
 
   const [staff, setStaff] = useState<
     {

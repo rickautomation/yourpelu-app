@@ -1,11 +1,11 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
+import { useState } from "react";
 import { useAuth } from "@/app/lib/useAuth";
 import { useServices } from "@/app/hooks/useServices";
 import { useRouter } from "next/navigation";
 import TemplateServicesPage from "./new/page";
-import { useUserEstablishment } from "@/app/hooks/useUserEstablishment";
+import { useEstablishment } from "@/app/context/EstablishmentContext";
 
 interface ServicesPageProps {
   render?: string; // porque le pasás "true" como string
@@ -18,11 +18,8 @@ export default function ServicesPage({
   hasServices,
 }: ServicesPageProps) {
   const { user, refreshUser } = useAuth();
-  const {activeEstablishment} = useUserEstablishment(user)
+  const {activeEstablishment} = useEstablishment()
   const router = useRouter();
-
-  console.log("usr in service: ", user )
-  console.log("barbershop: ", activeEstablishment)
 
   const {
     ownServices,
