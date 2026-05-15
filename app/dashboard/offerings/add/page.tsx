@@ -7,7 +7,7 @@ import { useState, useEffect } from "react";
 import { useRef } from "react";
 import { FiCheckCircle, FiChevronDown } from "react-icons/fi";
 import { useClients } from "@/app/hooks/useClients";
-import { useUserEstablishment } from "@/app/hooks/useUserEstablishment";
+import { useEstablishment } from "@/app/context/EstablishmentContext";
 
 export type CreateOfferingDto = {
   price: number;
@@ -22,7 +22,7 @@ export type CreateOfferingDto = {
 
 export default function AddOwnOffering() {
   const { user } = useAuth();
-  const { activeEstablishment, settings} = useUserEstablishment(user)
+  const { activeEstablishment, settings} = useEstablishment()
   const { clientCategories, paymentMethods, loading } = useOfferingsCategories(
     activeEstablishment?.id,
   );

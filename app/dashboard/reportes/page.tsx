@@ -10,11 +10,11 @@ import {
   getMonthRangeLocal,
   getYearRangeLocal,
 } from "@/app/lib/dateRanges";
-import { useUserEstablishment } from "@/app/hooks/useUserEstablishment";
+import { useEstablishment } from "@/app/context/EstablishmentContext";
 
 export default function ReportsPage() {
   const { user } = useAuth();
-  const { activeEstablishment } = useUserEstablishment(user);
+  const { activeEstablishment } = useEstablishment();
 
   // Estado para el tipo de reporte (Resumen o Detalle)
   const [reportType, setReportType] = useState<"summary" | "detail">("summary");

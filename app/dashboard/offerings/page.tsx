@@ -3,15 +3,13 @@
 import { useState } from "react";
 import { FiChevronDown } from "react-icons/fi";
 import { useOfferings } from "@/app/hooks/useOfferings";
-import { useAuth } from "@/app/lib/useAuth";
 
 import Link from "next/link";
-import { useUserEstablishment } from "@/app/hooks/useUserEstablishment";
 import { IoAddSharp } from "react-icons/io5";
+import { useEstablishment } from "@/app/context/EstablishmentContext";
 
 export default function OfferingPage() {
-  const { user } = useAuth();
-  const { activeEstablishment } = useUserEstablishment(user);
+  const { activeEstablishment } = useEstablishment();
   const { clientOfferings, updatePrice, deleteOffering, loading } =
     useOfferings(activeEstablishment?.id);
 

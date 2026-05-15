@@ -30,6 +30,7 @@ import {
 } from "react-icons/io5";
 import { BiMaleFemale } from "react-icons/bi";
 import { MdOutlineAddHomeWork } from "react-icons/md";
+import { useEstablishment } from "@/app/context/EstablishmentContext";
 
 type Barbershop = {
   id: string;
@@ -54,22 +55,18 @@ type EstablishmentType = {
 type UserRole = "admin" | "staff" | "client" | "user";
 
 export default function SidebarNav({
-  establishments,
-  activeEstablishment,
-  setActiveEstablishment,
   setSidebarOpen,
   userRole,
   userId,
   sessionId,
 }: {
-  establishments: Establishment[]; // 👈 antes barbershops
-  activeEstablishment: Establishment | null; // 👈 antes activeBarbershop
-  setActiveEstablishment: (shop: Establishment) => void;
   setSidebarOpen: (open: boolean) => void;
   userRole: UserRole;
   userId: string;
   sessionId: string;
 }) {
+  const { establishments, activeEstablishment, setActiveEstablishment } =
+    useEstablishment();
   const { clientOfferings, loading } = useOfferings(
     activeEstablishment?.id,
     activeEstablishment?.type?.id,
