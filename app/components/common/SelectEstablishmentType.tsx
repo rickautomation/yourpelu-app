@@ -58,7 +58,7 @@ const SelectEstablishmentType: React.FC<StepOneProps> = ({
   }, []);
 
   return (
-    <div className="px-4 py-3">
+    <div className="">
       <h2 className="text-lg text-center font-bold mb-4">
         Elige el tipo de establecimiento
       </h2>
@@ -70,7 +70,7 @@ const SelectEstablishmentType: React.FC<StepOneProps> = ({
             onClick={() => {
               setSelectedType(t.id); // 👈 actualiza estado en el padre
               setStep(2);
-              router.push("/dashboard/initial-setup?step=2");
+              router.push(`/dashboard/initial-setup?step=2&type=${t.id}`);
             }}
             className={`bg-darkBrandBlue shadow-lg text-white px-4 py-4 rounded hover:bg-pink-500 transition-colors font-semibold ${
               selectedType === t.id ? "ring-2 ring-pink-400" : ""

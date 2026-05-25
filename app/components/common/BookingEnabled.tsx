@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { apiPost } from "@/app/lib/apiPost";
-import { useUserEstablishment } from "@/app/hooks/useUserEstablishment";
+import { useEstablishment } from "@/app/context/EstablishmentContext";
 
 interface UserProfile {
   id: string;
@@ -29,7 +29,7 @@ interface StepFiveProps {
 
 const BookingEnabled: React.FC<StepFiveProps> = ({ setStep, user }) => {
   const router = useRouter();
-  const { activeEstablishment } = useUserEstablishment(user);
+  const { activeEstablishment } = useEstablishment();
 
   const [bookingEnabled, setBookingEnabled] = useState<boolean | null>(null);
 

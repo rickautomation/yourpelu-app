@@ -1,42 +1,30 @@
 "use client";
 import { useState, useMemo, use } from "react";
-import { apiPost } from "@/app/lib/apiPost";
 import NewOfferingFromTemplatePage from "@/app/dashboard/offerings/new/from-template/page";
 import { useAuth } from "@/app/hooks/useAuth";
 import { WizardProvider } from "@/app/context/WizardContext";
 import { useRouter } from "next/navigation";
-import StepOne from "./steps/StepOne";
-import StepTwo from "./steps/StepTwo";
-import StepThree from "./steps/StepThree";
-import StepFive from "./steps/StepFive";
-import StepSix from "./steps/StepSix";
-import StepSeven from "./steps/StepSeven";
-import SelectEstablishmentType from "./steps/SelectEstablishmentType";
-import EstablishmentCreationForm from "./steps/EstablishmentCreationForm";
-import ActsStaffToggle from "./steps/ActsStaffToggle";
-import UploadLogo from "./steps/UploadLogo";
-import BookingEnabled from "./steps/BookingEnabled";
-import SelectScheduleDays from "./steps/SelectScheduleDays";
-import SchedulesSetup from "./steps/SchedulesSetup";
+import SelectEstablishmentType from "@/app/components/common/SelectEstablishmentType";
+import EstablishmentCreationForm from "@/app/components/common/EstablishmentCreationForm";
+import ActsStaffToggle from "@/app/components/common/ActsStaffToggle";
+import UploadLogo from "@/app/components/common/UploadLogo";
+import BookingEnabled from "@/app/components/common/BookingEnabled";
+import SelectScheduleDays from "@/app/components/common/SelectScheduleDays";
+import SchedulesSetup from "@/app/components/common/SchedulesSetup";
 
 interface WizardProps {
   onFinish?: () => void;
   userName: string;
   userId: string;
   step?: number; // 👈 nuevo prop
+  initialType?: string | null ;
 }
-
-type Interval = { start: string; end: string };
-
-type DaySchedule = {
-  dayOfWeek: number; // 1 = lunes, 7 = domingo
-  intervals: Interval[];
-};
 
 export default function EstablishmentSetupWizard({
   userName,
   userId,
   step: initialStep = 0,
+  initialType
 }: WizardProps) {
   const { user } = useAuth();
 
@@ -44,9 +32,7 @@ export default function EstablishmentSetupWizard({
 
   const [step, setStep] = useState(initialStep); // Si ya se está renderizando, salta al paso 2
 
-  const [schedules, setSchedules] = useState<DaySchedule[]>([]);
-
-  const [selectedType, setSelectedType] = useState<string | null>(null);
+  const [selectedType, setSelectedType] = useState<string | null>(initialType ?? null);
 
   const sessionId = useMemo(() => {
     return typeof crypto.randomUUID === "function"
@@ -54,9 +40,13 @@ export default function EstablishmentSetupWizard({
       : String(Date.now());
   }, []);
 
+  console.log("user: ", user)
+  console.log("selectedType: ", selectedType)
+  console.log("step: ", step)
+
   return (
     <WizardProvider>
-      <div className="text-white">
+      <div className="text-white px-6 py-3">
         {step === 0 && (
           <div className="text-center">
             <h2 className="text-2xl font-bold mb-4">Hola {userName}!</h2>
@@ -105,7 +95,7 @@ export default function EstablishmentSetupWizard({
 
         {step === 7 && user && <SelectScheduleDays setStep={setStep} user={user} />}
 
-        {step === 8 && user && <SchedulesSetup setStep={setStep} user={user} />}
+        {step === 8 && user && <SchedulesSetup setStep={setStep} />}
 
         {step === 9 && (
           <div className="text-center">

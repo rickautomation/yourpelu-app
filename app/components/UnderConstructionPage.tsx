@@ -1,6 +1,5 @@
 "use client";
 
-import { useParams } from "next/navigation";
 import { GiComb } from "react-icons/gi";
 import { RiScissorsCutFill } from "react-icons/ri";
 

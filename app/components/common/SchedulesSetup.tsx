@@ -1,35 +1,14 @@
 "use client";
-import { useUserEstablishment } from "@/app/hooks/useUserEstablishment";
+import { useEstablishment } from "@/app/context/EstablishmentContext";
 import { apiPost } from "@/app/lib/apiPost";
-import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
-interface UserProfile {
-  id: string;
-  avatarUrl?: string;
-  bio?: string;
-  birthDate?: string;
-  address?: string;
-}
-
-interface User {
-  id: string;
-  name: string;
-  lastname: string;
-  phoneNumber: string;
-  email: string;
-  rol: string;
-  userProfile?: UserProfile;
-}
-
 interface StepSevenProps {
-  setStep: (step: number) => void;
-  user: User;
+  setStep?: (step: number) => void;
 }
 
-const SchedulesSetup: React.FC<StepSevenProps> = ({ setStep, user }) => {
-  const router = useRouter();
-  const { activeEstablishment } = useUserEstablishment(user);
+const SchedulesSetup: React.FC<StepSevenProps> = ({ setStep }) => {
+  const { activeEstablishment } = useEstablishment();
 
   // Mapeo de número → nombre de día
   const dayNames: Record<number, string> = {
@@ -40,16 +19,6 @@ const SchedulesSetup: React.FC<StepSevenProps> = ({ setStep, user }) => {
     4: "Jueves",
     5: "Viernes",
     6: "Sábado",
-  };
-
-  const dayMap: Record<string, number> = {
-    Domingo: 0,
-    Lunes: 1,
-    Martes: 2,
-    Miércoles: 3,
-    Jueves: 4,
-    Viernes: 5,
-    Sábado: 6,
   };
 
   const applySchedule = async () => {
@@ -113,12 +82,18 @@ const SchedulesSetup: React.FC<StepSevenProps> = ({ setStep, user }) => {
     );
   };
 
+    const handleContinue = () => {
+    if (setStep) {
+      setStep(9); // solo si existe
+    }
+  };
+
   return (
-    <div className="text-center p-4">
+    <div className="text-center">
       {schedules.some(
         (sch) => !sch.timeRanges || sch.timeRanges.length === 0,
       ) && (
-        <div className="flex flex-wrap gap-2 justify-center mb-6">
+        <div className="flex flex-wrap gap-2 justify-center mb-8">
           {schedules.map((sch) => {
             const isDisabled = sch.timeRanges && sch.timeRanges.length > 0;
             const dayLabel = dayNames[sch.dayOfWeek];
@@ -129,8 +104,8 @@ const SchedulesSetup: React.FC<StepSevenProps> = ({ setStep, user }) => {
                 type="button"
                 onClick={() => !isDisabled && toggleDay(dayLabel)}
                 disabled={isDisabled}
-                className={`border min-w-25 rounded p-2 text-center text-lg font-medium transition-colors
-          ${selectedDays.includes(dayLabel) ? "bg-pink-600 text-white" : "border-pink-600 text-pink-600"}
+                className={`border border-pink-500 min-w-25 rounded p-2 text-center text-lg font-medium transition-colors
+          ${selectedDays.includes(dayLabel) ? "bg-pink-500 text-white" : "border-pink-600 text-pink-600"}
           ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}
         `}
               >
@@ -145,11 +120,11 @@ const SchedulesSetup: React.FC<StepSevenProps> = ({ setStep, user }) => {
       {schedules.some(
         (sch) => !sch.timeRanges || sch.timeRanges.length === 0,
       ) && (
-        <div className="flex justify-center gap-4 mb-6">
+        <div className="flex justify-center gap-4 mb-8">
           <button
             onClick={() => setMode("continuo")}
-            className={`p-2 rounded border border-pink-600 font-semibold transition-colors
-        ${mode === "continuo" ? "bg-pink-600 text-white" : "text-pink-600"}
+            className={`p-2 rounded border border-pink-500 font-semibold transition-colors
+        ${mode === "continuo" ? "bg-pink-500 text-white" : "text-pink-600"}
       `}
           >
             Horario continuo
@@ -170,7 +145,7 @@ const SchedulesSetup: React.FC<StepSevenProps> = ({ setStep, user }) => {
         (sch) => !sch.timeRanges || sch.timeRanges.length === 0,
       ) &&
         (mode === "continuo" ? (
-          <div className="flex gap-4 w-full max-w-md mx-auto mb-6 p-3">
+          <div className="flex gap-4 w-full max-w-md mx-auto mb-8">
             <input
               type="time"
               value={schedule.start1 || ""}
@@ -189,7 +164,7 @@ const SchedulesSetup: React.FC<StepSevenProps> = ({ setStep, user }) => {
             />
           </div>
         ) : (
-          <div className="flex flex-col gap-4 w-full max-w-md mx-auto mb-6 p-3">
+          <div className="flex flex-col gap-4 w-full max-w-md mx-auto mb-8">
             <div className="flex gap-4 w-full">
               <input
                 type="time"
@@ -235,7 +210,7 @@ const SchedulesSetup: React.FC<StepSevenProps> = ({ setStep, user }) => {
       ) && (
         <button
           onClick={applySchedule}
-          className="bg-green-600 text-white px-6 py-2 rounded font-semibold hover:bg-green-700 transition-colors"
+          className="w-full bg-pink-700 text-white px-6 py-2 rounded font-semibold hover:bg-green-700 transition-colors"
         >
           Aplicar a días seleccionados
         </button>
@@ -266,7 +241,7 @@ const SchedulesSetup: React.FC<StepSevenProps> = ({ setStep, user }) => {
               Editar
             </button>
             <button
-              onClick={() => setStep(9)} // 👈 avanza al siguiente paso
+              onClick={handleContinue} // 👈 avanza al siguiente paso
               className="flex-1 bg-blue-600 text-white px-6 py-2 rounded font-semibold hover:bg-blue-700 transition-colors"
             >
               Continuar

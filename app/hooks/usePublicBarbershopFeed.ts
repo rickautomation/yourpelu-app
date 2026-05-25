@@ -22,7 +22,7 @@ type ProfileData = {
 export type TimeRange = {
   id: string;
   start: string; // formato "HH:mm"
-  end: string;   // formato "HH:mm"
+  end: string; // formato "HH:mm"
 };
 
 export type Schedule = {
@@ -30,7 +30,6 @@ export type Schedule = {
   dayOfWeek: number; // 1 = lunes, 2 = martes, etc.
   timeRanges: TimeRange[];
 };
-
 
 type UserProfile = {
   id: string;
@@ -56,7 +55,9 @@ type Establishment = {
   staff?: Staff[];
 };
 export function usePublicBarbershopFeed(slug: string) {
-  const [establishment, setEstablishment] = useState<Establishment | null>(null);
+  const [establishment, setEstablishment] = useState<Establishment | null>(
+    null,
+  );
   const [staff, setStaff] = useState<Staff[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -67,10 +68,10 @@ export function usePublicBarbershopFeed(slug: string) {
     const load = async () => {
       setLoading(true);
       try {
-        const data = await apiGet<{ establishment: Establishment }>(
+        const data = await apiGet<Establishment>(
           `/public-data/establishment/${slug}/feed`,
         );
-        setEstablishment(data.establishment);
+        setEstablishment(data);
 
         const staffData = await apiGet<Staff[]>(
           `/public-data/establishment/${slug}/staff`,

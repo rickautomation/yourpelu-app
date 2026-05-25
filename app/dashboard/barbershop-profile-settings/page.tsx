@@ -7,12 +7,11 @@ import CarouselUploader from "./components/CarouselUploader";
 import LocationSelector from "./components/LocationSelector";
 import BarbershopInfoForm from "./components/BarbershopInfoForm";
 import BarbershopProfileCard from "./components/BarbershopProfileCard";
-import { useUserEstablishment } from "@/app/hooks/useUserEstablishment";
+import { useEstablishment } from "@/app/context/EstablishmentContext";
 
 export default function BarbershopProfileSettingsPage() {
-  const { user, loading, isUnauthorized, router } = useAuth();
 
-  const {activeEstablishment} = useUserEstablishment(user)
+  const {activeEstablishment, loading} = useEstablishment()
 
   const [logo, setLogo] = useState<File | null>(null);
   const [carouselImages, setCarouselImages] = useState<File[]>([]);
@@ -106,10 +105,6 @@ export default function BarbershopProfileSettingsPage() {
 };
 
   if (loading) return <p>Cargando...</p>;
-  if (isUnauthorized) {
-    router.push("/login");
-    return null;
-  }
 
   if (success) {
     return <div className="p-6 text-center">✔️ Configuración finalizada</div>;

@@ -14,13 +14,13 @@ import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useOfferings } from "../hooks/useOfferings";
 import { BiBarChart } from "react-icons/bi";
-import { useUserEstablishment } from "../hooks/useUserEstablishment";
+import { useEstablishment } from "../context/EstablishmentContext";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function BottomNav({ onToggleSidebar, setSidebarOpen }: any) {
   const { user, logout } = useAuth();
-  const { activeEstablishment } = useUserEstablishment(user);
+  const { activeEstablishment } = useEstablishment();
   const { clientOfferings } = useOfferings(
     activeEstablishment?.id,
     activeEstablishment?.type?.id,

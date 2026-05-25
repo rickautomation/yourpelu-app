@@ -142,6 +142,9 @@ export default function AppointmentsPage({
     "Sábado",
   ];
 
+  console.log("establishment: ", establishment)
+  console.log("staff: ", staff)
+
   return (
     <div className="flex flex-col items-center px-4 py-2 bg-gray-200 text-black min-h-screen">
       <div className="rounded-full mt-4">

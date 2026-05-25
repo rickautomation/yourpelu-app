@@ -1,5 +1,5 @@
 "use client";
-import { useUserEstablishment } from "@/app/hooks/useUserEstablishment";
+import { useEstablishment } from "@/app/context/EstablishmentContext";
 import { apiPost } from "@/app/lib/apiPost";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
@@ -29,7 +29,7 @@ interface StepSixProps {
 
 const SelectScheduleDays: React.FC<StepSixProps> = ({ setStep, user }) => {
   const router = useRouter();
-  const { activeEstablishment } = useUserEstablishment(user);
+  const { activeEstablishment } = useEstablishment();
 
   const daysOfWeek = [
     "Lunes",

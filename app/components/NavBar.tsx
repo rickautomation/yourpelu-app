@@ -70,7 +70,7 @@ export default function Navbar({
   }, [showSelector]);
 
   return (
-    <header className="w-full flex items-center justify-between text-white px-4 py-2 relative z-50">
+    <header className="w-full flex items-center justify-between text-white px-6 py-3 relative z-50">
       {/* Lado izquierdo: menú + logo */}
       <div className="flex items-center gap-1">
         <div className="text-xl font-bold">
