@@ -4,11 +4,11 @@ import { useAuth } from "@/app/hooks/useAuth";
 import { apiPost } from "@/app/lib/apiPost";
 
 import { FaWhatsapp } from "react-icons/fa";
-import { useUserEstablishment } from "@/app/hooks/useUserEstablishment";
+import { useEstablishment } from "@/app/context/EstablishmentContext";
 
 export default function NewStaffPage() {
-  const { user, loading, isUnauthorized, router } = useAuth();
-  const { activeEstablishment } = useUserEstablishment(user);
+  const { loading, isUnauthorized, router } = useAuth();
+  const { activeEstablishment } = useEstablishment();
 
   const [name, setName] = useState("");
   const [lastname, setLastname] = useState("");

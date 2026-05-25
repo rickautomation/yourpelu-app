@@ -1,13 +1,12 @@
 "use client";
 import { useState } from "react";
 import { FiChevronDown, FiCheckCircle } from "react-icons/fi";
-import { useAuth } from "@/app/hooks/useAuth";
 import { useOfferings } from "@/app/hooks/useOfferings";
 import { apiPost } from "@/app/lib/apiPost";
 import { useRouter } from "next/navigation";
 import { useWizard } from "@/app/context/WizardContext";
 import { useSearchParams } from "next/navigation";
-import { useUserEstablishment } from "@/app/hooks/useUserEstablishment";
+import { useEstablishment } from "@/app/context/EstablishmentContext";
 
 export interface ClientOfferingType {
   id: string;
@@ -21,8 +20,7 @@ export interface ClientOfferingType {
 }
 
 export default function NewOfferingFromCustomPage() {
-  const { user } = useAuth();
-   const {activeEstablishment} = useUserEstablishment(user)
+   const {activeEstablishment} = useEstablishment()
   const { categories, addClientCategory, clientOfferings, setClientOfferings } = useOfferings(
     activeEstablishment?.id, activeEstablishment?.type?.id
   );
@@ -94,7 +92,7 @@ export default function NewOfferingFromCustomPage() {
   return (
     <div
       className={
-        "flex flex-col gap-2 max-w-lg mx-auto px-4 py-2"
+        `flex flex-col gap-2 max-w-lg mx-auto ${inWizard ? "" : "px-6 py-2" }`
       }
     >
       {/* Mensaje de éxito temporal */}

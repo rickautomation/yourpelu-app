@@ -2,7 +2,8 @@
 import React, { useState } from "react";
 import { MdUploadFile } from "react-icons/md";
 import { useRouter } from "next/navigation";
-import { useUserEstablishment } from "@/app/hooks/useUserEstablishment";
+import { useEstablishment } from "@/app/context/EstablishmentContext";
+import { FiCheckCircle } from "react-icons/fi";
 
 interface UserProfile {
   id: string;
@@ -29,7 +30,7 @@ interface StepThreeProps {
 
 const UploadLogo: React.FC<StepThreeProps> = ({ setStep, user }) => {
   const router = useRouter();
-  const { activeEstablishment } = useUserEstablishment(user);
+  const { activeEstablishment } = useEstablishment();
 
   const [formData, setFormData] = useState<{
     logoFile?: File;
@@ -38,6 +39,7 @@ const UploadLogo: React.FC<StepThreeProps> = ({ setStep, user }) => {
     logoFile: undefined,
     logoUploaded: false,
   });
+  const [showPopup, setShowPopup] = useState(false);
 
   const handleUpload = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -59,16 +61,20 @@ const UploadLogo: React.FC<StepThreeProps> = ({ setStep, user }) => {
       if (!res.ok) {
         throw new Error(`Error HTTP ${res.status}`);
       }
-
-      alert("Logo subido con éxito ✅");
       setFormData({ ...formData, logoUploaded: true });
+      setShowPopup(true);
+
+      // 👇 cerramos el popup automáticamente después de 1 segundo
+      setTimeout(() => {
+        setShowPopup(false);
+      }, 2000);
     } catch (err: any) {
       alert(err.message || "Error al subir logo");
     }
   };
 
   return (
-    <div className="mt-4 text-center p-4">
+    <div className="mt-4 text-center">
       {!formData.logoUploaded ? (
         <form className="flex flex-col gap-4 mb-6" onSubmit={handleUpload}>
           <div className="relative w-full h-32 border-2 border-dashed border-gray-600 rounded flex items-center justify-center bg-luminiBrandBlue overflow-hidden">
@@ -107,9 +113,18 @@ const UploadLogo: React.FC<StepThreeProps> = ({ setStep, user }) => {
         </form>
       ) : (
         <div className="flex flex-col gap-3">
-          <p className="text-lg mb-4">
-            ¡Logo agregado con éxito! Ahora vamos a configurar los servicios que
-            ofrecerás.
+          <p className="text-lg mb-4 leading-relaxed">
+            Lo siguiente es configurar los servicios que vas a ofrecer en tu{" "}
+            <span className="font-semibold text-rose-400">
+              {activeEstablishment?.type?.name}
+            </span>
+            .
+          </p>
+          <p className="text-md mb-4 text-gray-200">
+            Podés hacerlo utilizando las{" "}
+            <span className="font-semibold">plantillas disponibles </span>
+            para ahorrar tiempo, o crear tus propios servicios desde cero según
+            las necesidades de tu negocio.
           </p>
 
           <button
@@ -117,10 +132,21 @@ const UploadLogo: React.FC<StepThreeProps> = ({ setStep, user }) => {
               setStep(5);
               router.push("/dashboard/initial-setup?step=5");
             }}
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors font-semibold"
+            className="bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600 transition-colors font-semibold"
           >
             Configurar servicios
           </button>
+        </div>
+      )}
+
+      {showPopup && (
+        <div className="fixed inset-0 backdrop-blur-sm bg-opacity-70 flex items-center justify-center z-50">
+          <div className="border border-green-500 bg-darkBrandBlue text-white rounded-lg shadow-lg p-6 flex items-center space-x-3">
+            <FiCheckCircle className="text-green-400 text-3xl" />
+            <span className="font-semibold">
+              Establecimiento creado con éxito!
+            </span>
+          </div>
         </div>
       )}
     </div>

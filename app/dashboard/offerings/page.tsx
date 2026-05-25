@@ -62,11 +62,11 @@ export default function OfferingPage() {
   }
 
   return (
-    <div className="px-4 py-2">
-      <div className="mb-4 relative flex items-center justify-between">
+    <div className="px-6 py-2">
+      <div className="w-full mb-4 relative flex flex-col">
         <button
           onClick={() => setShowDropdown(!showDropdown)}
-          className="px-4 py-2 bg-ligthBrandBlue text-white rounded flex justify-between items-center text-xl"
+          className="w-full px-4 py-2 bg-ligthBrandBlue text-white rounded flex justify-between items-center text-xl"
         >
           {selectedCategory ? selectedCategory.name : "Todas las categorías"}
           <FiChevronDown
@@ -75,6 +75,7 @@ export default function OfferingPage() {
             }`}
           />
         </button>
+
         {showDropdown && (
           <ul className="absolute top-full left-0 mt-1 w-full max-h-100 overflow-y-auto bg-luminiBrandBlue rounded shadow-lg shadow-black z-10">
             <li
@@ -100,13 +101,6 @@ export default function OfferingPage() {
             ))}
           </ul>
         )}
-
-        <button
-          onClick={() => setShowModal(true)}
-          className="bg-pink-500 text-white text-xl font-bold px-4 py-2 rounded hover:bg-pink-600 transition-colors"
-        >
-          +
-        </button>
       </div>
 
       {showModal && (
@@ -240,13 +234,12 @@ export default function OfferingPage() {
         </div>
       )}
 
-        <button
-                    //onClick={() => router.push("/dashboard/staff/new")}
-                   
-                    className="fixed bottom-20 right-4 p-2 rounded-md bg-pink-500 text-white shadow-md shadow-black hover:bg-pink-600 transition-colors"
-                  >
-                    <IoAddSharp className="text-3xl " />
-                  </button>
+      <button
+        onClick={() => setShowModal(true)}
+        className="fixed bottom-20 right-6 p-2 rounded-md bg-pink-500 text-white shadow-md shadow-black hover:bg-pink-600 transition-colors"
+      >
+        <IoAddSharp className="text-3xl " />
+      </button>
     </div>
   );
 }

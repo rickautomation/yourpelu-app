@@ -2,15 +2,13 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/app/hooks/useAuth";
 
 import { FiChevronDown } from "react-icons/fi";
 import { FiCheckCircle } from "react-icons/fi";
 
 import { useOfferings } from "@/app/hooks/useOfferings";
 import Link from "next/link";
-import { useUserEstablishment } from "@/app/hooks/useUserEstablishment";
-import { useWizard } from "@/app/context/WizardContext";
+import { useEstablishment } from "@/app/context/EstablishmentContext";
 
 interface OfferingPageProps {
   inWizard?: boolean;
@@ -33,10 +31,9 @@ type OfferingType = {
 
 export default function NewOfferingFromTemplatePage({
   inWizard,
-  setStep
+  setStep,
 }: OfferingPageProps) {
-  const { user } = useAuth();
-  const { activeEstablishment } = useUserEstablishment(user);
+  const { activeEstablishment } = useEstablishment();
   const {
     addOffering,
     clientOfferings,
@@ -65,14 +62,33 @@ export default function NewOfferingFromTemplatePage({
   };
 
   return (
-    <div className="py-2 px-4">
+    <div className={`${inWizard ?  "" : "px-6 py-3"}`}>
       <div className="flex w-full gap-2 items-center py-2 mb-2">
         <div className="relative flex-1">
           <button
             onClick={() => setShowDropdown(!showDropdown)}
             className="flex-1 px-3 py-2 bg-ligthBrandBlue text-white rounded flex justify-between items-center text-xl w-full"
           >
-            {selectedCategory ? selectedCategory.name : "Categoría"}
+            <span
+              className={`block overflow-hidden whitespace-nowrap flex-1 text-left ${
+                selectedCategory
+                  ? selectedCategory.name.length > 17
+                    ? "text-xs py-1.5"
+                    : selectedCategory.name.length > 10
+                      ? "text-sm py-1"
+                      : "text-xl"
+                  : "text-xl"
+              }`}
+            >
+              {selectedCategory
+                ? selectedCategory.name.length > 17
+                  ? selectedCategory.name
+                  : selectedCategory.name.length > 10
+                    ? selectedCategory.name
+                    : selectedCategory.name
+                : "Categoría"}
+            </span>
+
             <FiChevronDown
               className={`ml-2 text-xl transition-transform duration-200 ${
                 showDropdown ? "rotate-180" : "rotate-0"

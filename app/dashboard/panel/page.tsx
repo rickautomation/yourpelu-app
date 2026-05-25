@@ -1,11 +1,11 @@
 "use client";
 
+import { useEstablishment } from "@/app/context/EstablishmentContext";
 import { useAuth } from "@/app/hooks/useAuth";
-import { useUserEstablishment } from "@/app/hooks/useUserEstablishment";
 
 export default function DashboardPanelPage() {
   const { user, loading, isUnauthorized, router } = useAuth();
-  const { activeEstablishment } = useUserEstablishment(user)
+  const { activeEstablishment } = useEstablishment()
 
   if (loading) {
     return <div className="p-6 text-white">Cargando...</div>;

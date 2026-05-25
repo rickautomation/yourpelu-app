@@ -48,7 +48,7 @@ export default function ClientsPage() {
   }
 
   return (
-    <div className="flex flex-col gap-3 px-4 py-2">
+    <div className="flex flex-col gap-3 px-6 py-2">
       {/* Card para agregar cliente */}
       <div className="flex flex-col gap-3">
         {!showAdd && (
@@ -217,7 +217,7 @@ export default function ClientsPage() {
       <button
         //onClick={() => router.push("/dashboard/staff/new")}
         onClick={() => setShowAdd(showAdd ? false : true)}
-        className="fixed bottom-20 right-4 p-2 rounded-md bg-pink-500 text-white shadow-lg hover:bg-pink-600 transition-colors"
+        className="fixed bottom-20 right-6 p-2 rounded-md bg-pink-500 text-white shadow-lg hover:bg-pink-600 transition-colors"
       >
         <FiUserPlus className="text-3xl" />
       </button>

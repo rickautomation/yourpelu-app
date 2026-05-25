@@ -7,6 +7,7 @@ type Establishment = {
   name: string;
   address?: string;
   phoneNumber?: string;
+  bookingEnabled: boolean;
   profile?: ProfileData;
   type?: EstablishmentType;
   slug: string

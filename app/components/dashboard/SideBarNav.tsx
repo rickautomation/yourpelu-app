@@ -3,40 +3,23 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+
 import { apiPost } from "@/app/lib/apiPost";
+import { useOfferings } from "@/app/hooks/useOfferings";
+import { useEstablishment } from "@/app/context/EstablishmentContext";
 
 import {
   FiUsers,
   FiImage,
   FiSettings,
   FiCalendar,
-  FiBarChart2,
-  FiBox,
   FiList,
   FiPlusCircle,
-  FiDollarSign,
-  FiShoppingCart,
-  FiLayers,
-  FiGrid,
-  FiUserPlus,
 } from "react-icons/fi";
 import SidebarLink from "./SidebarLink";
-import Image from "next/image";
-import { useOfferings } from "@/app/hooks/useOfferings";
-import {
-  IoAnalyticsSharp,
-  IoChatboxEllipsesOutline,
-  IoGiftOutline,
-} from "react-icons/io5";
 import { BiMaleFemale } from "react-icons/bi";
 import { MdOutlineAddHomeWork } from "react-icons/md";
-import { useEstablishment } from "@/app/context/EstablishmentContext";
-
-type Barbershop = {
-  id: string;
-  name: string;
-  address?: string;
-};
 
 type Establishment = {
   id: string;
@@ -44,6 +27,7 @@ type Establishment = {
   address?: string;
   type?: EstablishmentType;
   slug: string;
+  bookingEnabled: boolean;
 };
 
 type EstablishmentType = {
@@ -76,7 +60,7 @@ export default function SidebarNav({
 
   const router = useRouter();
 
-  const handleSelectBarbershop = async (shop: Establishment) => {
+  const handleSelectEstablishment = async (shop: Establishment) => {
     try {
       await apiPost("/current-establishments/set", {
         userId,
@@ -123,7 +107,7 @@ export default function SidebarNav({
             </Link>
           </div>
           {(userRole === "admin" || userRole === "user") &&
-            (establishments.length > 0 ? (
+            establishments.length > 0 && (
               <>
                 {/* Botón para abrir/cerrar selector */}
                 <button
@@ -160,7 +144,7 @@ export default function SidebarNav({
                               ? "bg-brandBlue text-pink-400"
                               : "text-white"
                           }`}
-                          onClick={() => handleSelectBarbershop(shop)}
+                          onClick={() => handleSelectEstablishment(shop)}
                         >
                           <p className="font-bold">{shop.name}</p>
                           <p className="text-sm text-gray-400">
@@ -172,16 +156,7 @@ export default function SidebarNav({
                   </>
                 )}
               </>
-            ) : (
-              <Link
-                href="/dashboard/initial-setup?step=1"
-                onClick={() => setSidebarOpen(false)}
-                className="flex items-center justify-start gap-2 w-full px-4 py-1 border border-pink-600 rounded-md text-xl font-semibold"
-              >
-                <span className="text-3xl text-pink-600 font-semibold">+</span>
-                Nuevo establecimiento
-              </Link>
-            ))}
+            )}
         </div>
 
         {loading && (
@@ -214,35 +189,6 @@ export default function SidebarNav({
           <div className="flex flex-col gap-3 mt-4 text-exposeBrandBlue">
             {userRole === "admin" && (
               <>
-                {/* <div className="flex justify-between">
-                  <SidebarLink
-                    href="/dashboard/staff"
-                    setSidebarOpen={setSidebarOpen}
-                  >
-                    <div className="flex w-40  border rounded-md p-2 px-2 py-4 items-end text-xs text-end">
-                      <FiUsers className="inline w-8 h-8 mr-1" />
-                      <p>Team</p>
-                    </div>
-                  </SidebarLink>
-                  <SidebarLink
-                    href="/dashboard/barbershop-profile-settings"
-                    setSidebarOpen={setSidebarOpen}
-                  >
-                    <div className="flex w-40 border rounded-md p-2 px-2 py-4 items-end text-xs text-end">
-                      <FiImage className="inline w-8 h-8 mr-2" />
-                      <p>Feed</p>
-                    </div>
-                  </SidebarLink>
-                  <SidebarLink
-                    href="/dashboard/chat"
-                    setSidebarOpen={setSidebarOpen}
-                  >
-                    <div className="flex w-26  border rounded-md p-2 px-2 py-4 items-end text-xs text-end">
-                      <IoChatboxEllipsesOutline className="inline w-8 h-8 mr-2" />
-                      <p>Chat</p>
-                    </div>
-                  </SidebarLink>
-                </div> */}
                 <div className="flex gap-3">
                   <SidebarLink
                     href="/dashboard/staff"
@@ -280,18 +226,6 @@ export default function SidebarNav({
                       <p>Servicios</p>
                     </div>
                   </SidebarLink>
-                  {/* <SidebarLink
-                    href="/dashboard/offerings/categories"
-                    setSidebarOpen={setSidebarOpen}
-                  >
-                    <div className="flex w-26  border rounded-md p-2 px-2 py-4 items-end text-xs text-end">
-                      <FiGrid className="inline w-8 h-8 mr-2" />
-                      <div className="text-start">
-                        <p>Catego_</p>
-                        <p>rias</p>
-                      </div>
-                    </div>
-                  </SidebarLink> */}
                   <SidebarLink
                     href="/dashboard/offerings/add"
                     setSidebarOpen={setSidebarOpen}
@@ -319,79 +253,7 @@ export default function SidebarNav({
                     <BiMaleFemale className="w-8 h-8" />
                     <p>Clientes</p>
                   </SidebarLink>
-                  {/* <SidebarLink
-                    href="/dashboard/promotions"
-                    setSidebarOpen={setSidebarOpen}
-                  >
-                    <div className="flex w-26  border rounded-md p-2 px-2 py-4 items-end text-xs text-end">
-                      <IoGiftOutline className="inline w-8 h-8 mr-2" />
-                      <div>
-                        <p>Promo</p>
-                        <p>ciones</p>
-                      </div>
-                    </div>
-                  </SidebarLink> */}
                 </div>
-
-                {/* <div className="flex justify-between">
-                  <SidebarLink
-                    href="/dashboard/insumos"
-                    setSidebarOpen={setSidebarOpen}
-                  >
-                    <div className="flex w-26  border rounded-md p-2 px-2 py-4 items-end text-xs text-end">
-                      <FiBox className="inline w-8 h-8 mr-2" />
-                      <p>Insumos</p>
-                    </div>
-                  </SidebarLink>
-                  <SidebarLink
-                    href="/dashboard/insumos/sell"
-                    setSidebarOpen={setSidebarOpen}
-                  >
-                    <div className="flex w-26  border rounded-md p-2 px-2 py-4 items-end text-xs">
-                      <FiShoppingCart className="inline w-10 h-8 mr-2" />
-                      <p>Vender insumos</p>
-                    </div>
-                  </SidebarLink>
-                  <SidebarLink
-                    href="/dashboard/insumos/stock"
-                    setSidebarOpen={setSidebarOpen}
-                  >
-                    <div className="flex w-26  border rounded-md p-2 px-2 py-4 items-end text-xs text-end">
-                      <FiLayers className="inline w-8 h-8 mr-2" />
-                      <p>Inventario</p>
-                    </div>
-                  </SidebarLink>
-                </div> */}
-
-                {/* <div className="flex justify-between">
-                  <SidebarLink
-                    href="/dashboard/reportes"
-                    setSidebarOpen={setSidebarOpen}
-                  >
-                    <div className="flex w-26  border rounded-md p-2 px-2 py-4 items-end text-xs text-end">
-                      <FiBarChart2 className="inline w-8 h-8 mr-2" />
-                      <p>Reportes</p>
-                    </div>
-                  </SidebarLink>
-                  <SidebarLink
-                    href="/dashboard/analitycs"
-                    setSidebarOpen={setSidebarOpen}
-                  >
-                    <div className="flex w-26 border rounded-md p-2 px-2 py-4 items-end text-xs text-end">
-                      <IoAnalyticsSharp className="inline w-8 h-8 mr-2" />
-                      <p>Analytics</p>
-                    </div>
-                  </SidebarLink>
-                  <SidebarLink
-                    href="/dashboard/cash-closing"
-                    setSidebarOpen={setSidebarOpen}
-                  >
-                    <div className="flex w-26 border rounded-md p-2 px-2 py-4 items-end text-xs text-start">
-                      <FiDollarSign className="inline w-8 h-8 mr-2" />
-                      <p>Cierre de caja</p>
-                    </div>
-                  </SidebarLink>
-                </div> */}
 
                 <div className="flex justify-start">
                   <SidebarLink
@@ -408,31 +270,19 @@ export default function SidebarNav({
             )}
           </div>
         )}
-
-        {!loading && clientOfferings && clientOfferings.length < 1 && (
-          <div className="flex flex-col gap-2 mt-4">
-            <button
-              onClick={() => {
-                setSidebarOpen(false);
-                router.push("/dashboard/initial-setup?step=3");
-              }}
-              className="px-4 py-2 bg-pink-600 text-white rounded-md shadow hover:bg-pink-700 transition"
-            >
-              Configura tu establecimiento
-            </button>
-          </div>
-        )}
       </nav>
 
-      <button
-        onClick={() => {
-          router.push("/dashboard/initial-setup?step=1");
-          setSidebarOpen(false);
-        }}
-        className="fixed bottom-20 right-6 p-2 rounded-md bg-pink-500 text-white  shadow-md shadow-black hover:bg-pink-600 transition-colors"
-      >
-        <MdOutlineAddHomeWork className="text-3xl" />
-      </button>
+      {userRole === "admin" && (
+        <button
+          onClick={() => {
+            router.push("/dashboard/initial-setup?step=1");
+            setSidebarOpen(false);
+          }}
+          className="fixed bottom-20 right-6 p-2 rounded-md bg-pink-500 text-white  shadow-md shadow-black hover:bg-pink-600 transition-colors"
+        >
+          <MdOutlineAddHomeWork className="text-3xl" />
+        </button>
+      )}
     </aside>
   );
 }

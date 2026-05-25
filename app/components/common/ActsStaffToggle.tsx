@@ -1,8 +1,8 @@
 "use client";
 import React, { useState } from "react";
 import { apiPatch } from "@/app/lib/apiPatch";
-import { useUserEstablishment } from "@/app/hooks/useUserEstablishment";
 import { useRouter } from "next/navigation";
+import { useEstablishment } from "@/app/context/EstablishmentContext";
 
 interface User {
   id: string;
@@ -29,7 +29,7 @@ const ActsStaffToggle: React.FC<StaffToggleProps> = ({ user, setStep }) => {
   const [isStaff, setIsStaff] = useState(true);
   const [loading, setLoading] = useState(false);
 
-  const { activeEstablishment } = useUserEstablishment(user);
+  const { activeEstablishment } = useEstablishment();
   const router = useRouter();
 
   const handleConfirm = async () => {
@@ -61,7 +61,7 @@ const ActsStaffToggle: React.FC<StaffToggleProps> = ({ user, setStep }) => {
   };
 
   return (
-    <div className="flex flex-col gap-8 p-4 text-center">
+    <div className="flex flex-col gap-8 text-center">
       <p className="text-lg text-white font-medium">
         ¿Quieres que tu cuenta funcione además de administrador como parte del{" "}
         <strong>staff</strong> en este establecimiento?
