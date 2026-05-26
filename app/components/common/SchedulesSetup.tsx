@@ -5,28 +5,9 @@ import React, { useState } from "react";
 
 interface StepSevenProps {
   setStep?: (step: number) => void;
-  user: User
 }
 
-interface User {
-  id: string;
-  name: string;
-  lastname: string;
-  phoneNumber: string;
-  email: string;
-  rol: string;
-  userProfile?: UserProfile;
-}
-
-interface UserProfile {
-  id: string;
-  avatarUrl?: string;
-  bio?: string;
-  birthDate?: string;
-  address?: string;
-}
-
-const SchedulesSetup: React.FC<StepSevenProps> = ({ setStep, user }) => {
+const SchedulesSetup: React.FC<StepSevenProps> = ({ setStep }) => {
   const { activeEstablishment } = useEstablishment();
 
     console.log("active en 8: ", activeEstablishment)

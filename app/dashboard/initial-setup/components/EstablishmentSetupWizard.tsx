@@ -91,7 +91,7 @@ export default function EstablishmentSetupWizard({
 
         {step === 7 && user && <SelectScheduleDays setStep={setStep} user={user} />}
 
-        {step === 8 && user && <SchedulesSetup setStep={setStep} user={user} />}
+        {step === 8 && user && <SchedulesSetup setStep={setStep} />}
 
         {step === 9 && (
           <div className="text-center">
