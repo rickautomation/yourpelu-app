@@ -40,7 +40,6 @@ const BookingEnabled: React.FC<StepFiveProps> = ({ setStep, user }) => {
       `/establishment/${establishmentId}/enable-booking`,
       {},
     );
-    setReloadEffect(prev => !prev);
 
     return result;
   }
