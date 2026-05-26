@@ -27,7 +27,7 @@ const EstablishmentCreationForm: React.FC<StepTwoProps> = ({
   selectedType,
   setStep,
 }) => {
-  const { setReloadEffect } = useEstablishment();
+  const { setActiveEstablishment } = useEstablishment();
   const router = useRouter();
 
   const [formData, setFormData] = useState<{
@@ -71,7 +71,7 @@ const EstablishmentCreationForm: React.FC<StepTwoProps> = ({
         sessionId,
       });
 
-      setReloadEffect(prev => !prev);
+      setActiveEstablishment(establishment)
       window.dispatchEvent(new Event("barbershop-changed"));
       router.refresh();
 
