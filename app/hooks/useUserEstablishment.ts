@@ -51,7 +51,7 @@ interface User {
   rol: string;
 }
 
-export function useUserEstablishment(user: User | null, reload?: boolean | null) {
+export function useUserEstablishment(user: User | null) {
   const [activeEstablishment, setActiveEstablishment] =
     useState<Establishment | null>(null);
   const [establishments, setEstablishments] = useState<Establishment[]>([]);
