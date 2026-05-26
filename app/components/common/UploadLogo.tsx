@@ -64,8 +64,6 @@ const UploadLogo: React.FC<StepThreeProps> = ({ setStep, user }) => {
       setFormData({ ...formData, logoUploaded: true });
       setShowPopup(true);
 
-      setReloadEffect(reloadEffect ? false : true)
-
       // 👇 cerramos el popup automáticamente después de 1 segundo
       setTimeout(() => {
         setShowPopup(false);

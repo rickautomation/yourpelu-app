@@ -118,7 +118,7 @@ export function useUserEstablishment(user: User | null, reload?: boolean | null)
       }
     };
     loadSettings();
-  }, [activeEstablishment]);
+  }, [activeEstablishment, reloadEffect]);
 
   return {
     activeEstablishment,

@@ -61,7 +61,6 @@ const SelectScheduleDays: React.FC<StepSixProps> = ({ setStep, user }) => {
       await addScheduleDays(activeEstablishment.profile.id, days);
 
       setStep(8); // avanzar al siguiente paso
-      setReloadEffect(reloadEffect ? false : true)
       router.push("/dashboard/initial-setup?step=8");
     } else {
       router.refresh();
