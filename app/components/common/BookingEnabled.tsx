@@ -34,7 +34,12 @@ const BookingEnabled: React.FC<StepFiveProps> = ({ setStep, user }) => {
   const [bookingEnabled, setBookingEnabled] = useState<boolean | null>(null);
 
   async function enableBooking(establishmentId: string) {
-    return apiPost(`/establishment/${establishmentId}/enable-booking`, {});
+    const result = await apiPost(
+      `/establishment/${establishmentId}/enable-booking`,
+      {},
+    );
+    router.refresh(); // 👈 se ejecuta después de que la promesa se resuelve
+    return result;
   }
 
   return (
@@ -57,6 +62,7 @@ const BookingEnabled: React.FC<StepFiveProps> = ({ setStep, user }) => {
           onClick={async () => {
             setBookingEnabled(false);
             setStep(9);
+            router.refresh();
             router.push("/dashboard/initial-setup?step=9");
           }}
           className={`border border-pink-600 px-6 py-2 rounded font-medium transition-colors
@@ -70,15 +76,16 @@ const BookingEnabled: React.FC<StepFiveProps> = ({ setStep, user }) => {
         <button
           className="bg-pink-600 px-8 py-2 rounded text-lg"
           onClick={async () => {
-              const establishmentId = activeEstablishment?.id;
+            const establishmentId = activeEstablishment?.id;
 
-              if (establishmentId) {
-                await enableBooking(establishmentId);
-                setStep(7);
-                router.push("/dashboard/initial-setup?step=7");
-              } else {
-                alert("Todavía no se creó el establecimiento");
-              }
+            if (establishmentId) {
+              await enableBooking(establishmentId);
+              setStep(7);
+              router.refresh();
+              router.push("/dashboard/initial-setup?step=7");
+            } else {
+              alert("Todavía no se creó el establecimiento");
+            }
           }}
         >
           Continuar

@@ -10,6 +10,8 @@ interface StepSevenProps {
 const SchedulesSetup: React.FC<StepSevenProps> = ({ setStep }) => {
   const { activeEstablishment } = useEstablishment();
 
+    console.log("active en 8: ", activeEstablishment)
+
   // Mapeo de número → nombre de día
   const dayNames: Record<number, string> = {
     0: "Domingo",
@@ -82,7 +84,7 @@ const SchedulesSetup: React.FC<StepSevenProps> = ({ setStep }) => {
     );
   };
 
-    const handleContinue = () => {
+  const handleContinue = () => {
     if (setStep) {
       setStep(9); // solo si existe
     }

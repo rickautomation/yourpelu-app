@@ -143,7 +143,7 @@ const EstablishmentCreationForm: React.FC<StepTwoProps> = ({
       </form>
 
       {showPopup && (
-        <div className="fixed inset-0 backdrop-blur-sm bg-black bg-opacity-70 flex items-center justify-center z-50">
+        <div className="fixed inset-0 backdrop-blur-sm bg-opacity-70 flex items-center justify-center z-50">
           <div className="border border-green-500 bg-darkBrandBlue text-white rounded-lg shadow-lg p-6 flex items-center space-x-3">
             <FiCheckCircle className="text-green-400 text-3xl" />
             <span className="font-semibold">
