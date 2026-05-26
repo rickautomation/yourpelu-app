@@ -29,7 +29,7 @@ interface StepFiveProps {
 
 const BookingEnabled: React.FC<StepFiveProps> = ({ setStep, user }) => {
   const router = useRouter();
-  const { activeEstablishment } = useEstablishment();
+  const { activeEstablishment, reloadEffect, setReloadEffect } = useEstablishment();
 
   const [bookingEnabled, setBookingEnabled] = useState<boolean | null>(null);
 
@@ -38,7 +38,7 @@ const BookingEnabled: React.FC<StepFiveProps> = ({ setStep, user }) => {
       `/establishment/${establishmentId}/enable-booking`,
       {},
     );
-    router.refresh(); // 👈 se ejecuta después de que la promesa se resuelve
+    setReloadEffect(reloadEffect ? false : true)// 👈 se ejecuta después de que la promesa se resuelve
     return result;
   }
 
