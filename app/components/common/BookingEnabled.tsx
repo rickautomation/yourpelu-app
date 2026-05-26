@@ -31,6 +31,8 @@ const BookingEnabled: React.FC<StepFiveProps> = ({ setStep, user }) => {
   const router = useRouter();
   const { activeEstablishment, setReloadEffect } = useEstablishment();
 
+  console.log("active in booking: ", activeEstablishment)
+
   const [bookingEnabled, setBookingEnabled] = useState<boolean | null>(null);
 
   async function enableBooking(establishmentId: string) {

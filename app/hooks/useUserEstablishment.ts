@@ -60,6 +60,8 @@ export function useUserEstablishment(user: User | null) {
   const [loading, setLoading] = useState(false);
   const [reloadEffect, setReloadEffect] = useState(false)
 
+  console.log("reload: ", reloadEffect)
+
   useEffect(() => {
     if (!user) return;
 

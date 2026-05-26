@@ -31,7 +31,7 @@ const SelectScheduleDays: React.FC<StepSixProps> = ({ setStep, user }) => {
   const router = useRouter();
   const { activeEstablishment, setReloadEffect, reloadEffect } = useEstablishment();
 
-  console.log(`active en step seven: `, activeEstablishment)
+  console.log(`active in SelectScheduleDays: `, activeEstablishment)
 
   const daysOfWeek = [
     "Lunes",
