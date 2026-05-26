@@ -29,7 +29,9 @@ interface StepSixProps {
 
 const SelectScheduleDays: React.FC<StepSixProps> = ({ setStep, user }) => {
   const router = useRouter();
-  const { activeEstablishment } = useEstablishment();
+  const { activeEstablishment, setReloadEffect, reloadEffect } = useEstablishment();
+
+  console.log(`active en step seven: `, activeEstablishment)
 
   const daysOfWeek = [
     "Lunes",
@@ -57,9 +59,9 @@ const SelectScheduleDays: React.FC<StepSixProps> = ({ setStep, user }) => {
 
       const days = selectedDays.map((d) => dayMap[d]);
       await addScheduleDays(activeEstablishment.profile.id, days);
-      router.refresh();
 
       setStep(8); // avanzar al siguiente paso
+      setReloadEffect(reloadEffect ? false : true)
       router.push("/dashboard/initial-setup?step=8");
     } else {
       router.refresh();

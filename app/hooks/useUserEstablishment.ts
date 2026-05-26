@@ -51,13 +51,14 @@ interface User {
   rol: string;
 }
 
-export function useUserEstablishment(user: User | null) {
+export function useUserEstablishment(user: User | null, reload?: boolean | null) {
   const [activeEstablishment, setActiveEstablishment] =
     useState<Establishment | null>(null);
   const [establishments, setEstablishments] = useState<Establishment[]>([]);
   const [settings, setSettings] = useState<any>(null);
   const [types, setTypes] = useState<EstablishmentType[]>([]);
   const [loading, setLoading] = useState(false);
+  const [reloadEffect, setReloadEffect] = useState(false)
 
   useEffect(() => {
     if (!user) return;
@@ -102,7 +103,7 @@ export function useUserEstablishment(user: User | null) {
     window.addEventListener("establishment-changed", handler);
 
     return () => window.removeEventListener("establishment-changed", handler);
-  }, [user]);
+  }, [user, reloadEffect]);
 
   useEffect(() => {
     if (!activeEstablishment) return;
@@ -126,5 +127,7 @@ export function useUserEstablishment(user: User | null) {
     types,
     setActiveEstablishment,
     loading,
+    setReloadEffect,
+    reloadEffect,
   };
 }

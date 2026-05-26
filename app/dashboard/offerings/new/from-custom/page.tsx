@@ -28,6 +28,8 @@ export default function NewOfferingFromCustomPage() {
   const searchParams = useSearchParams();
   const inWizard = searchParams.get("inWizard") === "true";
 
+  console.log("active: ", activeEstablishment)
+
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
@@ -92,7 +94,7 @@ export default function NewOfferingFromCustomPage() {
   return (
     <div
       className={
-        `flex flex-col gap-2 max-w-lg mx-auto ${inWizard ? "" : "px-6 py-2" }`
+        `flex flex-col gap-2 max-w-lg mx-auto px-6 py-2`
       }
     >
       {/* Mensaje de éxito temporal */}
@@ -262,9 +264,9 @@ export default function NewOfferingFromCustomPage() {
           <button
             onClick={() => {
               if (setStep) {
-                setStep(5);
+                setStep(6);
               }
-              router.push("/dashboard/initial-setup?step=5");
+              router.push("/dashboard/initial-setup?step=6");
             }}
             disabled={clientOfferings.length === 0}
             className={`px-4 py-2 rounded 

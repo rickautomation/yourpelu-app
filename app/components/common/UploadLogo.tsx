@@ -30,7 +30,7 @@ interface StepThreeProps {
 
 const UploadLogo: React.FC<StepThreeProps> = ({ setStep, user }) => {
   const router = useRouter();
-  const { activeEstablishment } = useEstablishment();
+  const { activeEstablishment, setReloadEffect, reloadEffect } = useEstablishment();
 
   const [formData, setFormData] = useState<{
     logoFile?: File;
@@ -63,6 +63,8 @@ const UploadLogo: React.FC<StepThreeProps> = ({ setStep, user }) => {
       }
       setFormData({ ...formData, logoUploaded: true });
       setShowPopup(true);
+
+      setReloadEffect(reloadEffect ? false : true)
 
       // 👇 cerramos el popup automáticamente después de 1 segundo
       setTimeout(() => {

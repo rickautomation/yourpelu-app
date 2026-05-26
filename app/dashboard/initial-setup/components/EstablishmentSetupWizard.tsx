@@ -40,10 +40,6 @@ export default function EstablishmentSetupWizard({
       : String(Date.now());
   }, []);
 
-  console.log("user: ", user)
-  console.log("selectedType: ", selectedType)
-  console.log("step: ", step)
-
   return (
     <WizardProvider>
       <div className="text-white px-6 py-3">
@@ -95,7 +91,7 @@ export default function EstablishmentSetupWizard({
 
         {step === 7 && user && <SelectScheduleDays setStep={setStep} user={user} />}
 
-        {step === 8 && user && <SchedulesSetup setStep={setStep} />}
+        {step === 8 && user && <SchedulesSetup setStep={setStep} user={user} />}
 
         {step === 9 && (
           <div className="text-center">

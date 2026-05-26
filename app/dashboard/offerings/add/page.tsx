@@ -8,6 +8,7 @@ import { useRef } from "react";
 import { FiCheckCircle, FiChevronDown } from "react-icons/fi";
 import { useClients } from "@/app/hooks/useClients";
 import { useEstablishment } from "@/app/context/EstablishmentContext";
+import AddClientForm from "../components/AddClientForm";
 
 export type CreateOfferingDto = {
   price: number;
@@ -22,7 +23,7 @@ export type CreateOfferingDto = {
 
 export default function AddOwnOffering() {
   const { user } = useAuth();
-  const { activeEstablishment, settings} = useEstablishment()
+  const { activeEstablishment, settings } = useEstablishment();
   const { clientCategories, paymentMethods, loading } = useOfferingsCategories(
     activeEstablishment?.id,
   );
@@ -54,13 +55,15 @@ export default function AddOwnOffering() {
   const [selectedClient, setSelectedClient] = useState<any>(null);
   const clientRef = useRef<HTMLDivElement>(null);
 
-  const [componetLoading, setComponentLoading] = useState(true)
+  const [componetLoading, setComponentLoading] = useState(true);
 
   const filteredClients = clients.filter((client) =>
     `${client.name} ${client.lastname} ${client.email ?? ""} ${client.phone ?? ""}`
       .toLowerCase()
       .includes(searchTerm.toLowerCase()),
   );
+
+  console.log("settings: ", settings)
 
   // 👇 Setear categoría por defecto o primera opción
   useEffect(() => {
@@ -70,7 +73,7 @@ export default function AddOwnOffering() {
       );
       setSelectedCategory(defaultCat || clientCategories[0]);
     }
-    setComponentLoading(false)
+    setComponentLoading(false);
   }, [clientCategories, selectedCategory]);
 
   // 👇 Setear clientType por defecto o primera opción
@@ -178,7 +181,54 @@ export default function AddOwnOffering() {
   }
 
   return (
-    <div className="py-2 px-4 space-y-4">
+    <div className="p-6 space-y-4">
+      <div className="bg-exposeBrandBlue text-white rounded-lg shadow-lg p-6 space-y-4 mb-18">
+        <div className="flex justify-between">
+          <p className="font-semibold">
+            {selectedCategory?.name || "Categoría"}
+          </p>
+          <p className="font-semibold">
+            {selectedClientType?.name || "Servicio"}
+          </p>
+        </div>
+
+        <div className="flex justify-between">
+          <p className="text-green-400 font-bold">
+            {selectedClientType ? `$${selectedClientType.price}` : ""}
+          </p>
+          {selectedPaymentMethod?.type ? (
+            <p className="italic">{`${selectedPaymentMethod.type}`}</p>
+          ) : (
+            <p className="italic text-gray-400">Sin metodo de pago</p>
+          )}
+        </div>
+
+        {settings?.clients_in_offerings && (
+          <div className="flex justify-between">
+            <strong>Cliente: </strong>
+
+            {selectedClient ? (
+              <p className="italic">
+                {selectedClient.name + " " + selectedClient.lastname}
+              </p>
+            ) : (
+              <p className="italic text-gray-400">Sin cliente</p>
+            )}
+          </div>
+        )}
+
+        {showSuccessPopup && (
+          <div className="fixed inset-0 backdrop-blur-sm bg-opacity-70 flex items-center justify-center z-50">
+            <div className="border border-green-500 bg-darkBrandBlue text-white rounded-lg shadow-lg p-6 flex items-center space-x-3">
+              <FiCheckCircle className="text-green-400 text-3xl" />
+              <span className="font-semibold">
+                {selectedCategory?.name} creado con éxito!
+              </span>
+            </div>
+          </div>
+        )}
+      </div>
+
       {/* Tarjeta Categoría */}
       <div
         onClick={() => setShowCategoryPopup(true)}
@@ -364,8 +414,8 @@ export default function AddOwnOffering() {
                   </li>
                 ) : filteredClients.length > 0 ? (
                   <div>
-                    {
-                     searchTerm.length === 0 && ( <li
+                    {searchTerm.length === 0 && (
+                      <li
                         onClick={() => {
                           setSelectedClient(null);
                           setShowClientPopup(false);
@@ -373,12 +423,10 @@ export default function AddOwnOffering() {
                         className="px-3 py-2 border border-pink-600 bg-gray-700 text-white rounded-lg cursor-pointer hover:bg-gray-600 transition-colors mb-1"
                       >
                         <div className="flex flex-col">
-                          <span className="font-semibold">
-                            Sin cliente
-                          </span>
+                          <span className="font-semibold">Sin cliente</span>
                         </div>
-                      </li>)
-                    }
+                      </li>
+                    )}
                     {filteredClients.map((client) => (
                       <li
                         key={client.id}
@@ -423,106 +471,23 @@ export default function AddOwnOffering() {
 
             {/* Formulario para agregar cliente */}
             {showAdd && (
-              <form
-                onSubmit={async (e) => {
-                  e.preventDefault();
-
-                  const newClient = {
-                    name: newClientName,
-                    lastname: newClientLastname,
-                  };
-
-                  const created = await addClient(newClient);
-
-                  if (created) {
-                    setSelectedClient(created);
-                  }
-
-                  // Cerramos el form y limpiamos inputs
-                  setShowAdd(false);
-                  setNewClientName("");
-                  setNewClientLastname("");
-                  setShowClientPopup(false); // opcional: cerrar popup automáticamente
-                }}
-                className="flex flex-col gap-3"
-              >
-                <h2 className="text-center text-lg font-semibold">
-                  Nuevo Cliente
-                </h2>
-                <input
-                  type="text"
-                  placeholder="Nombre"
-                  value={newClientName}
-                  onChange={(e) => setNewClientName(e.target.value)}
-                  className="px-2 py-2 rounded bg-gray-700 text-white"
-                  required
-                />
-                <input
-                  type="text"
-                  placeholder="Apellido"
-                  value={newClientLastname}
-                  onChange={(e) => setNewClientLastname(e.target.value)}
-                  className="px-2 py-2 rounded bg-gray-700 text-white"
-                  required
-                />
-                <div className="flex gap-2">
-                  <button
-                    type="submit"
-                    className="flex-1 bg-pink-400 text-white px-3 py-2 rounded hover:bg-pink-500 transition-colors text-sm font-semibold"
-                  >
-                    Guardar
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setShowAdd(false)}
-                    className="flex-1 bg-gray-600 text-white px-3 py-2 rounded hover:bg-gray-700 transition-colors text-sm font-semibold"
-                  >
-                    Cancelar
-                  </button>
-                </div>
-              </form>
+              <AddClientForm
+                newClientName={newClientName}
+                setNewClientName={setNewClientName}
+                newClientLastname={newClientLastname}
+                setNewClientLastname={setNewClientLastname}
+                setSelectedClient={setSelectedClient}
+                setShowAdd={setShowAdd}
+                setShowClientPopup={setShowClientPopup}
+                addClient={addClient}
+              />
             )}
           </div>
         </div>
       )}
 
       {/* Card resumen al final */}
-      <div className="mt-8 bg-exposeBrandBlue text-white rounded-lg shadow-lg p-6 space-y-4">
-        <div className="flex justify-between">
-          <p className="font-semibold">
-            {selectedCategory?.name || "Categoría"}
-          </p>
-          <p className="font-semibold">
-            {selectedClientType?.name || "Servicio"}
-          </p>
-        </div>
-
-        <div className="flex justify-between">
-          <p className="text-green-400 font-bold">
-            {selectedClientType ? `$${selectedClientType.price}` : ""}
-          </p>
-          {selectedPaymentMethod?.type ? (
-            <p className="italic">{`${selectedPaymentMethod.type}`}</p>
-          ) : (
-            <p className="italic text-gray-400">Sin metodo de pago</p>
-          )}
-        </div>
-
-        {settings?.clients_in_offerings && (
-          <div className="flex justify-between">
-            <strong>Cliente: </strong>
-
-            {selectedClient ? (
-              <p className="italic">
-                {selectedClient.name + " " + selectedClient.lastname}
-              </p>
-            ) : (
-              <p className="italic text-gray-400">Sin cliente</p>
-            )}
-          </div>
-        )}
-
-        <div className="w-full text-center">
+      <div className="w-full text-center">
           <button
             onClick={handleSubmit}
             disabled={loading}
@@ -531,18 +496,6 @@ export default function AddOwnOffering() {
             Registrar
           </button>
         </div>
-
-        {showSuccessPopup && (
-          <div className="fixed inset-0 backdrop-blur-sm bg-opacity-70 flex items-center justify-center z-50">
-            <div className="border border-green-500 bg-darkBrandBlue text-white rounded-lg shadow-lg p-6 flex items-center space-x-3">
-              <FiCheckCircle className="text-green-400 text-3xl" />
-              <span className="font-semibold">
-                {selectedCategory?.name} creado con éxito!
-              </span>
-            </div>
-          </div>
-        )}
-      </div>
     </div>
   );
 }
