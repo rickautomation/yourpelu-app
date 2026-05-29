@@ -7,6 +7,7 @@ import { FiCheckCircle } from "react-icons/fi";
 
 export interface Establishment {
   id: string;
+  establishmentId?: string;
   slug: string; // 👈 faltaba
   name: string;
   phoneNumber?: string;
@@ -63,11 +64,10 @@ const EstablishmentCreationForm: React.FC<StepTwoProps> = ({
       );
 
       const establishment = response.establishment;
-      console.log("Establecimiento creado:", establishment);
 
       await apiPost("/current-establishments/set", {
         userId,
-        establishmentId: establishment.id,
+        establishmentId: establishment.establishmentId,
         sessionId,
       });
 
