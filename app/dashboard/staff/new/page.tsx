@@ -137,7 +137,7 @@ ${activationLink}
               value={name}
               onChange={(e) => setName(e.target.value.trim())}
               required
-              className="px-3 py-2 rounded bg-gray-700 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
+              className="px-3 py-2 rounded bg-luminiBrandBlue text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
             />
           </div>
 
@@ -148,7 +148,7 @@ ${activationLink}
               value={lastname}
               onChange={(e) => setLastname(e.target.value.trim())}
               required
-              className="px-3 py-2 rounded bg-gray-700 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
+              className="px-3 py-2 rounded bg-luminiBrandBlue text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
             />
           </div>
 
@@ -159,7 +159,7 @@ ${activationLink}
               value={phoneNumber}
               onChange={(e) => setPhoneNumber(e.target.value.trim())}
               required
-              className="px-3 py-2 rounded bg-gray-700 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
+              className="px-3 py-2 rounded bg-luminiBrandBlue text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
             />
           </div>
 
@@ -170,7 +170,7 @@ ${activationLink}
               value={email}
               onChange={(e) => setEmail(e.target.value.trim())}
               required
-              className="px-3 py-2 rounded bg-gray-700 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
+              className="px-3 py-2 rounded bg-luminiBrandBlue text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
             />
           </div>
 
@@ -178,13 +178,13 @@ ${activationLink}
             <button
               type="button"
               onClick={() => router.back()}
-              className="flex-1 bg-rose-500 text-white px-4 py-2 rounded hover:bg-gray-700 transition-colors font-semibold"
+              className="flex-1 bg-rose-500 text-white px-4 py-2 rounded hover:bg-luminiBrandBlue transition-colors font-semibold"
             >
               Cancelar
             </button>
             <button
               type="submit"
-              className="flex-1 bg-pink-400 text-white px-4 py-2 rounded hover:bg-pink-500 transition-colors font-semibold"
+              className="flex-1 bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-500 transition-colors font-semibold"
             >
               Agregar
             </button>

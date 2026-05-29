@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { apiPatch } from "@/app/lib/apiPatch";
 import { useRouter } from "next/navigation";
 import { useEstablishment } from "@/app/context/EstablishmentContext";
+import { useUserEstablishment } from "@/app/hooks/useUserEstablishment";
 
 interface User {
   id: string;
@@ -30,7 +31,12 @@ const ActsStaffToggle: React.FC<StaffToggleProps> = ({ user, setStep }) => {
   const [loading, setLoading] = useState(false);
 
   const { activeEstablishment } = useEstablishment();
-  const router = useRouter();
+  const {activeEstablishment: activeForHook} = useUserEstablishment(user)
+ 
+  console.log("active: ", activeEstablishment)
+  console.log("active for hook: ", activeForHook)
+
+    const router = useRouter();
 
   const handleConfirm = async () => {
     if (!activeEstablishment) {

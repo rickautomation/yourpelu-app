@@ -58,10 +58,10 @@ export function useUserEstablishment(user: User | null) {
   const [settings, setSettings] = useState<any>(null);
   const [types, setTypes] = useState<EstablishmentType[]>([]);
   const [loading, setLoading] = useState(false);
-  const [reloadEffect, setReloadEffect] = useState(false)
+  const [reloadEffect, setReloadEffect] = useState(false);
 
-  console.log("reload: ", reloadEffect)
-
+  const reload = () => setReloadEffect(prev => !prev);
+  
   useEffect(() => {
     if (!user) return;
 
@@ -129,7 +129,6 @@ export function useUserEstablishment(user: User | null) {
     types,
     setActiveEstablishment,
     loading,
-    setReloadEffect,
-    reloadEffect,
+    reload
   };
 }

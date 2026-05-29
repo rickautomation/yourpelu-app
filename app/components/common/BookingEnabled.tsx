@@ -1,8 +1,9 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { apiPost } from "@/app/lib/apiPost";
 import { useEstablishment } from "@/app/context/EstablishmentContext";
+import { useUserEstablishment } from "@/app/hooks/useUserEstablishment";
 
 interface UserProfile {
   id: string;
@@ -29,19 +30,15 @@ interface StepFiveProps {
 
 const BookingEnabled: React.FC<StepFiveProps> = ({ setStep, user }) => {
   const router = useRouter();
-  const { activeEstablishment, setReloadEffect } = useEstablishment();
 
-  console.log("active in booking: ", activeEstablishment)
+  const { activeEstablishment, reload } = useEstablishment();
+
+  console.log("active: ", activeEstablishment);
 
   const [bookingEnabled, setBookingEnabled] = useState<boolean | null>(null);
 
   async function enableBooking(establishmentId: string) {
-    const result = await apiPost(
-      `/establishment/${establishmentId}/enable-booking`,
-      {},
-    );
-
-    return result;
+    return apiPost(`/establishment/${establishmentId}/enable-booking`, {});
   }
 
   return (
@@ -64,7 +61,6 @@ const BookingEnabled: React.FC<StepFiveProps> = ({ setStep, user }) => {
           onClick={async () => {
             setBookingEnabled(false);
             setStep(9);
-            router.refresh();
             router.push("/dashboard/initial-setup?step=9");
           }}
           className={`border border-pink-600 px-6 py-2 rounded font-medium transition-colors
@@ -82,8 +78,8 @@ const BookingEnabled: React.FC<StepFiveProps> = ({ setStep, user }) => {
 
             if (establishmentId) {
               await enableBooking(establishmentId);
+              reload();
               setStep(7);
-              router.refresh();
               router.push("/dashboard/initial-setup?step=7");
             } else {
               alert("Todavía no se creó el establecimiento");
