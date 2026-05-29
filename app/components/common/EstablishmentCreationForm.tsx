@@ -71,7 +71,7 @@ const EstablishmentCreationForm: React.FC<StepTwoProps> = ({
         sessionId,
       });
 
-      setActiveEstablishment(establishment); // 👈 actualiza el context
+      setActiveEstablishment(establishment)
       window.dispatchEvent(new Event("barbershop-changed"));
       router.refresh();
 

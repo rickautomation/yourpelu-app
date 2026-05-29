@@ -61,7 +61,7 @@ export function useUserEstablishment(user: User | null) {
   const [reloadEffect, setReloadEffect] = useState(false);
 
   const reload = () => setReloadEffect(prev => !prev);
-
+  
   useEffect(() => {
     if (!user) return;
 
