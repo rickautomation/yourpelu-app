@@ -31,12 +31,10 @@ const ActsStaffToggle: React.FC<StaffToggleProps> = ({ user, setStep }) => {
   const [loading, setLoading] = useState(false);
 
   const { activeEstablishment } = useEstablishment();
-  const {activeEstablishment: activeForHook} = useUserEstablishment(user)
- 
-  console.log("active: ", activeEstablishment)
-  console.log("active for hook: ", activeForHook)
 
-    const router = useRouter();
+  console.log("active: ", activeEstablishment);
+
+  const router = useRouter();
 
   const handleConfirm = async () => {
     if (!activeEstablishment) {
@@ -50,7 +48,7 @@ const ActsStaffToggle: React.FC<StaffToggleProps> = ({ user, setStep }) => {
         `/user-staff-establishments/${user.id}/${activeEstablishment.id}`,
         {
           actsAsStaff: isStaff,
-        }
+        },
       );
 
       setIsStaff(response.actsAsStaff);
@@ -87,9 +85,7 @@ const ActsStaffToggle: React.FC<StaffToggleProps> = ({ user, setStep }) => {
             }`}
           />
         </div>
-        <span className="text-xl font-semibold">
-          {isStaff ? "SI" : "NO"}
-        </span>
+        <span className="text-xl font-semibold">{isStaff ? "SI" : "NO"}</span>
       </label>
 
       {/* Botón de confirmación */}

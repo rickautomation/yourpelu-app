@@ -5,8 +5,18 @@ import { useRouter } from "next/navigation";
 import { useEstablishment } from "@/app/context/EstablishmentContext";
 import { FiCheckCircle } from "react-icons/fi";
 
+interface CurrentEstablishment {
+  id: string;              // id del current_establishment
+  userId: string;
+  establishmentId: string; // FK al establecimiento
+  sessionId: string;
+  createdAt: string;
+  establishment: Establishment; // 👈 el objeto real del establecimiento
+}
+
 export interface Establishment {
   id: string;
+  establishmentId?: string;
   slug: string; // 👈 faltaba
   name: string;
   phoneNumber?: string;
@@ -48,45 +58,49 @@ const EstablishmentCreationForm: React.FC<StepTwoProps> = ({
     setFormData({ ...formData, [field]: value });
   };
 
-  const handleSubmit = async () => {
-    try {
-      const response = await apiPost<{ establishment: Establishment }>(
-        "/establishment",
-        {
-          name: formData.name,
-          phoneNumber: formData.phoneNumber,
-          address: formData.address,
-          userId,
-          sessionId,
-          typeId: selectedType,
-        },
-      );
-
-      const establishment = response.establishment;
-      console.log("Establecimiento creado:", establishment);
-
-      await apiPost("/current-establishments/set", {
+const handleSubmit = async () => {
+  try {
+    const response = await apiPost<{ establishment: CurrentEstablishment }>(
+      "/establishment",
+      {
+        name: formData.name,
+        phoneNumber: formData.phoneNumber,
+        address: formData.address,
         userId,
-        establishmentId: establishment.id,
         sessionId,
-      });
+        typeId: selectedType,
+      },
+    );
 
-      setActiveEstablishment(establishment)
-      window.dispatchEvent(new Event("barbershop-changed"));
-      router.refresh();
+    // 👇 acá response.establishment es un CurrentEstablishment
+    const currentEstablishment = response.establishment;
+    const establishment = currentEstablishment.establishment; // 👈 el objeto real
 
-      setFormData((prev) => ({ ...prev, id: establishment.id }));
+    console.log("Establecimiento creado:", establishment);
 
-      setShowPopup(true);
+    await apiPost("/current-establishments/set", {
+      userId,
+      establishmentId: establishment.id, // 👈 usar el id del establecimiento
+      sessionId,
+    });
 
-      setTimeout(() => {
-        setStep(3);
-        router.push("/dashboard/initial-setup?step=3");
-      }, 1500);
-    } catch (error) {
-      console.error("Error creando barbería:", error);
-    }
-  };
+    setActiveEstablishment(establishment); // 👈 guardar el objeto correcto
+    window.dispatchEvent(new Event("barbershop-changed"));
+    router.refresh();
+
+    setFormData((prev) => ({ ...prev, id: establishment.id }));
+
+    setShowPopup(true);
+
+    setTimeout(() => {
+      setStep(3);
+      router.push("/dashboard/initial-setup?step=3");
+    }, 1500);
+  } catch (error) {
+    console.error("Error creando barbería:", error);
+  }
+};
+
 
   return (
     <div className="">
