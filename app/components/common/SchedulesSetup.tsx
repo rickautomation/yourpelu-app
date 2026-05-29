@@ -2,6 +2,7 @@
 import { useEstablishment } from "@/app/context/EstablishmentContext";
 import { apiPost } from "@/app/lib/apiPost";
 import React, { useState } from "react";
+import { FiCheckCircle } from "react-icons/fi";
 
 interface StepSevenProps {
   setStep?: (step: number) => void;
@@ -20,6 +21,7 @@ const SchedulesSetup: React.FC<StepSevenProps> = ({ setStep }) => {
     5: "Viernes",
     6: "Sábado",
   };
+  const [showPopup, setShowPopup] = useState(false);
 
   const applySchedule = async () => {
     if (selectedDays.length === 0) {
@@ -49,7 +51,8 @@ const SchedulesSetup: React.FC<StepSevenProps> = ({ setStep }) => {
         });
       }
 
-      alert("Horarios guardados correctamente");
+      setShowPopup(true);
+      setTimeout(() => setShowPopup(false), 1000);
 
       // 👇 refresca el componente y vuelve a cargar los datos
       window.location.reload();
@@ -82,7 +85,7 @@ const SchedulesSetup: React.FC<StepSevenProps> = ({ setStep }) => {
     );
   };
 
-    const handleContinue = () => {
+  const handleContinue = () => {
     if (setStep) {
       setStep(9); // solo si existe
     }
@@ -124,7 +127,7 @@ const SchedulesSetup: React.FC<StepSevenProps> = ({ setStep }) => {
           <button
             onClick={() => setMode("continuo")}
             className={`p-2 rounded border border-pink-500 font-semibold transition-colors
-        ${mode === "continuo" ? "bg-pink-500 text-white" : "text-pink-600"}
+        ${mode === "continuo" ? "bg-pink-600 text-white" : "text-pink-600"}
       `}
           >
             Horario continuo
@@ -210,7 +213,7 @@ const SchedulesSetup: React.FC<StepSevenProps> = ({ setStep }) => {
       ) && (
         <button
           onClick={applySchedule}
-          className="w-full bg-pink-700 text-white px-6 py-2 rounded font-semibold hover:bg-green-700 transition-colors"
+          className="w-full bg-pink-400 text-white px-6 py-2 rounded font-semibold hover:bg-green-700 transition-colors"
         >
           Aplicar a días seleccionados
         </button>
@@ -248,6 +251,17 @@ const SchedulesSetup: React.FC<StepSevenProps> = ({ setStep }) => {
             </button>
           </div>
         )}
+
+      {showPopup && (
+        <div className="fixed inset-0 backdrop-blur-sm bg-opacity-70 flex items-center justify-center z-50">
+          <div className="border border-green-500 bg-darkBrandBlue text-white rounded-lg shadow-lg p-6 flex items-center space-x-3">
+            <FiCheckCircle className="text-green-400 text-3xl" />
+            <span className="font-semibold">
+              Horarios Guardados
+            </span>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

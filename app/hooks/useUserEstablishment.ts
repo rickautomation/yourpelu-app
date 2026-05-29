@@ -58,6 +58,9 @@ export function useUserEstablishment(user: User | null) {
   const [settings, setSettings] = useState<any>(null);
   const [types, setTypes] = useState<EstablishmentType[]>([]);
   const [loading, setLoading] = useState(false);
+  const [reloadEffect, setReloadEffect] = useState(false);
+
+  const reload = () => setReloadEffect(prev => !prev);
 
   useEffect(() => {
     if (!user) return;
@@ -102,7 +105,7 @@ export function useUserEstablishment(user: User | null) {
     window.addEventListener("establishment-changed", handler);
 
     return () => window.removeEventListener("establishment-changed", handler);
-  }, [user]);
+  }, [user, reloadEffect]);
 
   useEffect(() => {
     if (!activeEstablishment) return;
@@ -117,7 +120,7 @@ export function useUserEstablishment(user: User | null) {
       }
     };
     loadSettings();
-  }, [activeEstablishment]);
+  }, [activeEstablishment, reloadEffect]);
 
   return {
     activeEstablishment,
@@ -126,5 +129,6 @@ export function useUserEstablishment(user: User | null) {
     types,
     setActiveEstablishment,
     loading,
+    reload
   };
 }

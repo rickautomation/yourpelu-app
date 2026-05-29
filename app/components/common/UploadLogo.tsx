@@ -4,6 +4,51 @@ import { MdUploadFile } from "react-icons/md";
 import { useRouter } from "next/navigation";
 import { useEstablishment } from "@/app/context/EstablishmentContext";
 import { FiCheckCircle } from "react-icons/fi";
+import { apiGet } from "@/app/lib/apiGet";
+
+type Establishment = {
+  id: string;
+  name: string;
+  address?: string;
+  phoneNumber?: string;
+  bookingEnabled: boolean;
+  profile?: ProfileData;
+  type?: EstablishmentType;
+  slug: string;
+  bookingLink?: string;
+};
+
+type ProfileData = {
+  id: string;
+  lema?: string;
+  description?: string;
+  openingHours?: string;
+  adressCoordinates?: string;
+  logoUrl?: string;
+  websiteUrl?: string | null;
+  images?: EstablishmentImage[];
+  schedules?: Schedule[];
+};
+
+type EstablishmentImage = { id: string; imageUrl: string };
+
+interface TimeRange {
+  id: string;
+  start: string;
+  end: string;
+}
+
+interface Schedule {
+  id: string;
+  dayOfWeek: number;
+  timeRanges: TimeRange[]; // 👈 agregar esta propiedad
+}
+
+type EstablishmentType = {
+  id: string;
+  name: string;
+  description: string;
+};
 
 interface UserProfile {
   id: string;
@@ -30,7 +75,7 @@ interface StepThreeProps {
 
 const UploadLogo: React.FC<StepThreeProps> = ({ setStep, user }) => {
   const router = useRouter();
-  const { activeEstablishment } = useEstablishment();
+  const { activeEstablishment, setActiveEstablishment } = useEstablishment();
 
   const [formData, setFormData] = useState<{
     logoFile?: File;
@@ -61,10 +106,14 @@ const UploadLogo: React.FC<StepThreeProps> = ({ setStep, user }) => {
       if (!res.ok) {
         throw new Error(`Error HTTP ${res.status}`);
       }
+
       setFormData({ ...formData, logoUploaded: true });
       setShowPopup(true);
 
-      // 👇 cerramos el popup automáticamente después de 1 segundo
+      // 👇 tipamos la respuesta
+      const response = await apiGet<Establishment>(`/establishment/${activeEstablishment?.id}`);
+      setActiveEstablishment(response);
+
       setTimeout(() => {
         setShowPopup(false);
       }, 2000);

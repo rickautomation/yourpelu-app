@@ -75,7 +75,7 @@ export default function SetupAccountPage() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center gap-4 p-4">
+    <div className="flex flex-col items-center justify-center gap-4 p-6">
       <div className="text-center max-w-md">
         <h1 className="text-2xl text-white mb-2">
           ¡Hola <span className="text-pink-600">{userData?.name}</span>!
@@ -88,7 +88,7 @@ export default function SetupAccountPage() {
           .
         </p>
       </div>
-      <div className="w-full max-w-md text-lg text-center">
+      <div className="w-full max-w-md text-xl text-center">
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Input contraseña */}
           <div className="relative">
@@ -98,12 +98,12 @@ export default function SetupAccountPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-pink-400 pr-10"
+              className="w-full px-4 py-2 rounded bg-luminiBrandBlue text-white focus:outline-none focus:ring-2 focus:ring-pink-400 pr-10"
             />
             <button
               type="button"
               onClick={togglePasswordVisibility}
-              className="absolute right-2 top-2 text-gray-400 hover:text-white"
+              className="absolute right-4 top-2 text-gray-400 hover:text-white"
             >
               {showPassword ? <FaEyeSlash size={26} /> : <FaEye size={26} />}
             </button>
@@ -117,12 +117,12 @@ export default function SetupAccountPage() {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
-              className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-pink-400 pr-10"
+              className="w-full px-4 py-2 rounded bg-luminiBrandBlue text-white focus:outline-none focus:ring-2 focus:ring-pink-400 pr-10"
             />
             <button
               type="button"
               onClick={toggleConfirmPasswordVisibility}
-              className="absolute right-2 top-2 text-gray-400 hover:text-white"
+              className="absolute right-4 top-2 text-gray-400 hover:text-white"
             >
               {showConfirmPassword ? (
                 <FaEyeSlash size={26} />

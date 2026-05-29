@@ -2,7 +2,52 @@
 import { useEstablishment } from "@/app/context/EstablishmentContext";
 import { apiPost } from "@/app/lib/apiPost";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { apiGet } from "@/app/lib/apiGet";
+
+type Establishment = {
+  id: string;
+  name: string;
+  address?: string;
+  phoneNumber?: string;
+  bookingEnabled: boolean;
+  profile?: ProfileData;
+  type?: EstablishmentType;
+  slug: string;
+  bookingLink?: string;
+};
+
+type ProfileData = {
+  id: string;
+  lema?: string;
+  description?: string;
+  openingHours?: string;
+  adressCoordinates?: string;
+  logoUrl?: string;
+  websiteUrl?: string | null;
+  images?: EstablishmentImage[];
+  schedules?: Schedule[];
+};
+
+type EstablishmentImage = { id: string; imageUrl: string };
+
+interface TimeRange {
+  id: string;
+  start: string;
+  end: string;
+}
+
+interface Schedule {
+  id: string;
+  dayOfWeek: number;
+  timeRanges: TimeRange[]; // 👈 agregar esta propiedad
+}
+
+type EstablishmentType = {
+  id: string;
+  name: string;
+  description: string;
+};
 
 interface UserProfile {
   id: string;
@@ -29,7 +74,7 @@ interface StepSixProps {
 
 const SelectScheduleDays: React.FC<StepSixProps> = ({ setStep, user }) => {
   const router = useRouter();
-  const { activeEstablishment } = useEstablishment();
+  const { activeEstablishment, setActiveEstablishment } = useEstablishment();
 
   const daysOfWeek = [
     "Lunes",
@@ -57,7 +102,11 @@ const SelectScheduleDays: React.FC<StepSixProps> = ({ setStep, user }) => {
 
       const days = selectedDays.map((d) => dayMap[d]);
       await addScheduleDays(activeEstablishment.profile.id, days);
-      router.refresh();
+
+      const response = await apiGet<Establishment>(
+        `/establishment/${activeEstablishment?.id}`,
+      );
+      setActiveEstablishment(response);
 
       setStep(8); // avanzar al siguiente paso
       router.push("/dashboard/initial-setup?step=8");

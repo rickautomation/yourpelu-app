@@ -1,8 +1,9 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { apiPost } from "@/app/lib/apiPost";
 import { useEstablishment } from "@/app/context/EstablishmentContext";
+import { useUserEstablishment } from "@/app/hooks/useUserEstablishment";
 
 interface UserProfile {
   id: string;
@@ -29,7 +30,10 @@ interface StepFiveProps {
 
 const BookingEnabled: React.FC<StepFiveProps> = ({ setStep, user }) => {
   const router = useRouter();
-  const { activeEstablishment } = useEstablishment();
+
+    const { activeEstablishment, reload } = useEstablishment();
+   
+    console.log("active: ", activeEstablishment)
 
   const [bookingEnabled, setBookingEnabled] = useState<boolean | null>(null);
 
@@ -74,6 +78,7 @@ const BookingEnabled: React.FC<StepFiveProps> = ({ setStep, user }) => {
 
               if (establishmentId) {
                 await enableBooking(establishmentId);
+                reload();
                 setStep(7);
                 router.push("/dashboard/initial-setup?step=7");
               } else {
