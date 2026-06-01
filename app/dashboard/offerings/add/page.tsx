@@ -232,7 +232,7 @@ export default function AddOwnOffering() {
       {/* Tarjeta Categoría */}
       <div
         onClick={() => setShowCategoryPopup(true)}
-        className="px-4 py-3 bg-ligthBrandBlue text-white rounded-lg flex justify-between items-center cursor-pointer"
+        className="px-4 py-3 bg-ligthBrandBlue text-white rounded-lg flex justify-between items-center cursor-pointer mt-60"
       >
         <span>{selectedCategory ? selectedCategory.name : "Categoría"}</span>
         <FiChevronDown className="text-xl" />
@@ -487,11 +487,11 @@ export default function AddOwnOffering() {
       )}
 
       {/* Card resumen al final */}
-      <div className="w-full text-center">
+      <div className="w-full text-center mt-10">
           <button
             onClick={handleSubmit}
             disabled={loading}
-            className="bg-blue-500 hover:bg-green-600 text-white font-semibold px-6 py-2 rounded-lg transition-colors duration-200"
+            className="bg-blue-500 hover:bg-green-600 text-white font-semibold px-6 py-3 rounded-lg transition-colors duration-200"
           >
             Registrar
           </button>
