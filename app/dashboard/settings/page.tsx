@@ -43,16 +43,6 @@ export default function SettingsPage() {
       </div>
 
       <div
-        onClick={() => router.push(`/dashboard/settings/reports`)}
-        className="flex items-center justify-between rounded-md bg-luminiBrandBlue p-4 text-start cursor-pointer"
-      >
-        <p>Reportes</p>
-        <div className="p-1 bg-ligthBrandBlue rounded-full">
-          <AiOutlineRight />
-        </div>
-      </div>
-
-      <div
         onClick={() => router.push(`/dashboard/settings/cash-closing`)}
         className="flex items-center justify-between rounded-md bg-luminiBrandBlue p-4 text-start cursor-pointer"
       >

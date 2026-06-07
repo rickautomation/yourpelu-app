@@ -50,7 +50,7 @@ export default function ClientsPage() {
   return (
     <div className="flex flex-col gap-3 px-6 py-2">
       {/* Card para agregar cliente */}
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-3 w-full">
         {!showAdd && (
           <div className="flex justify-center items-center gap-3 rounded-lg py-2">
             <input
@@ -140,14 +140,13 @@ export default function ClientsPage() {
           {clients.length === 0 && loading ? (
             <p className="text-gray-400">Aun no se agregaron clientes</p>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-3 px-1">
               {filteredClients.map((client) => {
                 return (
                   <div
                     key={client.id}
                     className="flex flex-col px-5 py-4 bg-exposeBrandBlue rounded-lg shadow-md"
                   >
-                    {/* Nombre centrado */}
                     <div className="flex justify-center items-center mb-2">
                       <p className="text-xl text-white font-bold mr-2">
                         {client.name}
@@ -157,7 +156,6 @@ export default function ClientsPage() {
                       </p>
                     </div>
 
-                    {/* Email y teléfono más bonitos */}
                     <div className="flex justify-between items-center text-sm text-gray-300 mb-3">
                       {client.email && (
                         <p className="flex items-center gap-1">
