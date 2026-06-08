@@ -4,9 +4,12 @@ import { useState } from "react";
 import { BsToggle2On, BsToggle2Off, BsCash } from "react-icons/bs";
 import { useEstablishment } from "@/app/context/EstablishmentContext";
 import { SiMercadopago } from "react-icons/si";
+import { AiOutlineRight } from "react-icons/ai";
+import { useRouter } from "next/navigation";
 
 export default function AddRegisterPage() {
   const { activeEstablishment, settings } = useEstablishment();
+  const router = useRouter();
 
   // Estado local inicial desde settings
   const [clientsInOfferings, setClientsInOfferings] = useState(
@@ -126,12 +129,14 @@ export default function AddRegisterPage() {
       </section>
 
       {/* Sección: Cambiar vista */}
-      <section className="bg-exposeBrandBlue rounded-lg p-4 shadow-md">
+      <section
+        onClick={() => router.push(`/dashboard/settings/add-register/views`)}
+        className="flex items-center justify-between bg-exposeBrandBlue rounded-lg p-4 shadow-md"
+      >
         <h3 className="text-xl font-semibold mb-2">Cambiar vista</h3>
-        <p className="text-gray-400">Vista actual: {settings?.registerView}</p>
-        <button className="mt-3 bg-green-600 hover:bg-green-700 px-4 py-2 rounded">
-          Cambiar
-        </button>
+        <div className="p-1 bg-ligthBrandBlue rounded-full">
+          <AiOutlineRight />
+        </div>
       </section>
     </div>
   );
