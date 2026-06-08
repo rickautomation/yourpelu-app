@@ -3,9 +3,11 @@
 import { useState } from "react";
 import { useEstablishment } from "@/app/context/EstablishmentContext";
 import { FaEdit } from "react-icons/fa";
+import { useRouter } from "next/navigation";
 
 export default function InformationPage() {
   const { activeEstablishment } = useEstablishment();
+  const router = useRouter();
 
   const [editingField, setEditingField] = useState<string | null>(null);
   const [formData, setFormData] = useState({
@@ -20,19 +22,30 @@ export default function InformationPage() {
   };
 
   const handleSave = (field: string) => {
-    console.log(`Guardando ${field}:`, formData[field as keyof typeof formData]);
+    console.log(
+      `Guardando ${field}:`,
+      formData[field as keyof typeof formData],
+    );
     // acá iría tu lógica de actualización (PATCH/PUT al backend)
     setEditingField(null);
   };
 
   return (
     <div className="p-6 max-w-md mx-auto text-center">
-      <h1 className="text-xl font-bold mb-4">Información Basica</h1>
+      <header className="flex gap-1 border-b border-gray-700 pb-4 text-start text-xl">
+        <p onClick={() => router.push(`/dashboard/settings`)}>Configuracion</p>
+        <p>{">"}</p>
+        <p>Informacion</p>
+      </header>
 
       {["name", "phoneNumber", "address"].map((field) => (
-        <div key={field} className="mb-4 text-start">
+        <div key={field} className="mb-4 mt-4 text-start">
           <label className="block font-semibold capitalize">
-            {field === "phoneNumber" ? "Teléfono" : field === "address" ? "Dirección" : "Nombre"}
+            {field === "phoneNumber"
+              ? "Teléfono"
+              : field === "address"
+                ? "Dirección"
+                : "Nombre"}
           </label>
 
           {editingField === field ? (
