@@ -50,7 +50,7 @@ export default function DashboardPage() {
         <div className="text-center">
           <h2 className="text-2xl font-bold mb-4">Hola {userName}!</h2>
           <p className="mb-6">
-            Vamos a configurar tu barbería completa. Completa los datos y la
+            Vamos a configurar tu establecimiento. Completa los datos y lo
             crearemos en el sistema.
           </p>
           <button
