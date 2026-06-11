@@ -400,11 +400,24 @@
 //   );
 // }
 
-export default function TestPage({ params }: { params: { slug: string } }) {
+// Fuerza a Next.js a tratar la ruta como dinámica para los rewrites
+export const dynamic = 'force-dynamic';
+
+interface PageProps {
+  params: Promise<{ slug: string }>;
+}
+
+// Asegúrate de que tenga el 'async'
+export default async function TurnosPage({ params }: PageProps) {
+  // En Next.js 15/16 es OBLIGATORIO hacer await a los params
+  const resolvedParams = await params;
+  const slug = resolvedParams.slug;
+
   return (
-    <div style={{ padding: '50px' }}>
-      <h1>¡El middleware funciona!</h1>
-      <p>Estás en el subdominio de turnos y el slug recibido es: {params.slug}</p>
+    <div style={{ padding: '50px', color: 'white', background: '#111' }}>
+      <h1>¡El middleware funciona impecable!</h1>
+      <p>Subdominio: <strong>turnos</strong></p>
+      <p>Slug recibido correctamente: <strong>{slug}</strong></p>
     </div>
-  )
+  );
 }
