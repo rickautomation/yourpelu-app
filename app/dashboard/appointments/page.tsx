@@ -45,6 +45,8 @@ export default function AppointmentsPage() {
 
   const [popupMessage, setPopupMessage] = useState<string | null>(null);
 
+ console.log("active: ", activeEstablishment)
+
   const fetchAppointments = async () => {
     if (!activeEstablishment?.id) return; // 👈 aseguramos que haya barbería activa
     setLoading(true);
@@ -135,27 +137,7 @@ export default function AppointmentsPage() {
     <div className="p-4">
       {activeEstablishment?.bookingLink && user?.rol === "admin" && (
         <div className="mt-4 py-4 rounded bg-luminiBrandBlue text-center text-lg mb-2">
-          <p className="text-sm text-start p-2 font-semibold">
-            📎 Comparte tu link de reservas:
-          </p>
-          <div className="flex items-center justify-center gap-2">
-            <p className="text-pink-500 break-all">
-              {activeEstablishment.bookingLink}
-            </p>
-            <button
-              onClick={() => {
-                if (activeEstablishment?.bookingLink) {
-                  navigator.clipboard.writeText(
-                    activeEstablishment.bookingLink,
-                  );
-                  alert("Link copiado al portapapeles ✅"); // feedback rápido
-                }
-              }}
-              className="flex items-center gap-1 px-2 py-1 rounded border border-pink-500 hover:bg-pink-100 text-pink-500 transition"
-            >
-              <FaRegCopy />
-            </button>
-          </div>
+          <p>enabled</p>
         </div>
       )}
       {appointments.length === 0 ? (
