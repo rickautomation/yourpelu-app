@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useEstablishment } from "@/app/context/EstablishmentContext";
 import { FaEdit } from "react-icons/fa";
 import { useRouter } from "next/navigation";
+import { apiPatch } from "@/app/lib/apiPatch";
 
 export default function InformationPage() {
   const { activeEstablishment } = useEstablishment();
@@ -21,13 +22,21 @@ export default function InformationPage() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSave = (field: string) => {
-    console.log(
-      `Guardando ${field}:`,
-      formData[field as keyof typeof formData],
-    );
-    // acá iría tu lógica de actualización (PATCH/PUT al backend)
-    setEditingField(null);
+  const handleSave = async (field: string) => {
+    try {
+      const updated = await apiPatch(
+        `/establishment/${activeEstablishment?.id}`,
+        {
+          [field]: formData[field as keyof typeof formData],
+        },
+      );
+
+      console.log("Actualizado:", updated);
+
+      setEditingField(null);
+    } catch (err) {
+      console.error("Error al actualizar:", err);
+    }
   };
 
   return (

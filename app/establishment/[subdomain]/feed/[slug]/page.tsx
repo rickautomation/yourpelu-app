@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { usePublicBarbershopFeed } from "../../hooks/usePublicBarbershopFeed";
+import { usePublicBarbershopFeed } from "../../../../hooks/usePublicBarbershopFeed";
 import BarbershopFeed from "@/app/components/public-feed/BarbershopFeed";
 
 export default function PublicFeedPage({ params }: { params: Promise<{ slug: string }> }) {
