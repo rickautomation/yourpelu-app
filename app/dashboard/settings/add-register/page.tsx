@@ -1,11 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BsToggle2On, BsToggle2Off, BsCash } from "react-icons/bs";
 import { useEstablishment } from "@/app/context/EstablishmentContext";
 import { SiMercadopago } from "react-icons/si";
 import { AiOutlineRight } from "react-icons/ai";
 import { useRouter } from "next/navigation";
+import { apiPatch } from "@/app/lib/apiPatch";
+import { apiPost } from "@/app/lib/apiPost";
+import { apiGet } from "@/app/lib/apiGet";
+import { FaRegMoneyBillAlt } from "react-icons/fa";
+
+interface PaymentMethod {
+  id: string;
+  type: string;
+  isActive: boolean;
+}
 
 export default function AddRegisterPage() {
   const { activeEstablishment, settings } = useEstablishment();
@@ -18,25 +28,44 @@ export default function AddRegisterPage() {
   const [editing, setEditing] = useState(false); // controla si el toggle está habilitado
   const [tempValue, setTempValue] = useState(clientsInOfferings); // valor temporal mientras editás
 
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [paymentType, setPaymentType] = useState("");
+  const [isActive, setIsActive] = useState(true);
+
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
+
   console.log("settings: ", settings);
 
-  // Guardar cambios en API
-  const handleSave = async () => {
+  const updateClientsInOfferings = async () => {
     try {
-      const res = await fetch(
-        `/api/establishments/${activeEstablishment?.id}/settings`,
-        {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ clients_in_offerings: tempValue }),
-        },
+      const updated = await apiPatch(
+        `/establishments/${activeEstablishment?.id}/settings`,
+        { clients_in_offerings: tempValue },
       );
-      if (!res.ok) throw new Error("Error al actualizar settings");
-      console.log("Actualizado en backend:", tempValue);
+      console.log("Actualizado en backend:", updated);
       setClientsInOfferings(tempValue);
       setEditing(false);
+      window.location.reload();
     } catch (err) {
-      console.error(err);
+      console.error("Error al actualizar clients_in_offerings:", err);
+    }
+  };
+
+  const handleCreatePaymentMethod = async () => {
+    try {
+      const newPayment = await apiPost(
+        `/payment-methods/${activeEstablishment?.id}`,
+        { type: paymentType },
+      );
+
+      console.log("Método de pago creado:", newPayment);
+
+      setShowPaymentModal(false);
+      setPaymentType("");
+      setIsActive(true);
+      window.location.reload();
+    } catch (err) {
+      console.error("Error al crear método de pago:", err);
     }
   };
 
@@ -45,6 +74,23 @@ export default function AddRegisterPage() {
     setTempValue(clientsInOfferings); // vuelve al valor original
     setEditing(false);
   };
+
+  useEffect(() => {
+    const fetchPayments = async () => {
+      try {
+        const data = await apiGet<PaymentMethod[]>(
+          `/payment-methods/establishment/${activeEstablishment?.id}`,
+        );
+        setPaymentMethods(data);
+      } catch (err) {
+        console.error("Error al traer métodos de pago:", err);
+      }
+    };
+
+    if (activeEstablishment?.id) {
+      fetchPayments();
+    }
+  }, [activeEstablishment?.id]);
 
   return (
     <div className="min-h-screen text-white p-6 space-y-4">
@@ -98,7 +144,7 @@ export default function AddRegisterPage() {
                 Cancelar
               </button>
               <button
-                onClick={handleSave}
+                onClick={updateClientsInOfferings}
                 className="flex-1 bg-pink-600 hover:bg-pink-700 px-4 py-2 rounded"
               >
                 Guardar
@@ -121,8 +167,21 @@ export default function AddRegisterPage() {
               <SiMercadopago className="text-blue-500 bg-white" />
               <li>MercadoPago</li>
             </div>
+
+            {paymentMethods.map((pm) => (
+              <div key={pm.id} className="flex items-center gap-3 text-xl">
+                <FaRegMoneyBillAlt />
+                <li>{pm.type}</li>
+                {!pm.isActive && (
+                  <span className="text-sm text-red-400">(Inactivo)</span>
+                )}
+              </div>
+            ))}
           </ul>
-          <button className="mt-3 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded">
+          <button
+            onClick={() => setShowPaymentModal(true)}
+            className="mt-3 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded"
+          >
             Agregar
           </button>
         </div>
@@ -138,6 +197,37 @@ export default function AddRegisterPage() {
           <AiOutlineRight />
         </div>
       </section>
+
+      {showPaymentModal && (
+        <div className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50 p-6">
+          <div className="bg-luminiBrandBlue p-6 rounded-lg w-96 shadow shadow-black">
+            <h2 className="text-xl font-semibold mb-4">Nuevo método de pago</h2>
+
+            <input
+              type="text"
+              placeholder="Tipo (ej: Tarjeta, Transferencia)"
+              value={paymentType}
+              onChange={(e) => setPaymentType(e.target.value)}
+              className="w-full p-2 mb-4 rounded bg-ligthBrandBlue text-white"
+            />
+
+            <div className="flex gap-4">
+              <button
+                onClick={() => setShowPaymentModal(false)}
+                className="flex-1 bg-ligthBrandBlue hover:bg-gray-700 px-4 py-2 rounded"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleCreatePaymentMethod}
+                className="flex-1 bg-pink-600 hover:bg-pink-700 px-4 py-2 rounded"
+              >
+                Guardar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

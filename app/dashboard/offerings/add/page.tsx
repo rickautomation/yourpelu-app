@@ -9,6 +9,8 @@ import { FiCheckCircle, FiChevronDown } from "react-icons/fi";
 import { useClients } from "@/app/hooks/useClients";
 import { useEstablishment } from "@/app/context/EstablishmentContext";
 import AddClientForm from "../components/AddClientForm";
+import DefaultOfferingForm from "../components/DefaultOfferingForm";
+import AlternativeOfferingForm from "../components/AlternativeOfferingForm";
 
 export type CreateOfferingDto = {
   price: number;
@@ -63,7 +65,7 @@ export default function AddOwnOffering() {
       .includes(searchTerm.toLowerCase()),
   );
 
-  console.log("settings: ", settings)
+  console.log("settings: ", settings);
 
   // 👇 Setear categoría por defecto o primera opción
   useEffect(() => {
@@ -182,320 +184,87 @@ export default function AddOwnOffering() {
 
   return (
     <div className="p-6 space-y-4">
-      <div className="bg-exposeBrandBlue text-white rounded-lg shadow-lg p-6 space-y-4 mb-18">
-        <div className="flex justify-between">
-          <p className="font-semibold">
-            {selectedCategory?.name || "Categoría"}
-          </p>
-          <p className="font-semibold">
-            {selectedClientType?.name || "Servicio"}
-          </p>
-        </div>
-
-        <div className="flex justify-between">
-          <p className="text-green-400 font-bold">
-            {selectedClientType ? `$${selectedClientType.price}` : ""}
-          </p>
-          {selectedPaymentMethod?.type ? (
-            <p className="italic">{`${selectedPaymentMethod.type}`}</p>
-          ) : (
-            <p className="italic text-gray-400">Sin metodo de pago</p>
-          )}
-        </div>
-
-        {settings?.clients_in_offerings && (
-          <div className="flex justify-between">
-            <strong>Cliente: </strong>
-
-            {selectedClient ? (
-              <p className="italic">
-                {selectedClient.name + " " + selectedClient.lastname}
-              </p>
-            ) : (
-              <p className="italic text-gray-400">Sin cliente</p>
-            )}
-          </div>
-        )}
-
-        {showSuccessPopup && (
-          <div className="fixed inset-0 backdrop-blur-sm bg-opacity-70 flex items-center justify-center z-50">
-            <div className="border border-green-500 bg-darkBrandBlue text-white rounded-lg shadow-lg p-6 flex items-center space-x-3">
-              <FiCheckCircle className="text-green-400 text-3xl" />
-              <span className="font-semibold">
-                {selectedCategory?.name} creado con éxito!
-              </span>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Tarjeta Categoría */}
-      <div
-        onClick={() => setShowCategoryPopup(true)}
-        className="px-4 py-3 bg-ligthBrandBlue text-white rounded-lg flex justify-between items-center cursor-pointer mt-60"
-      >
-        <span>{selectedCategory ? selectedCategory.name : "Categoría"}</span>
-        <FiChevronDown className="text-xl" />
-      </div>
-
-      {showCategoryPopup && (
-        <div className="fixed inset-0 backdrop-blur-sm bg-opacity-50 flex items-center justify-center z-50">
-          <div
-            className="bg-luminiBrandBlue shadow-lg shadow-black rounded-lg p-6 w-80"
-            ref={categoryRef}
-          >
-            <h2 className="text-center text-white text-lg mb-4">
-              Elegí una categoría
-            </h2>
-            <ul className="space-y-3">
-              {clientCategories?.map((cat: any) => (
-                <li
-                  key={cat.id}
-                  onClick={() => {
-                    setSelectedCategory(cat);
-                    setSelectedClientType(null); // reset clientType al cambiar categoría
-                    setShowCategoryPopup(false);
-                  }}
-                  className="px-3 py-2 bg-ligthBrandBlue text-white rounded cursor-pointer hover:bg-gray-600"
-                >
-                  {cat.name}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
+      {settings?.registerView === "default" ? (
+        <DefaultOfferingForm
+          selectedCategory={selectedCategory}
+          setSelectedCategory={setSelectedCategory}
+          selectedClientType={selectedClientType}
+          setSelectedClientType={setSelectedClientType}
+          selectedPaymentMethod={selectedPaymentMethod}
+          setSelectedPaymentMethod={setSelectedPaymentMethod}
+          selectedClient={selectedClient}
+          setSelectedClient={setSelectedClient}
+          clientCategories={clientCategories}
+          paymentMethods={paymentMethods}
+          clients={clients}
+          filteredClients={filteredClients}
+          settings={settings}
+          showCategoryPopup={showCategoryPopup}
+          setShowCategoryPopup={setShowCategoryPopup}
+          showClientTypePopup={showClientTypePopup}
+          setShowClientTypePopup={setShowClientTypePopup}
+          showPaymentPopup={showPaymentPopup}
+          setShowPaymentPopup={setShowPaymentPopup}
+          showClientPopup={showClientPopup}
+          setShowClientPopup={setShowClientPopup}
+          showSuccessPopup={showSuccessPopup}
+          showAdd={showAdd}
+          setShowAdd={setShowAdd}
+          newClientName={newClientName}
+          setNewClientName={setNewClientName}
+          newClientLastname={newClientLastname}
+          setNewClientLastname={setNewClientLastname}
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          categoryRef={categoryRef}
+          clientTypeRef={clientTypeRef}
+          paymentRef={paymentRef}
+          clientRef={clientRef}
+          addClient={addClient}
+          handleSubmit={handleSubmit}
+          loading={loading}
+        />
+      ) : (
+        <AlternativeOfferingForm
+          selectedCategory={selectedCategory}
+          setSelectedCategory={setSelectedCategory}
+          selectedClientType={selectedClientType}
+          setSelectedClientType={setSelectedClientType}
+          selectedPaymentMethod={selectedPaymentMethod}
+          setSelectedPaymentMethod={setSelectedPaymentMethod}
+          selectedClient={selectedClient}
+          setSelectedClient={setSelectedClient}
+          clientCategories={clientCategories}
+          paymentMethods={paymentMethods}
+          clients={clients}
+          filteredClients={filteredClients}
+          settings={settings}
+          showCategoryPopup={showCategoryPopup}
+          setShowCategoryPopup={setShowCategoryPopup}
+          showClientTypePopup={showClientTypePopup}
+          setShowClientTypePopup={setShowClientTypePopup}
+          showPaymentPopup={showPaymentPopup}
+          setShowPaymentPopup={setShowPaymentPopup}
+          showClientPopup={showClientPopup}
+          setShowClientPopup={setShowClientPopup}
+          showSuccessPopup={showSuccessPopup}
+          showAdd={showAdd}
+          setShowAdd={setShowAdd}
+          newClientName={newClientName}
+          setNewClientName={setNewClientName}
+          newClientLastname={newClientLastname}
+          setNewClientLastname={setNewClientLastname}
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          categoryRef={categoryRef}
+          clientTypeRef={clientTypeRef}
+          paymentRef={paymentRef}
+          clientRef={clientRef}
+          addClient={addClient}
+          handleSubmit={handleSubmit}
+          loading={loading}
+        />
       )}
-
-      {/* Tarjeta ClientType */}
-      {selectedCategory && (
-        <div
-          onClick={() => setShowClientTypePopup(true)}
-          className="px-4 py-3 bg-ligthBrandBlue text-white rounded-lg flex justify-between items-center cursor-pointer"
-        >
-          <span>
-            {selectedClientType ? selectedClientType.name : "Servicio"}
-          </span>
-          <FiChevronDown className="text-xl" />
-        </div>
-      )}
-
-      {showClientTypePopup && selectedCategory && (
-        <div className="fixed inset-0 backdrop-blur-sm bg-opacity-50 flex items-center justify-center z-50">
-          <div
-            className="bg-luminiBrandBlue shadow-md shadow-black rounded-lg p-6 w-80"
-            ref={clientTypeRef}
-          >
-            <h2 className="text-center text-white text-lg mb-4">
-              Elegí un servicio
-            </h2>
-            <ul className="space-y-2">
-              {selectedCategory.clientTypes?.map((service: any) => (
-                <li
-                  key={service.id}
-                  onClick={() => {
-                    setSelectedClientType(service);
-                    setShowClientTypePopup(false);
-                  }}
-                  className="px-3 py-2 bg-ligthBrandBlue text-white rounded cursor-pointer hover:bg-gray-600"
-                >
-                  {service.name} — ${service.price}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      )}
-
-      {/* Tarjeta PaymentMethod */}
-      <div
-        onClick={() => setShowPaymentPopup(true)}
-        className="px-4 py-3 bg-ligthBrandBlue text-white rounded-lg flex justify-between items-center cursor-pointer"
-      >
-        <span>
-          {selectedPaymentMethod
-            ? selectedPaymentMethod.type
-            : "Método de pago"}
-        </span>
-        <FiChevronDown className="text-xl" />
-      </div>
-
-      {showPaymentPopup && (
-        <div className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50">
-          <div
-            className="bg-luminiBrandBlue shadow-md shadow-black rounded-lg p-6 w-80"
-            ref={paymentRef}
-          >
-            <h2 className="text-center text-white text-lg mb-4">
-              Elegí un método de pago
-            </h2>
-            <ul className="space-y-3">
-              {paymentMethods?.map((method: any) => (
-                <li
-                  key={method.id}
-                  onClick={() => {
-                    setSelectedPaymentMethod(method);
-                    setShowPaymentPopup(false);
-                  }}
-                  className="px-3 py-2 bg-ligthBrandBlue text-white rounded cursor-pionter hover:bg-gray-600"
-                >
-                  {method.type}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      )}
-
-      {settings?.clients_in_offerings && (
-        <div
-          onClick={() => setShowClientPopup(true)}
-          className="px-4 py-3 bg-darkBrandBlue text-white rounded-lg flex justify-between items-center cursor-pointer"
-        >
-          <span>
-            {selectedClient
-              ? `${selectedClient.name} ${selectedClient.lastname}`
-              : "Seleccionar cliente"}
-          </span>
-          <FiChevronDown className="text-xl" />
-        </div>
-      )}
-
-      {showClientPopup && (
-        <div className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50">
-          <div
-            className="border border-pink-600 bg-gray-800 rounded-lg p-6 w-80"
-            ref={clientRef}
-          >
-            {filteredClients.length > 0 && !showAdd && (
-              <h2 className="text-center text-white text-lg mb-4">
-                Elegí un cliente
-              </h2>
-            )}
-
-            {!showAdd && filteredClients.length > 0 && (
-              <div className="flex justify-between items-center mb-4">
-                <input
-                  type="text"
-                  placeholder="Buscar..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value.trim())}
-                  className="px-2 py-2 rounded bg-gray-700 text-white w-full max-w-xs focus:outline-none focus:ring-2 focus:ring-pink-400"
-                />
-                <button
-                  onClick={() => setShowAdd(true)}
-                  className="flex gap-2 items-center justify-center bg-pink-400 px-2  text-white rounded-md hover:bg-pink-500 transition-colors font-bold ml-2"
-                >
-                  <span>nuevo </span>
-                  <span className="text-4xl">+</span>
-                </button>
-              </div>
-            )}
-
-            {/* Lista de clientes con scroll */}
-            {!showAdd && (
-              <ul className="space-y-3 max-h-48 overflow-y-auto">
-                {clients.length === 0 ? (
-                  <li className="p-3 text-gray-400 text-center">
-                    Aun no tienes clientes
-                    <div className="flex gap-2 justify-center mt-2">
-                      <button
-                        onClick={() => setShowAdd(true)}
-                        className="bg-pink-400 text-white px-3 py-2 rounded hover:bg-pink-500 transition-colors text-sm font-semibold"
-                      >
-                        Agregar ahora
-                      </button>
-                      <button
-                        onClick={() => setShowClientPopup(false)}
-                        className="bg-gray-600 text-white px-3 py-2 rounded hover:bg-gray-700 transition-colors text-sm font-semibold"
-                      >
-                        Cancelar
-                      </button>
-                    </div>
-                  </li>
-                ) : filteredClients.length > 0 ? (
-                  <div>
-                    {searchTerm.length === 0 && (
-                      <li
-                        onClick={() => {
-                          setSelectedClient(null);
-                          setShowClientPopup(false);
-                        }}
-                        className="px-3 py-2 border border-pink-600 bg-gray-700 text-white rounded-lg cursor-pointer hover:bg-gray-600 transition-colors mb-1"
-                      >
-                        <div className="flex flex-col">
-                          <span className="font-semibold">Sin cliente</span>
-                        </div>
-                      </li>
-                    )}
-                    {filteredClients.map((client) => (
-                      <li
-                        key={client.id}
-                        onClick={() => {
-                          setSelectedClient(client);
-                          setShowClientPopup(false);
-                        }}
-                        className="px-3 py-2 border border-pink-600 bg-gray-700 text-white rounded-lg cursor-pointer hover:bg-gray-600 transition-colors mb-1"
-                      >
-                        <div className="flex flex-col">
-                          <span className="font-semibold">
-                            {client.name} {client.lastname}
-                          </span>
-                        </div>
-                      </li>
-                    ))}
-                  </div>
-                ) : (
-                  <li className="p-3 text-gray-400 text-center">
-                    No se encontraron coincidencias
-                    <div className="flex flex-col gap-2 justify-center mt-2">
-                      <button
-                        onClick={() => setShowAdd(true)}
-                        className="bg-pink-400 text-white px-3 py-2 rounded hover:bg-pink-500 transition-colors text-sm font-semibold"
-                      >
-                        Agregar nuevo cliente
-                      </button>
-                      <button
-                        onClick={() => {
-                          setShowAdd(false); // volvemos a la vista original
-                          setSearchTerm(""); // opcional: limpiar búsqueda
-                        }}
-                        className="bg-gray-600 text-white px-3 py-2 rounded hover:bg-gray-700 transition-colors text-sm font-semibold"
-                      >
-                        Cancelar
-                      </button>
-                    </div>
-                  </li>
-                )}
-              </ul>
-            )}
-
-            {/* Formulario para agregar cliente */}
-            {showAdd && (
-              <AddClientForm
-                newClientName={newClientName}
-                setNewClientName={setNewClientName}
-                newClientLastname={newClientLastname}
-                setNewClientLastname={setNewClientLastname}
-                setSelectedClient={setSelectedClient}
-                setShowAdd={setShowAdd}
-                setShowClientPopup={setShowClientPopup}
-                addClient={addClient}
-              />
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Card resumen al final */}
-      <div className="w-full text-center mt-10">
-          <button
-            onClick={handleSubmit}
-            disabled={loading}
-            className="bg-blue-500 hover:bg-green-600 text-white font-semibold px-6 py-3 rounded-lg transition-colors duration-200"
-          >
-            Registrar
-          </button>
-        </div>
     </div>
   );
 }
