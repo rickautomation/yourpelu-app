@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useEstablishment } from "@/app/context/EstablishmentContext";
 import { FaEdit } from "react-icons/fa";
 import { useRouter } from "next/navigation";
+import { apiPatch } from "@/app/lib/apiPatch";
 
 export default function InformationPage() {
-  const { activeEstablishment } = useEstablishment();
+  const { activeEstablishment, fetchEstablishmentById } = useEstablishment();
   const router = useRouter();
 
   const [editingField, setEditingField] = useState<string | null>(null);
@@ -16,18 +17,38 @@ export default function InformationPage() {
     address: activeEstablishment?.address || "",
   });
 
+  // 👇 sincronizar formData cada vez que activeEstablishment cambie
+  useEffect(() => {
+    if (activeEstablishment) {
+      setFormData({
+        name: activeEstablishment.name || "",
+        phoneNumber: activeEstablishment.phoneNumber || "",
+        address: activeEstablishment.address || "",
+      });
+    }
+  }, [activeEstablishment]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSave = (field: string) => {
-    console.log(
-      `Guardando ${field}:`,
-      formData[field as keyof typeof formData],
-    );
-    // acá iría tu lógica de actualización (PATCH/PUT al backend)
-    setEditingField(null);
+  const handleSave = async (field: string) => {
+    try {
+      const value = formData[field as keyof typeof formData];
+      await apiPatch(`/establishment/${activeEstablishment?.id}`, {
+        [field]: value,
+      });
+
+      // refrescar el establecimiento en contexto
+      if (activeEstablishment?.id) {
+        await fetchEstablishmentById(activeEstablishment.id);
+      }
+
+      setEditingField(null);
+    } catch (err: any) {
+      alert(`Error al guardar ${field}: ${err.message}`);
+    }
   };
 
   return (
@@ -44,8 +65,8 @@ export default function InformationPage() {
             {field === "phoneNumber"
               ? "Teléfono"
               : field === "address"
-                ? "Dirección"
-                : "Nombre"}
+              ? "Dirección"
+              : "Nombre"}
           </label>
 
           {editingField === field ? (

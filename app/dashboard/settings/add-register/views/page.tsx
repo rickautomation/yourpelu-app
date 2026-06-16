@@ -23,7 +23,7 @@ export interface EstablishmentSettings {
 }
 
 export default function RegisterViews() {
-  const { activeEstablishment } = useEstablishment();
+  const { activeEstablishment, fetchEstablishmentById } = useEstablishment();
 
   const images = [
     {
@@ -59,13 +59,14 @@ export default function RegisterViews() {
         },
       );
 
+       setTimeout(async () => {
+        if (activeEstablishment?.id) {
+          await fetchEstablishmentById(activeEstablishment.id);
+        }
+      }, 1000);
+
       setSelectedView(updated.registerView);
       setShowModal(true);
-
-      // ⏱️ Mostrar modal 1 segundo y luego recargar
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
     } catch (err) {
       console.error(err);
       alert("No se pudo actualizar la vista");
@@ -114,7 +115,7 @@ export default function RegisterViews() {
         <div className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="bg-darkBrandBlue rounded-lg shadow-lg p-6 text-center border border-green-500">
             <div className="flex justify-center mb-4">
-             <FiCheckCircle className="text-green-400 text-3xl" />
+              <FiCheckCircle className="text-green-400 text-3xl" />
             </div>
             <h2 className="text-xl font-bold mb-2">¡Vista actualizada!</h2>
             <p>

@@ -1,8 +1,10 @@
 "use client";
 import { useEstablishment } from "@/app/context/EstablishmentContext";
 import { apiPost } from "@/app/lib/apiPost";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FiCheckCircle } from "react-icons/fi";
+import CustomTimeInput from "./CustomTimeInput";
+import { useRouter } from "next/navigation";
 
 interface StepSevenProps {
   setStep?: (step: number) => void;
@@ -10,8 +12,7 @@ interface StepSevenProps {
 
 const SchedulesSetup: React.FC<StepSevenProps> = ({ setStep }) => {
   const { activeEstablishment } = useEstablishment();
-
-    console.log("active en 8: ", activeEstablishment)
+  const router = useRouter();
 
   // Mapeo de número → nombre de día
   const dayNames: Record<number, string> = {
@@ -57,7 +58,7 @@ const SchedulesSetup: React.FC<StepSevenProps> = ({ setStep }) => {
       setTimeout(() => setShowPopup(false), 1000);
 
       // 👇 refresca el componente y vuelve a cargar los datos
-      window.location.reload();
+     window.location.reload()
     } catch (err: any) {
       console.error(err);
       alert(`Error al guardar horarios: ${err.message}`);
@@ -87,11 +88,17 @@ const SchedulesSetup: React.FC<StepSevenProps> = ({ setStep }) => {
     );
   };
 
-  const handleContinue = () => {
-    if (setStep) {
-      setStep(9); // solo si existe
-    }
-  };
+  console.log(schedules)
+
+  useEffect(() => {
+  if (
+    schedules.length > 0 &&
+    schedules.every((sch) => sch.timeRanges && sch.timeRanges.length > 0)
+  ) {
+    if (setStep) setStep(9);
+    router.push("/dashboard/initial-setup?step=9");
+  }
+}, [schedules, setStep, router]);
 
   return (
     <div className="text-center">
@@ -150,60 +157,36 @@ const SchedulesSetup: React.FC<StepSevenProps> = ({ setStep }) => {
         (sch) => !sch.timeRanges || sch.timeRanges.length === 0,
       ) &&
         (mode === "continuo" ? (
-          <div className="flex gap-4 w-full max-w-md mx-auto mb-8">
-            <input
-              type="time"
+          <div className="flex gap-4 w-full max-w-md mx-auto mb-8 rounded bg-luminiBrandBlue p-2">
+            <CustomTimeInput
               value={schedule.start1 || ""}
-              onChange={(e) =>
-                setSchedule({ ...schedule, start1: e.target.value })
-              }
-              className="border rounded px-3 py-2 flex-1 focus:ring-2 focus:ring-pink-500"
+              onChange={(val) => setSchedule({ ...schedule, start1: val })}
             />
-            <input
-              type="time"
+            <CustomTimeInput
               value={schedule.end1 || ""}
-              onChange={(e) =>
-                setSchedule({ ...schedule, end1: e.target.value })
-              }
-              className="border rounded px-3 py-2 flex-1 focus:ring-2 focus:ring-pink-500"
+              onChange={(val) => setSchedule({ ...schedule, end1: val })}
             />
           </div>
         ) : (
           <div className="flex flex-col gap-4 w-full max-w-md mx-auto mb-8">
-            <div className="flex gap-4 w-full">
-              <input
-                type="time"
+            <div className="flex gap-4 w-full rounded bg-luminiBrandBlue p-2">
+              <CustomTimeInput
                 value={schedule.start1 || ""}
-                onChange={(e) =>
-                  setSchedule({ ...schedule, start1: e.target.value })
-                }
-                className="border rounded px-3 py-2 flex-1 focus:ring-2 focus:ring-pink-500"
+                onChange={(val) => setSchedule({ ...schedule, start1: val })}
               />
-              <input
-                type="time"
+              <CustomTimeInput
                 value={schedule.end1 || ""}
-                onChange={(e) =>
-                  setSchedule({ ...schedule, end1: e.target.value })
-                }
-                className="border rounded px-3 py-2 flex-1 focus:ring-2 focus:ring-pink-500"
+                onChange={(val) => setSchedule({ ...schedule, end1: val })}
               />
             </div>
-            <div className="flex gap-4 w-full">
-              <input
-                type="time"
+            <div className="flex gap-4 w-full rounded bg-luminiBrandBlue p-2">
+              <CustomTimeInput
                 value={schedule.start2 || ""}
-                onChange={(e) =>
-                  setSchedule({ ...schedule, start2: e.target.value })
-                }
-                className="border rounded px-3 py-2 flex-1 focus:ring-2 focus:ring-pink-500"
+                onChange={(val) => setSchedule({ ...schedule, start2: val })}
               />
-              <input
-                type="time"
+              <CustomTimeInput
                 value={schedule.end2 || ""}
-                onChange={(e) =>
-                  setSchedule({ ...schedule, end2: e.target.value })
-                }
-                className="border rounded px-3 py-2 flex-1 focus:ring-2 focus:ring-pink-500"
+                onChange={(val) => setSchedule({ ...schedule, end2: val })}
               />
             </div>
           </div>
@@ -221,46 +204,11 @@ const SchedulesSetup: React.FC<StepSevenProps> = ({ setStep }) => {
         </button>
       )}
 
-      <div className="mt-6 text-left max-w-md mx-auto px-2">
-        {schedules
-          .filter((sch) => sch.timeRanges && sch.timeRanges.length > 0)
-          .map((sch) => (
-            <div key={sch.id} className="mb-2 flex items-center">
-              <p className="font-semibold w-24">{dayNames[sch.dayOfWeek]}</p>
-              <p className="text-sm">
-                {sch.timeRanges
-                  .map((tr) => `${tr.start} a ${tr.end}`)
-                  .join(" y de ")}
-              </p>
-            </div>
-          ))}
-      </div>
-
-      {/* Botón continuar si todos los días tienen horarios */}
-      {schedules.length > 0 &&
-        schedules.every(
-          (sch) => sch.timeRanges && sch.timeRanges.length > 0,
-        ) && (
-          <div className="mt-6 flex gap-4 w-full max-w-md mx-auto px-2">
-            <button className="flex-1 bg-pink-600 text-white px-6 py-2 rounded font-semibold hover:bg-pink-700 transition-colors">
-              Editar
-            </button>
-            <button
-              onClick={handleContinue} // 👈 avanza al siguiente paso
-              className="flex-1 bg-blue-600 text-white px-6 py-2 rounded font-semibold hover:bg-blue-700 transition-colors"
-            >
-              Continuar
-            </button>
-          </div>
-        )}
-
       {showPopup && (
         <div className="fixed inset-0 backdrop-blur-sm bg-opacity-70 flex items-center justify-center z-50">
           <div className="border border-green-500 bg-darkBrandBlue text-white rounded-lg shadow-lg p-6 flex items-center space-x-3">
             <FiCheckCircle className="text-green-400 text-3xl" />
-            <span className="font-semibold">
-              Horarios Guardados
-            </span>
+            <span className="font-semibold">Horarios Guardados</span>
           </div>
         </div>
       )}

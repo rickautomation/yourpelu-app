@@ -178,8 +178,9 @@ export default function NewOfferingFromCustomPage() {
               alert(`Error creando categoría: ${err.message}`);
             }
           }}
-          className="flex flex-col gap-4 mt-8"
+          className="flex flex-col gap-4 mt-2"
         >
+          <label>Nueva categoria</label>
           <input
             type="text"
             placeholder="Nombre categoría"
@@ -226,7 +227,8 @@ export default function NewOfferingFromCustomPage() {
 
       {/* Formulario */}
       {!showCategoryForm && (
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-8">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-2">
+          <label>Nuevo servicio</label>
           <input
             type="text"
             placeholder="Nombre"

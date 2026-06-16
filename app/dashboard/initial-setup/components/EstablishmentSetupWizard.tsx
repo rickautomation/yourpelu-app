@@ -11,6 +11,7 @@ import UploadLogo from "@/app/components/common/UploadLogo";
 import BookingEnabled from "@/app/components/common/BookingEnabled";
 import SelectScheduleDays from "@/app/components/common/SelectScheduleDays";
 import SchedulesSetup from "@/app/components/common/SchedulesSetup";
+import SchedulesConfirm from "./SchedulesConfirm";
 
 interface WizardProps {
   onFinish?: () => void;
@@ -93,7 +94,9 @@ export default function EstablishmentSetupWizard({
 
         {step === 8 && user && <SchedulesSetup setStep={setStep} />}
 
-        {step === 9 && (
+        {step === 9 && user && <SchedulesConfirm setStep={setStep}/>}
+
+        {step === 10 && (
           <div className="text-center">
             <h2 className="text-2xl font-bold mb-4">¡Listo!</h2>
             <p className="mb-6">
