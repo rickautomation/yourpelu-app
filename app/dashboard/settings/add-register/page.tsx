@@ -93,7 +93,7 @@ export default function AddRegisterPage() {
   }, [activeEstablishment?.id]);
 
   return (
-    <div className="min-h-screen text-white p-6 space-y-4">
+    <div className="text-white p-6 space-y-4">
       {/* Header */}
       <header className="border-b border-gray-700 pb-4 text-xl">
         <p>{"Settings > Register"}</p>

@@ -2,7 +2,7 @@
 import { useEstablishment } from "@/app/context/EstablishmentContext";
 import { apiPost } from "@/app/lib/apiPost";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { apiGet } from "@/app/lib/apiGet";
 
 type Establishment = {

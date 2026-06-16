@@ -123,6 +123,15 @@ export function useUserEstablishment(user: User | null) {
     loadSettings();
   }, [activeEstablishment, reloadEffect]);
 
+   const fetchEstablishmentById = async (id: string) => {
+    try {
+      const est = await apiGet<Establishment>(`/establishment/${id}`);
+      setActiveEstablishment(est);
+    } catch (err) {
+      console.error("Error cargando establecimiento por id", err);
+    }
+  };
+
   return {
     activeEstablishment,
     establishments,
@@ -130,6 +139,7 @@ export function useUserEstablishment(user: User | null) {
     types,
     setActiveEstablishment,
     loading,
-    reload
+    reload,
+    fetchEstablishmentById
   };
 }
