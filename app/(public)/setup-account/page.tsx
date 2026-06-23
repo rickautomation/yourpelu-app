@@ -100,13 +100,13 @@ export default function SetupAccountPage() {
               required
               className="w-full px-4 py-2 rounded bg-luminiBrandBlue text-white focus:outline-none focus:ring-2 focus:ring-pink-400 pr-10"
             />
-            <button
+            {/* <button
               type="button"
               onClick={togglePasswordVisibility}
               className="absolute right-4 top-2 text-gray-400 hover:text-white"
             >
               {showPassword ? <FaEyeSlash size={26} /> : <FaEye size={26} />}
-            </button>
+            </button> */}
           </div>
 
           {/* Confirmar contraseña */}
@@ -119,7 +119,7 @@ export default function SetupAccountPage() {
               required
               className="w-full px-4 py-2 rounded bg-luminiBrandBlue text-white focus:outline-none focus:ring-2 focus:ring-pink-400 pr-10"
             />
-            <button
+            {/* <button
               type="button"
               onClick={toggleConfirmPasswordVisibility}
               className="absolute right-4 top-2 text-gray-400 hover:text-white"
@@ -129,7 +129,7 @@ export default function SetupAccountPage() {
               ) : (
                 <FaEye size={26} />
               )}
-            </button>
+            </button> */}
           </div>
 
           <button

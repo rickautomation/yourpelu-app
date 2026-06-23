@@ -46,7 +46,7 @@ export default function DashboardPage() {
   return (
     <div className="flex flex-col space-y-4 p-4">
       {/* Caso 1: sin barbería activa */}
-      {!activeEstablishment && activeEstablishment !== undefined && (
+      {activeEstablishment === null && (
         <div className="text-center">
           <h2 className="text-2xl font-bold mb-4">Hola {userName}!</h2>
           <p className="mb-6">

@@ -45,6 +45,7 @@ export default function AppointmentsPage() {
 
   const [popupMessage, setPopupMessage] = useState<string | null>(null);
 
+  console.log("user: ", user)
  console.log("active: ", activeEstablishment)
 
   const fetchAppointments = async () => {
@@ -127,7 +128,7 @@ export default function AppointmentsPage() {
 
   if (loading)
     return (
-      <div className="flex items-center justify-center h-screen">
+      <div className="flex items-center justify-center">
         <div className="w-12 h-12 border-4 border-pink-500 border-t-transparent rounded-full animate-spin"></div>
       </div>
     );

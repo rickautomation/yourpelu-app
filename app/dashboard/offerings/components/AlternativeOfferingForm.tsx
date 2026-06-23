@@ -94,7 +94,7 @@ export default function AlternativeOfferingForm(props: OfferingFormProps) {
 
   return (
     <>
-      <div className="bg-exposeBrandBlue text-white rounded-lg shadow-lg p-6 space-y-4 mb-18">
+      {/* <div className="bg-exposeBrandBlue text-white rounded-lg shadow-lg p-6 space-y-4 mb-18">
         <div className="flex justify-between">
           <p className="font-semibold">
             {selectedCategory?.name || "Categoría"}
@@ -139,12 +139,53 @@ export default function AlternativeOfferingForm(props: OfferingFormProps) {
             </div>
           </div>
         )}
+      </div> */}
+      <div className="bg-exposeBrandBlue text-white rounded-lg shadow-lg p-6 space-y-4 mb-18">
+        <div className="grid grid-cols-2 gap-y-3">
+          <p className="font-semibold">
+            {selectedCategory?.name || "Categoría"}
+          </p>
+          <p className="font-semibold text-end">
+            {selectedClientType?.name || "Servicio"}
+          </p>
+
+          <p className="text-green-400 font-bold">
+            {selectedClientType ? `$${selectedClientType.price}` : ""}
+          </p>
+          <p className="italic text-end">
+            {selectedPaymentMethod?.type || "Sin método de pago"}
+          </p>
+        </div>
+
+        {settings?.clients_in_offerings && (
+          <div className="grid grid-cols-2 gap-y-2">
+            <strong>Cliente:</strong>
+            {selectedClient ? (
+              <p className="italic text-end">
+                {selectedClient.name + " " + selectedClient.lastname}
+              </p>
+            ) : (
+              <p className="italic text-gray-400 text-end">Sin cliente</p>
+            )}
+          </div>
+        )}
+
+        {showSuccessPopup && (
+          <div className="fixed inset-0 backdrop-blur-sm bg-opacity-70 flex items-center justify-center z-50 p-6">
+            <div className="border border-green-500 bg-darkBrandBlue text-white rounded-lg shadow-lg p-6 flex items-center space-x-3">
+              <FiCheckCircle className="text-green-400 text-3xl" />
+              <span className="font-semibold">
+                {selectedCategory?.name} creado con éxito!
+              </span>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Tarjeta Categoría */}
       <div
         onClick={() => setShowCategoryPopup(true)}
-        className="px-4 py-3 bg-ligthBrandBlue text-white rounded-lg flex justify-between items-center cursor-pointer mt-40"
+        className="px-4 py-3 bg-ligthBrandBlue text-white rounded-lg flex justify-between items-center cursor-pointer mt-30"
       >
         <span>{selectedCategory ? selectedCategory.name : "Categoría"}</span>
         <FiChevronDown className="text-xl" />

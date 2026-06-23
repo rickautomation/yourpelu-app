@@ -11,7 +11,7 @@ type Establishment = {
   subdomain?: string;
   profile?: ProfileData;
   type?: EstablishmentType;
-  slug: string
+  slug: string;
   bookingLink?: string;
 };
 
@@ -53,16 +53,17 @@ interface User {
 }
 
 export function useUserEstablishment(user: User | null) {
-  const [activeEstablishment, setActiveEstablishment] =
-    useState<Establishment | null>(null);
+  const [activeEstablishment, setActiveEstablishment] = useState<
+    Establishment | null | undefined
+  >(undefined);
   const [establishments, setEstablishments] = useState<Establishment[]>([]);
   const [settings, setSettings] = useState<any>(null);
   const [types, setTypes] = useState<EstablishmentType[]>([]);
   const [loading, setLoading] = useState(false);
   const [reloadEffect, setReloadEffect] = useState(false);
 
-  const reload = () => setReloadEffect(prev => !prev);
-  
+  const reload = () => setReloadEffect((prev) => !prev);
+
   useEffect(() => {
     if (!user) return;
 
@@ -123,7 +124,7 @@ export function useUserEstablishment(user: User | null) {
     loadSettings();
   }, [activeEstablishment, reloadEffect]);
 
-   const fetchEstablishmentById = async (id: string) => {
+  const fetchEstablishmentById = async (id: string) => {
     try {
       const est = await apiGet<Establishment>(`/establishment/${id}`);
       setActiveEstablishment(est);
@@ -140,6 +141,6 @@ export function useUserEstablishment(user: User | null) {
     setActiveEstablishment,
     loading,
     reload,
-    fetchEstablishmentById
+    fetchEstablishmentById,
   };
 }
