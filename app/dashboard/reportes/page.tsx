@@ -64,6 +64,8 @@ export default function ReportsPage() {
     error,
   } = useAnalytics(activeEstablishment?.id, dayRange);
 
+  console.log(categories);
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -149,34 +151,71 @@ export default function ReportsPage() {
       {reportType === "summary" ? (
         // 🔹 Render actual de Resumen
         summary && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-6">
-            <div className="flex-1 bg-exposeBrandBlue shadow-md rounded-lg p-6 flex flex-col gap-1 items-center">
-              <p className="text-5xl font-bold text-blue-600">
-                {summary.servicesCount}
-              </p>
-              <div className="flex text-center text-xl">
-                <h3 className="font-semibold text-white mb-2">Servicios</h3>
+          <>
+            <div className="bg-luminiBrandBlue shadow-md rounded-lg p-6 flex gap-4 items-center justify-between text-3xl px-10">
+              <div className="flex flex-col items-center">
+                <p className="font-bold text-blue-600">
+                  {summary.servicesCount}
+                </p>
+                <h3 className="font-semibold text-white text-sm">Servicios</h3>
               </div>
-            </div>
 
-            <div className="flex-1 bg-exposeBrandBlue shadow-md rounded-lg p-6 flex flex-col gap-1 items-center">
-              <p className="text-5xl font-bold text-green-600">
-                ${Number(summary.totalRevenue).toLocaleString("es-AR")}
-              </p>
-              <div className="flex gap-1 text-center text-xl">
-                <h3 className="font-semibold text-white mb-2">Total</h3>
-                <h3 className="font-semibold text-white mb-2">acumulado</h3>
+              <div className="flex flex-col items-center">
+                <p className="font-bold text-green-600">
+                  ${Number(summary.totalRevenue).toLocaleString("es-AR")}
+                </p>
+                <h3 className="font-semibold text-white text-sm">
+                  Total acumulado
+                </h3>
               </div>
             </div>
-          </div>
+            {user?.rol === "admin" && (
+              <div className="bg-luminiBrandBlue shadow-md rounded-lg p-6 flex flex-col gap-4 text-lg">
+                {usersSummary.map((user) => (
+                  <div
+                    key={user.userId}
+                    className="grid grid-cols-3 gap-2 px-4"
+                  >
+                    <p className="text-left">{user.userName}</p>
+                    <p className="text-center text-blue-600 font-semibold">
+                      x{user.servicesCount}
+                    </p>
+                    <p className="text-right text-green-600 font-semibold">
+                      $ {Number(user.totalRevenue).toLocaleString("es-AR")}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
+            <div className="bg-luminiBrandBlue shadow-md rounded-lg p-6 flex flex-col gap-4 text-lg">
+              {categories.map((category) => (
+                <div
+                  key={category.id}
+                  className={`grid grid-cols-3 gap-2 px-4 ${category.name.length > 10 && "items-end"}`}
+                >
+                  <p
+                    className={`text-left ${category.name.length > 10 ? "text-xs" : "text-lg"}`}
+                  >
+                    {category.name}
+                  </p>
+                  <p className="text-center text-blue-600 font-semibold">
+                    x{category.totalCount}
+                  </p>
+                  <p className="text-right text-green-600 font-semibold">
+                    $ {Number(category.totalPrice).toLocaleString("es-AR")}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </>
         )
       ) : (
         // 🔹 Vista de detalle
         <div className="space-y-3 py-2">
           {/* Barberos/Usuarios */}
           {usersSummary.length > 0 && user?.rol === "admin" && (
-            <div className="bg-exposeBrandBlue shadow-md rounded-lg p-4">
-              <h3 className="text-lg font-semibold text-white mb-4 border-b">
+            <div className="bg-luminiBrandBlue shadow-md rounded-lg p-4">
+              <h3 className="text-lg font-semibold text-blue-600 mb-4 border-b">
                 Barberos
               </h3>
               <div className="grid grid-cols-3 gap-4 text-white">
@@ -195,8 +234,8 @@ export default function ReportsPage() {
 
           {/* Métodos de pago */}
           {paymentMethods.length > 0 && (
-            <div className="bg-exposeBrandBlue shadow-md rounded-lg p-4">
-              <h3 className="text-lg font-semibold text-white mb-4 border-b">
+            <div className="bg-luminiBrandBlue shadow-md rounded-lg p-4">
+              <h3 className="text-blue-600 text-lg font-semibold mb-4 border-b">
                 Métodos de pago
               </h3>
               <div className="grid grid-cols-3 gap-4 text-white ">
@@ -215,23 +254,23 @@ export default function ReportsPage() {
 
           {/* Categorías */}
           {categories.length > 0 && (
-            <div className="bg-exposeBrandBlue shadow-md rounded-lg p-3">
-              <h3 className="text-lg font-semibold text-white mb-4">
+            <div className="bg-luminiBrandBlue shadow-md rounded-lg p-3">
+              <h3 className="text-lg font-semibold text-blue-600 mb-4">
                 Categorías
               </h3>
               <div className="space-y-4">
                 {categories.map((cat) => (
                   <div
                     key={cat.id}
-                    className="text-white border rounded-md p-2"
+                    className="text-white border border-blue-600 rounded-md p-2"
                   >
                     {/* Cabecera de la categoría */}
-                    <div className="grid grid-cols-3 gap-4 font-bold mb-2 border-b border-gray-600">
+                    <div className="font-bold mb-2 border-b border-gray-600 p-2">
                       <span>{cat.name}</span>
                     </div>
 
                     {/* Tipos dentro de la categoría */}
-                    <div className="grid grid-cols-[2fr_1fr_2fr] gap-4 ml-4 items-end text-start ">
+                    <div className="grid grid-cols-[2fr_1fr_2fr] gap-4 ml-4 items-end text-start">
                       {Object.entries(cat.types).map(([typeName, typeData]) => (
                         <div key={typeName} className="contents">
                           <span className="text-sm">{typeName}</span>
@@ -243,7 +282,7 @@ export default function ReportsPage() {
                       ))}
                     </div>
 
-                    <div className="grid grid-cols-3 gap-4 font-bold mt-2 border-t border-gray-600">
+                    <div className="grid grid-cols-3 gap-4 font-bold mt-2 border-t border-gray-600 p-2">
                       <span>{"Total: "}</span>
                       <span>{cat.totalCount} servicios</span>
                       <span className="text-right">
@@ -258,8 +297,8 @@ export default function ReportsPage() {
 
           {/* Clientes */}
           {clientsSummary.length > 0 && (
-            <div className="bg-exposeBrandBlue shadow-md rounded-lg p-4">
-              <h3 className="text-lg font-semibold text-white mb-4 border-b">
+            <div className="bg-luminiBrandBlue shadow-md rounded-lg p-4">
+              <h3 className="text-lg font-semibold text-blue-600 mb-4 border-b">
                 Clientes
               </h3>
               <div className="grid grid-cols-3 gap-4 text-white">

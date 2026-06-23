@@ -255,17 +255,19 @@ export default function SidebarNav({
                   </SidebarLink>
                 </div>
 
-                <div className="flex justify-start">
-                  <SidebarLink
-                    href="/dashboard/settings"
-                    setSidebarOpen={setSidebarOpen}
-                    className="flex items-center justify-start gap-2 rounded-md p-4 text-xl transition-colors cursor-pointer"
-                    style={{ width: "calc(50% - 0.375rem)" }}
-                  >
-                    <FiSettings className="inline w-8 h-8" />
-                    <p>Config</p>
-                  </SidebarLink>
-                </div>
+                {userRole === "admin" && (
+                  <div className="flex justify-start">
+                    <SidebarLink
+                      href="/dashboard/settings"
+                      setSidebarOpen={setSidebarOpen}
+                      className="flex items-center justify-start gap-2 rounded-md p-4 text-xl transition-colors cursor-pointer"
+                      style={{ width: "calc(50% - 0.375rem)" }}
+                    >
+                      <FiSettings className="inline w-8 h-8" />
+                      <p>Config</p>
+                    </SidebarLink>
+                  </div>
+                )}
               </>
             )}
           </div>
