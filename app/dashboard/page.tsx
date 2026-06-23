@@ -1,20 +1,24 @@
 "use client";
 
-import { FaUserPlus } from "react-icons/fa";
-import Link from "next/link";
+// import { FaUserPlus } from "react-icons/fa";
+// import Link from "next/link";
 import { useOfferings } from "../hooks/useOfferings";
 import { useAuth } from "../hooks/useAuth";
 import { useEstablishment } from "../context/EstablishmentContext";
 
 export default function DashboardPage() {
   const { user, loading, router } = useAuth();
-  const { activeEstablishment, loading: establishmentLoading } =
+  const { activeEstablishment, loading: establishmentLoading, establishments } =
     useEstablishment();
   const { clientOfferings, loading: offeringsLoading } = useOfferings(
     activeEstablishment?.id,
   );
 
   const userName = user?.name || "Usuario";
+
+  console.log("user: ", user)
+  console.log("active: ", activeEstablishment)
+  console.log("establishments: ", establishments)
 
   if (loading || establishmentLoading || offeringsLoading) {
     return (
@@ -46,7 +50,7 @@ export default function DashboardPage() {
   return (
     <div className="flex flex-col space-y-4 p-4">
       {/* Caso 1: sin barbería activa */}
-      {activeEstablishment === null && (
+      {activeEstablishment === null || user?.rol === "user" && (
         <div className="text-center">
           <h2 className="text-2xl font-bold mb-4">Hola {userName}!</h2>
           <p className="mb-6">
@@ -95,12 +99,6 @@ export default function DashboardPage() {
               {activeEstablishment?.phoneNumber}
             </p>
           </div>
-          <Link href="/dashboard/barberos/new">
-            <button className="border-2 border-pink-300 hover:bg-pink-700 text-white p-3 rounded-md text-xl flex items-center gap-2">
-              <FaUserPlus />
-              <span className="text-xs">Agregar Miembro</span>
-            </button>
-          </Link>
         </section>
       )}
     </div>
