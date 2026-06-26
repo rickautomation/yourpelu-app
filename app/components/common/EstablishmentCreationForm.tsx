@@ -53,6 +53,7 @@ const EstablishmentCreationForm: React.FC<StepTwoProps> = ({
     phoneNumber: "",
   });
   const [showPopup, setShowPopup] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (field: string, value: string) => {
     setFormData({ ...formData, [field]: value });
@@ -60,6 +61,7 @@ const EstablishmentCreationForm: React.FC<StepTwoProps> = ({
 
 const handleSubmit = async () => {
   try {
+    setIsSubmitting(true);
     const response = await apiPost<{ establishment: CurrentEstablishment }>(
       "/establishment",
       {
@@ -98,6 +100,8 @@ const handleSubmit = async () => {
     }, 1500);
   } catch (error) {
     console.error("Error creando barbería:", error);
+  } finally {
+    setIsSubmitting(false); 
   }
 };
 
@@ -150,9 +154,10 @@ const handleSubmit = async () => {
 
         <button
           type="submit"
+          disabled={isSubmitting}
           className="bg-pink-400 text-white px-4 py-2 rounded hover:bg-pink-500 transition-colors font-semibold"
         >
-          Crear establecimiento
+          {isSubmitting ? "Creando..." : "Crear establecimiento"}
         </button>
       </form>
 

@@ -25,11 +25,29 @@ const SchedulesSetup: React.FC<StepSevenProps> = ({ setStep }) => {
     6: "Sábado",
   };
   const [showPopup, setShowPopup] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const applySchedule = async () => {
     if (selectedDays.length === 0) {
       alert("Selecciona al menos un día");
       return;
+    }
+
+    if (mode === "continuo") {
+      if (!schedule.start1 || !schedule.end1) {
+        alert("Completa todos los horarios");
+        return;
+      }
+    } else if (mode === "dividido") {
+      if (
+        !schedule.start1 ||
+        !schedule.end1 ||
+        !schedule.start2 ||
+        !schedule.end2
+      ) {
+        alert("Completa todos los horarios");
+        return;
+      }
     }
 
     // construir intervalos
@@ -42,6 +60,7 @@ const SchedulesSetup: React.FC<StepSevenProps> = ({ setStep }) => {
     }
 
     try {
+      setIsSubmitting(true);
       // enviar para cada día seleccionado
       for (const day of selectedDays) {
         const scheduleEntity = schedules.find(
@@ -58,10 +77,12 @@ const SchedulesSetup: React.FC<StepSevenProps> = ({ setStep }) => {
       setTimeout(() => setShowPopup(false), 1000);
 
       // 👇 refresca el componente y vuelve a cargar los datos
-     window.location.reload()
+      window.location.reload();
     } catch (err: any) {
       console.error(err);
       alert(`Error al guardar horarios: ${err.message}`);
+    } finally {
+      setIsSubmitting(false); // 👈 volver a habilitar
     }
   };
 
@@ -88,17 +109,15 @@ const SchedulesSetup: React.FC<StepSevenProps> = ({ setStep }) => {
     );
   };
 
-  console.log(schedules)
-
   useEffect(() => {
-  if (
-    schedules.length > 0 &&
-    schedules.every((sch) => sch.timeRanges && sch.timeRanges.length > 0)
-  ) {
-    if (setStep) setStep(9);
-    router.push("/dashboard/initial-setup?step=9");
-  }
-}, [schedules, setStep, router]);
+    if (
+      schedules.length > 0 &&
+      schedules.every((sch) => sch.timeRanges && sch.timeRanges.length > 0)
+    ) {
+      if (setStep) setStep(9);
+      router.push("/dashboard/initial-setup?step=9");
+    }
+  }, [schedules, setStep, router]);
 
   return (
     <div className="text-center">
@@ -198,9 +217,14 @@ const SchedulesSetup: React.FC<StepSevenProps> = ({ setStep }) => {
       ) && (
         <button
           onClick={applySchedule}
-          className="w-full bg-pink-400 text-white px-6 py-2 rounded font-semibold hover:bg-green-700 transition-colors"
+          disabled={isSubmitting} // 👈 deshabilita mientras se envía
+          className={`w-full px-6 py-2 rounded font-semibold transition-colors ${
+            isSubmitting
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-pink-400 text-white hover:bg-green-700"
+          }`}
         >
-          Aplicar a días seleccionados
+          {isSubmitting ? "Guardando..." : "Aplicar a días seleccionados"}
         </button>
       )}
 

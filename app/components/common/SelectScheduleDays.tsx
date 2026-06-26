@@ -86,33 +86,41 @@ const SelectScheduleDays: React.FC<StepSixProps> = ({ setStep, user }) => {
     "Domingo",
   ];
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleAddScheduleDays = async () => {
-    if (activeEstablishment?.profile?.id) {
-      // Mapeamos nombres de días a números (ej: lunes=1, domingo=7)
-      const dayMap: Record<string, number> = {
-        Lunes: 1,
-        Martes: 2,
-        Miércoles: 3,
-        Jueves: 4,
-        Viernes: 5,
-        Sábado: 6,
-        Domingo: 7,
-      };
+    try {
+      setIsSubmitting(true);
+      if (activeEstablishment?.profile?.id) {
+        // Mapeamos nombres de días a números (ej: lunes=1, domingo=7)
+        const dayMap: Record<string, number> = {
+          Lunes: 1,
+          Martes: 2,
+          Miércoles: 3,
+          Jueves: 4,
+          Viernes: 5,
+          Sábado: 6,
+          Domingo: 7,
+        };
 
-      const days = selectedDays.map((d) => dayMap[d]);
-      await addScheduleDays(activeEstablishment.profile.id, days);
+        const days = selectedDays.map((d) => dayMap[d]);
+        await addScheduleDays(activeEstablishment.profile.id, days);
 
-      const response = await apiGet<Establishment>(
-        `/establishment/${activeEstablishment?.id}`,
-      );
-      setActiveEstablishment(response);
+        const response = await apiGet<Establishment>(
+          `/establishment/${activeEstablishment?.id}`,
+        );
+        setActiveEstablishment(response);
 
-      setStep(8); // avanzar al siguiente paso
-      router.push("/dashboard/initial-setup?step=8");
-    } else {
-      router.refresh();
-      alert("Todavía no se creó el establecimiento");
+        setStep(8); // avanzar al siguiente paso
+        router.push("/dashboard/initial-setup?step=8");
+      } else {
+        router.refresh();
+        alert("Todavía no se creó el establecimiento");
+      }
+    } catch (error) {
+      console.error("Error agregando días de atención:", error);
+    } finally {
+      setIsSubmitting(false); // 👈 volver a habilitar
     }
   };
 
@@ -149,8 +157,9 @@ const SelectScheduleDays: React.FC<StepSixProps> = ({ setStep, user }) => {
         <button
           className="bg-pink-600 px-12 py-2 rounded text-lg"
           onClick={handleAddScheduleDays}
+          disabled={isSubmitting}
         >
-          Hecho
+          {isSubmitting ? "Guardando..." : "Hecho"}
         </button>
       </div>
     </div>
