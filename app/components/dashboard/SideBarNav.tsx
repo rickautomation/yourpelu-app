@@ -20,6 +20,8 @@ import {
 import SidebarLink from "./SidebarLink";
 import { BiMaleFemale } from "react-icons/bi";
 import { MdOutlineAddHomeWork } from "react-icons/md";
+import { RiTeamLine } from "react-icons/ri";
+import { BsStars } from "react-icons/bs";
 
 type Establishment = {
   id: string;
@@ -195,8 +197,8 @@ export default function SidebarNav({
                     setSidebarOpen={setSidebarOpen}
                     className="basis-1/2 flex items-center text-end justify-start gap-2 rounded-md p-4 text-xl transition-colors cursor-pointer"
                   >
-                    <FiUsers className="w-8 h-8" />
-                    <p>Team</p>
+                    <RiTeamLine className="w-8 h-8"/>
+                    <p>Staff</p>
                   </SidebarLink>
 
                   <SidebarLink
@@ -221,7 +223,7 @@ export default function SidebarNav({
                     setSidebarOpen={setSidebarOpen}
                     className="basis-1/2 flex items-center justify-start gap-2 rounded-md p-4 text-lg transition-colors cursor-pointer"
                   >
-                    <FiList className="inline w-8 h-8" />
+                    <BsStars className="inline w-8 h-8" />
                     <div>
                       <p>Servicios</p>
                     </div>
@@ -250,7 +252,7 @@ export default function SidebarNav({
                     setSidebarOpen={setSidebarOpen}
                     className="basis-1/2 flex items-center justify-start gap-2 rounded-md p-4 text-xl transition-colors cursor-pointer"
                   >
-                    <BiMaleFemale className="w-8 h-8" />
+                    <FiUsers className="w-8 h-8" />
                     <p>Clientes</p>
                   </SidebarLink>
                 </div>

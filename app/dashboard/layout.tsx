@@ -54,7 +54,7 @@ export default function DashboardLayout({
 
   return (
     <EstablishmentProvider>
-      <div className="min-h-screen flex flex-col bg-brandBlue text-white relative">
+      <div className="min-h-screen flex flex-col bg-brandBlue text-white relative px-1">
         {!sidebarOpen && (
           <Navbar
             onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
