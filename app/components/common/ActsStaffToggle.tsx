@@ -67,7 +67,7 @@ const ActsStaffToggle: React.FC<StaffToggleProps> = ({ user, setStep }) => {
   return (
     <div className="flex flex-col gap-8 text-center">
       <p className="text-lg text-white font-medium">
-        ¿Quieres que tu cuenta funcione además de administrador como parte del{" "}
+        ¿Quieres que tu cuenta funcione además de propietario/administrador como parte del{" "}
         <strong>staff</strong> en este establecimiento?
       </p>
 

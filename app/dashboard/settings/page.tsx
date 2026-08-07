@@ -3,6 +3,7 @@
 import { useEstablishment } from "@/app/context/EstablishmentContext";
 import { AiOutlineRight } from "react-icons/ai";
 import { useRouter } from "next/navigation";
+import { RiTeamLine } from "react-icons/ri";
 
 export default function SettingsPage() {
   const { activeEstablishment } = useEstablishment();
@@ -57,6 +58,17 @@ export default function SettingsPage() {
         className="flex items-center justify-between rounded-md bg-luminiBrandBlue p-4 text-start cursor-pointer"
       >
         <p>Feed</p>
+        <div className="p-1 bg-ligthBrandBlue rounded-full">
+          <AiOutlineRight />
+        </div>
+      </div>
+
+      <div
+        onClick={() => router.push(`/dashboard/settings/staff`)}
+        className="flex items-center justify-between rounded-md bg-luminiBrandBlue p-4 text-start cursor-pointer"
+      >
+        <RiTeamLine />
+        <p>Staff</p>
         <div className="p-1 bg-ligthBrandBlue rounded-full">
           <AiOutlineRight />
         </div>

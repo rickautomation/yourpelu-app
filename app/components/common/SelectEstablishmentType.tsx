@@ -57,10 +57,12 @@ const SelectEstablishmentType: React.FC<StepOneProps> = ({
     fetchTypes();
   }, []);
 
+  console.log("types: ", types)
+
   return (
     <div className="">
-      <h2 className="text-lg text-center font-bold mb-4">
-        Elige el tipo de establecimiento
+      <h2 className="text-center font-bold mb-4">
+        Selecciona el tipo de establecimiento
       </h2>
 
       <div className="flex flex-col gap-3">
@@ -72,11 +74,12 @@ const SelectEstablishmentType: React.FC<StepOneProps> = ({
               setStep(2);
               router.push(`/dashboard/initial-setup?step=2&type=${t.id}`);
             }}
-            className={`bg-darkBrandBlue shadow-lg text-white px-4 py-4 rounded hover:bg-pink-500 transition-colors font-semibold ${
+            className={`bg-luminiBrandBlue shadow-lg text-start text-white px-4 py-4 rounded hover:bg-pink-500 transition-colors space-y-1 ${
               selectedType === t.id ? "ring-2 ring-pink-400" : ""
             }`}
           >
-            <p>{t.name}</p>
+            <p className="font-semibold text-pink-600">{t.name}</p>
+            <p className="text-sm">{t.description}</p>
           </button>
         ))}
       </div>

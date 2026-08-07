@@ -2,6 +2,19 @@
 import { useEffect, useState } from "react";
 import { apiGet } from "../lib/apiGet";
 
+type WorkModelType = {
+  id: string;
+  name: string;
+  description?: string;
+};
+
+type WorkModel = {
+  id: string;
+  type: WorkModelType;
+  value: number;
+  active: boolean;
+};
+
 type Establishment = {
   id: string;
   name: string;
@@ -13,6 +26,7 @@ type Establishment = {
   type?: EstablishmentType;
   slug: string;
   bookingLink?: string;
+  workModel?: WorkModel | null;
 };
 
 type EstablishmentImage = { id: string; imageUrl: string };

@@ -100,11 +100,11 @@ export default function EstablishmentSetupWizard({
           <div className="text-center">
             <h2 className="text-2xl font-bold mb-4">¡Listo!</h2>
             <p className="mb-6">
-              Has completado la configuración de tu barbería. Puedes empezar a
-              gestionar tus servicios y barberos.
+              Has completado la configuración. Puedes empezar a
+              gestionar tus servicios y staff.
             </p>
             <p>
-              ya puedes agregar barberos y gestionar tu barbería desde el menú
+              ya puedes agregar miembros a tu staff y gestionar tu establecimiento desde el menú
               de navegación.
             </p>
 

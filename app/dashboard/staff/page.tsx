@@ -2,9 +2,22 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/app/hooks/useAuth";
 import { apiGet } from "@/app/lib/apiGet";
-import { apiDelete } from "@/app/lib/apiDelete";
 import { FiUserPlus } from "react-icons/fi";
 import { useEstablishment } from "@/app/context/EstablishmentContext";
+import { FaChevronCircleRight } from "react-icons/fa";
+
+type WorkRelationAttribute = {
+  id: string;
+  name: string;
+  description?: string;
+};
+
+type WorkRelationType = {
+  id: string;
+  name: string;
+  description?: string;
+  attributes: WorkRelationAttribute[];
+};
 
 export default function StaffPage() {
   const { user, isUnauthorized, router } = useAuth();
@@ -22,6 +35,7 @@ export default function StaffPage() {
       userProfile?: { avatarUrl?: string };
     }[]
   >([]);
+  const [types, setTypes] = useState<WorkRelationType[]>([]);
   const [expandedStaffId, setExpandedStaffId] = useState<string | null>(null);
 
   const [showPopup, setShowPopup] = useState(false);
@@ -32,11 +46,21 @@ export default function StaffPage() {
         const res = await apiGet<typeof staff>(
           `/user/establishment/${shopId}/staff`,
         );
-        console.log("res staff: ", res)
+        console.log("res staff: ", res);
         setStaff(res);
       }
     } catch (err) {
       console.error("Error cargando miembro", err);
+    }
+  };
+
+  const fetchTypes = async () => {
+    try {
+      const resTypes = await apiGet<WorkRelationType[]>("/work-relation-types");
+      console.log("res types: ", resTypes);
+      setTypes(resTypes);
+    } catch (err: any) {
+      console.error("Error cargando tipos de relación", err.message);
     }
   };
 
@@ -52,14 +76,17 @@ export default function StaffPage() {
     if (activeEstablishment?.id) {
       setExpandedStaffId(null);
       fetchStaff(activeEstablishment?.id);
+      fetchTypes();
     } else {
       setStaff([]);
     }
   }, [activeEstablishment?.id]);
 
+  console.log("types: ", types);
+
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen">
+      <div className="flex items-center justify-center h-screen ">
         <div className="w-12 h-12 border-4 border-pink-500 border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
@@ -71,7 +98,7 @@ export default function StaffPage() {
   }
 
   return (
-    <div className="flex flex-col space-y-2 p-4">
+    <div className="flex flex-col space-y-2 py-4 px-6">
       {showPopup && (
         <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm z-50">
           <div className="bg-gray-800 p-6 rounded-lg shadow-xl text-center">
@@ -83,7 +110,7 @@ export default function StaffPage() {
       )}
 
       <div className="flex justify-center  items-center px-2 py-4">
-        <p className="text-3xl">{activeEstablishment?.name} Team</p>
+        <p className="text-3xl">{activeEstablishment?.name} Staff</p>
       </div>
 
       <div className="flex flex-col space-y-2 mt-2">
@@ -93,7 +120,7 @@ export default function StaffPage() {
           staff.map((member) => (
             <div
               key={member.id}
-              className="flex flex-col px-2 py-2 rounded-lg bg-exposeBrandBlue shadow-md"
+              className="flex items-center justify-between px-2 py-2 rounded-lg bg-exposeBrandBlue shadow-md"
             >
               <div className="flex items-center gap-3">
                 {/* Avatar o iniciales */}
@@ -110,129 +137,30 @@ export default function StaffPage() {
                   </div>
                 )}
 
-                <p className="text-2xl">
-                  {member.name} {member.lastname}
-                </p>
-
-                <button
-                  type="button"
-                  onClick={() =>
-                    setExpandedStaffId(
-                      expandedStaffId === member.id ? null : member.id,
-                    )
-                  }
-                  className="ml-auto flex items-center gap-1 bg-pink-400 text-white px-3 py-1 rounded hover:bg-gray-700 transition-colors text-sm font-semibold"
-                >
-                  {expandedStaffId === member.id ? (
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M5 15l7-7 7 7"
-                      />
-                    </svg>
-                  ) : (
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 9l-7 7-7-7"
-                      />
-                    </svg>
-                  )}
-                </button>
+                {member.id === user?.id ? (
+                  <p className="text-2xl">
+                    Vos
+                  </p>
+                ) : (
+                  <p className="text-2xl">
+                    {member.name} {member.lastname}
+                  </p>
+                )}
               </div>
 
-              {expandedStaffId === member.id && (
-                <div className="mt-2 text-center text-gray-200 text-sm space-y-1">
-                  <p>Teléfono: {member.phoneNumber}</p>
-                  {member.email && <p>Email: {member.email}</p>}
-                  {member.needsSetup && (
-                    <p className="text-yellow-400 font-semibold">
-                      ⚠️ Cuenta pendiente de activación
-                    </p>
-                  )}
-
-                  <div className="flex w-full gap-2 mt-2 text-lg">
-                    {member.needsSetup ? (
-                      <button
-                        onClick={async () => {
-                          try {
-                            await apiDelete(`/user/staff/soft/${member.id}`);
-                            fetchStaff(activeEstablishment!.id);
-                          } catch (err) {
-                            console.error("Error cancelando miembro", err);
-                          }
-                        }}
-                        className="flex-1 bg-rose-700 text-white p-2 rounded hover:bg-red-700 transition-colors font-semibold"
-                      >
-                        Cancelar cuenta
-                      </button>
-                    ) : (
-                      <div className="flex w-full gap-2 text-lg">
-                        <button
-                          onClick={async () => {
-                            try {
-                              await apiDelete(`/user/staff/soft/${member.id}`);
-                              fetchStaff(activeEstablishment!.id);
-                            } catch (err) {
-                              console.error("Error eliminando miembro", err);
-                            }
-                          }}
-                          className="flex-1 bg-rose-700 text-white p-2 rounded hover:bg-red-700 transition-colors font-semibold"
-                        >
-                          Eliminar
-                        </button>
-
-                        <button
-                          onClick={async () => {
-                            try {
-                              await apiDelete(
-                                `/user/staff/activity/${member.id}`,
-                              );
-                              fetchStaff(activeEstablishment!.id);
-                            } catch (err) {
-                              console.error("Error eliminando miembro", err);
-                            }
-                          }}
-                          className="flex-1 bg-pink-600 text-white px-3 py-1 rounded hover:bg-red-700 transition-colors font-semibold"
-                        >
-                          Actividad
-                        </button>
-                      </div>
-                    )}
-
-                    {member.activationLink && (
-                      <button
-                        onClick={() => {
-                          navigator.clipboard.writeText(member.activationLink!);
-                          setShowPopup(true);
-                          setTimeout(() => setShowPopup(false), 2000);
-                        }}
-                        className="flex-1 bg-pink-500 text-white p-2 rounded hover:bg-pink-600 transition-colors font-semibold"
-                      >
-                        Copiar enlace
-                      </button>
-                    )}
-                  </div>
-                </div>
-              )}
+              {/* Icono de navegación */}
+              <button
+                type="button"
+                onClick={() => router.push(`/dashboard/staff/${member.id}`)}
+                className="ml-auto text-pink-400 hover:text-pink-600 transition-colors"
+              >
+                <FaChevronCircleRight className="w-6 h-6" />
+              </button>
             </div>
           ))
         )}
       </div>
+
       <button
         onClick={() => router.push("/dashboard/staff/new")}
         className="fixed bottom-20 right-4 p-2 rounded-md bg-pink-500 text-white  shadow-md shadow-black hover:bg-pink-600 transition-colors"
