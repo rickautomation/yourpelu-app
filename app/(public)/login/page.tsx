@@ -15,7 +15,10 @@ export default function LoginPage({ setView }: Props) {
   const router = useRouter();
   const [form, setForm] = useState({ identifier: "", password: "" });
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState<{ text: string; isError: boolean } | null>(null);
+  const [message, setMessage] = useState<{
+    text: string;
+    isError: boolean;
+  } | null>(null);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -29,10 +32,14 @@ export default function LoginPage({ setView }: Props) {
       });
 
       if (data.ok) {
-        setMessage({ text: "¡Ingreso exitoso! Redirigiendo...", isError: false });
+        setMessage({
+          text: "¡Ingreso exitoso! Redirigiendo...",
+          isError: false,
+        });
         setTimeout(() => {
-          router.push("/workspace");
-        }, 1000);
+          // Usar window.location en lugar de router.push en flujos de login
+          window.location.href = "/workspace";
+        }, 300);
       }
     } catch (err: any) {
       console.error("Error de autenticación:", err);
@@ -52,15 +59,14 @@ export default function LoginPage({ setView }: Props) {
         <h1 className="text-2xl font-bold text-white mb-2">¡Hola de nuevo!</h1>
         <p className="text-xs sm:text-sm text-gray-300 leading-relaxed">
           Iniciá sesión para acceder a tu panel. Con Your
-          <span className="text-pink-400 font-semibold">Pelu</span> gestionás turnos,
-          clientes y servicios en un solo lugar.
+          <span className="text-pink-400 font-semibold">Pelu</span> gestionás
+          turnos, clientes y servicios en un solo lugar.
         </p>
       </div>
 
       {/* Tarjeta de Formulario */}
       <div className="w-full max-w-md p-6 sm:p-8">
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          
           {/* Campo Identificador */}
           <div>
             <label className="block text-xs font-semibold text-gray-300 mb-1.5 uppercase tracking-wider">
@@ -74,7 +80,9 @@ export default function LoginPage({ setView }: Props) {
                 type="text"
                 placeholder="ejemplo@correo.com o teléfono"
                 value={form.identifier}
-                onChange={(e) => setForm({ ...form, identifier: e.target.value })}
+                onChange={(e) =>
+                  setForm({ ...form, identifier: e.target.value })
+                }
                 className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-gray-900/50 border border-pink-600/30 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500 transition"
                 required
               />
