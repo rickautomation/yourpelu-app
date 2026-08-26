@@ -109,10 +109,6 @@ export default function StaffPage() {
         </div>
       )}
 
-      <div className="flex justify-center  items-center px-2 py-4">
-        <p className="text-3xl">{activeEstablishment?.name} Staff</p>
-      </div>
-
       <div className="flex flex-col space-y-2 mt-2">
         {staff.length === 0 ? (
           <p className="text-gray-400 text-center"></p>
@@ -120,31 +116,30 @@ export default function StaffPage() {
           staff.map((member) => (
             <div
               key={member.id}
-              className="flex items-center justify-between px-2 py-2 rounded-lg bg-exposeBrandBlue shadow-md"
+              className="flex items-center justify-between px-3 py-2 rounded-lg bg-luminiBrandBlue shadow-md"
             >
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 py-2">
                 {/* Avatar o iniciales */}
                 {member.userProfile?.avatarUrl ? (
                   <img
                     src={getImageSrc(member.userProfile.avatarUrl)}
                     alt={`${member.name} ${member.lastname}`}
-                    className="w-10 h-10 rounded-full border border-gray-600"
+                    className="w-12 h-12 rounded-full border border-gray-600"
                   />
                 ) : (
-                  <div className="w-10 h-10 flex items-center justify-center rounded-full bg-pink-700 text-white font-bold">
+                  <div className="w-12 h-12 flex items-center justify-center rounded-full bg-pink-700 text-white font-bold">
                     {member.name.charAt(0)}
                     {member.lastname.charAt(0)}
                   </div>
                 )}
 
                 {member.id === user?.id ? (
-                  <p className="text-2xl">
-                    Vos
-                  </p>
+                  <p className="text-2xl">Vos</p>
                 ) : (
-                  <p className="text-2xl">
-                    {member.name} {member.lastname}
-                  </p>
+                  <div>
+                    <p className="text-xl">{member.name}</p>
+                    <p className="text-xl">{member.lastname}</p>
+                  </div>
                 )}
               </div>
 
@@ -163,7 +158,7 @@ export default function StaffPage() {
 
       <button
         onClick={() => router.push("/dashboard/staff/new")}
-        className="fixed bottom-20 right-4 p-2 rounded-md bg-pink-500 text-white  shadow-md shadow-black hover:bg-pink-600 transition-colors"
+        className="fixed bottom-20 right-6 p-2 rounded-md bg-pink-500 text-white  shadow-md shadow-black hover:bg-pink-600 transition-colors"
       >
         <FiUserPlus className="text-3xl" />
       </button>

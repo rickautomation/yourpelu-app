@@ -1,3 +1,5 @@
+"use client"
+
 import { ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -5,7 +7,7 @@ import Link from "next/link";
 export default function PublicLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="es" className="h-full">
-      <body className="h-full flex flex-col overflow-hidden bg-brandBlue">
+      <body className="h-full flex flex-col overflow-hidden bg-darkBrandBlue min-h-screen">
         <header className="pt-10">
           <Link href="/">
             <Image

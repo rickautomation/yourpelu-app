@@ -43,7 +43,7 @@ export default function EstablishmentSetupWizard({
 
   return (
     <WizardProvider>
-      <div className="text-white px-6 py-3">
+      <div className="text-white px-6">
         {step === 0 && (
           <div className="text-center">
             <h2 className="text-2xl font-bold mb-4">Hola {userName}!</h2>

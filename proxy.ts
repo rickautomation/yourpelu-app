@@ -1,47 +1,108 @@
-import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
-export function proxy(request: NextRequest) {
-  const { pathname } = request.nextUrl
-  const hostname = request.headers.get('host') || ''
+export async function proxy(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+  const hostname = request.headers.get("host") || "";
 
-  // 1. Detectamos el subdominio limpiando tanto el entorno local como el de producción
+  // --- Lógica de auth ---
+  let token = request.cookies.get("auth_token")?.value;
+
+  if (pathname.startsWith("/workspace")) {
+    if (!token) {
+      // Intentar refrescar con refresh_token
+      const refresh = request.cookies.get("refresh_token")?.value;
+      if (refresh) {
+        try {
+          const resp = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/refresh`, {
+            method: "POST",
+            headers: {
+              cookie: `refresh_token=${refresh}`,
+            },
+          });
+
+          if (resp.ok) {
+            // si refrescó bien, dejar pasar
+            return NextResponse.next();
+          }
+        } catch {
+          // si falla, redirigir
+          return NextResponse.redirect(new URL("/login", request.url));
+        }
+      }
+
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
+
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      const role = payload?.rol;
+
+      switch (role) {
+        case "admin":
+          break; // acceso completo
+        case "manager":
+          if (pathname.startsWith("/workspace/admin-only")) {
+            return NextResponse.redirect(new URL("/unauthorized", request.url));
+          }
+          break;
+        case "staff":
+          if (!pathname.startsWith("/workspace/user-staff") && !pathname.startsWith("/workspace/commercial/offerings/add") && !pathname.startsWith("/workspace/commercial/clients") && !pathname.startsWith("/workspace/commercial/appointments")) {
+            return NextResponse.redirect(new URL("/unauthorized", request.url));
+          }
+          break;
+        default:
+          return NextResponse.redirect(new URL("/unauthorized", request.url));
+      }
+    } catch {
+      // si el token está corrupto, intentar refrescar
+      const refresh = request.cookies.get("refresh_token")?.value;
+      if (refresh) {
+        try {
+          const resp = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/refresh`, {
+            method: "POST",
+            headers: {
+              cookie: `refresh_token=${refresh}`,
+            },
+          });
+
+          if (resp.ok) {
+            return NextResponse.next();
+          }
+        } catch {
+          return NextResponse.redirect(new URL("/login", request.url));
+        }
+      }
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
+  }
+
+  // --- Lógica de subdominios ---
   const currentHost = hostname
-    .replace('.yourpelu.com', '')      // Para producción
-    .replace('.localhost:8001', '')    // Para tu entorno local
+    .replace(".yourpelu.com", "")
+    .replace(".localhost:8001", "");
 
-  // 2. Si el subdominio detectado es 'turnos'
-  if (currentHost === 'turnos') {
-    
-    // Evitamos bucles si la ruta ya contiene por alguna razón '/turnos'
-    if (pathname.startsWith('/turnos')) {
-      return NextResponse.next()
+  if (currentHost === "turnos") {
+    if (!pathname.startsWith("/turnos")) {
+      const requestUrl = new URL(request.url);
+      requestUrl.pathname = `/turnos${pathname}`;
+      return NextResponse.rewrite(requestUrl);
     }
-
-    // Clonamos la URL de la petición y le inyectamos el prefijo interno /turnos
-    // Si entran a turnos.yourpelu.com/barberia, por dentro busca app/turnos/barberia
-    const requestUrl = new URL(request.url)
-    requestUrl.pathname = `/turnos${pathname}`
-
-    return NextResponse.rewrite(requestUrl)
   }
 
-  // 3. Si en el futuro activas el subdominio 'feed'
-  if (currentHost === 'feed') {
-    if (pathname.startsWith('/feed')) {
-      return NextResponse.next()
+  if (currentHost === "feed") {
+    if (!pathname.startsWith("/feed")) {
+      const requestUrl = new URL(request.url);
+      requestUrl.pathname = `/feed${pathname}`;
+      return NextResponse.rewrite(requestUrl);
     }
-    const requestUrl = new URL(request.url)
-    requestUrl.pathname = `/feed${pathname}`
-    return NextResponse.rewrite(requestUrl)
   }
 
-  return NextResponse.next()
+  return NextResponse.next();
 }
 
-// El matcher clave que armamos para que NO te rompa los estilos (Tailwind, CSS, JS) ni imágenes
 export const config = {
   matcher: [
-    '/((?!api|_next/static|_next/image|favicon.ico|.*\\.css$|.*\\.js$|.*\\.png$|.*\\.jpg$).*)',
+    "/((?!api|_next/static|_next/image|favicon.ico|.*\\.css$|.*\\.js$|.*\\.png$|.*\\.jpg$).*)",
   ],
-}
+};

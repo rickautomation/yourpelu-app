@@ -6,7 +6,7 @@ import { RiScissorsCutFill } from "react-icons/ri";
 export default function UnderConstructionPage() {
 
   return (
-    <div className="flex flex-col items-center justify-center text-white px-6">
+    <div className="flex flex-col items-center justify-center text-white">
       <div className="flex flex-col items-center space-y-4">
         <h1 className="text-3xl font-bold tracking-wide flex items-center space-x-3">
           <RiScissorsCutFill className="w-20 h-20"/>
