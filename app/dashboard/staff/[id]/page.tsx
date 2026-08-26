@@ -84,23 +84,26 @@ export default function StaffDetailPage() {
 
   return (
     <div className="flex flex-col space-y-4 p-6">
-      <div className="flex items-center gap-4">
-        {user.userProfile?.avatarUrl ? (
-          <img
-            src={getImageSrc(user.userProfile.avatarUrl)}
-            alt={`${user.name} ${user.lastname}`}
-            className="w-16 h-16 rounded-full border border-gray-600"
-          />
-        ) : (
-          <div className="w-16 h-16 flex items-center justify-center rounded-full bg-pink-700 text-white font-bold text-xl">
-            {user.name.charAt(0)}
-            {user.lastname.charAt(0)}
+      <div className="">
+        <div className="flex items-center gap-4 w-full">
+          {user.userProfile?.avatarUrl ? (
+            <img
+              src={getImageSrc(user.userProfile.avatarUrl)}
+              alt={`${user.name} ${user.lastname}`}
+              className="w-20 h-20 rounded-full border border-gray-600"
+            />
+          ) : (
+            <div className="w-20 h-20 flex items-center justify-center rounded-full bg-pink-700 text-white font-bold text-2xl">
+              {user.name.charAt(0)}
+              {user.lastname.charAt(0)}
+            </div>
+          )}
+          <div>
+            <h1 className="text-3xl font-semibold">{user.name}</h1>{" "}
+            <h1 className="text-3xl font-semibold">{user.lastname}</h1>
           </div>
-        )}
-        <div>
-          <h1 className="text-3xl font-semibold">
-            {user.name} {user.lastname}
-          </h1>
+        </div>
+        <div className="py-2">
           <p className="text-gray-300">{user.email}</p>
           <p className="text-gray-300">{user.phoneNumber}</p>
         </div>
@@ -183,8 +186,11 @@ export default function StaffDetailPage() {
             <div className="flex flex-col gap-2 items-start">
               <input
                 type="number"
-                value={newAmount ?? ""}
-                onChange={(e) => setNewAmount(Number(e.target.value))}
+                value={newAmount !== null ? newAmount : ""}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setNewAmount(val === "" ? null : Number(val));
+                }}
                 placeholder={
                   wr.type.name === "contratista"
                     ? "Ingresar % comisión"
@@ -192,6 +198,7 @@ export default function StaffDetailPage() {
                 }
                 className="px-2 py-1 rounded border border-gray-400 text-white"
               />
+
               <div className="flex gap-2">
                 <button
                   onClick={() => handleSaveAmount(wr.id)}

@@ -5,10 +5,8 @@ import { useOfferingsCategories } from "@/app/hooks/useOfferingCategory";
 import { useOfferingsCrud } from "@/app/hooks/useOfferingsCrud";
 import { useState, useEffect } from "react";
 import { useRef } from "react";
-import { FiCheckCircle, FiChevronDown } from "react-icons/fi";
 import { useClients } from "@/app/hooks/useClients";
 import { useEstablishment } from "@/app/context/EstablishmentContext";
-import AddClientForm from "../components/AddClientForm";
 import DefaultOfferingForm from "../components/DefaultOfferingForm";
 import AlternativeOfferingForm from "../components/AlternativeOfferingForm";
 

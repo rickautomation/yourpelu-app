@@ -1,7 +1,7 @@
 {
   "name": "YourPelu",
   "short_name": "YourPelu",
-  "start_url": "/dashboard",
+  "start_url": "/workspace",
   "display": "standalone",
   "background_color": "#1800ad",
   "theme_color": "#1800ad",
