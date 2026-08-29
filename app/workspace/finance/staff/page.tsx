@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 import { useEstablishment } from "@/app/context/EstablishmentContext";
 import { useEstablishmentFinance } from "@/app/hooks/useEstablishmentFinance";
 import DateRangePicker, { DateRange } from "../../components/DateRangePicker";
-import { FiUser, FiBriefcase, FiInbox, FiTrendingUp, FiCalendar } from "react-icons/fi";
+import { FiUser, FiBriefcase, FiInbox, FiTrendingUp } from "react-icons/fi";
 
 const formatCurrency = (amount: number | undefined) => {
   if (amount === undefined || amount === null) return "$ 0";

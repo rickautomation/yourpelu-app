@@ -41,16 +41,36 @@ export async function proxy(request: NextRequest) {
       switch (role) {
         case "admin":
           break; // acceso completo
+
         case "manager":
           if (pathname.startsWith("/workspace/admin-only")) {
             return NextResponse.redirect(new URL("/unauthorized", request.url));
           }
           break;
-        case "staff":
-          if (!pathname.startsWith("/workspace/user-staff") && !pathname.startsWith("/workspace/commercial/offerings/add") && !pathname.startsWith("/workspace/commercial/clients") && !pathname.startsWith("/workspace/commercial/appointments")) {
+
+        case "staff": {
+          // 1. Redirección automática si intenta acceder directamente a /workspace o /workspace/
+          if (pathname === "/workspace" || pathname === "/workspace/") {
+            return NextResponse.redirect(new URL("/workspace/user-staff", request.url));
+          }
+
+          // 2. Rutas permitidas para Staff (incluyendo /workspace/profile)
+          const allowedPaths = [
+            "/workspace/user-staff",
+            "/workspace/profile",
+            "/workspace/commercial/offerings/add",
+            "/workspace/commercial/clients",
+            "/workspace/commercial/appointments",
+          ];
+
+          const isAllowed = allowedPaths.some((path) => pathname.startsWith(path));
+
+          if (!isAllowed) {
             return NextResponse.redirect(new URL("/unauthorized", request.url));
           }
           break;
+        }
+
         default:
           return NextResponse.redirect(new URL("/unauthorized", request.url));
       }

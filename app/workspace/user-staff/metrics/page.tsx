@@ -15,45 +15,50 @@ export default function MetricsPage() {
   const userId = user?.id ?? "";
   const establishmentId = activeEstablishment?.id;
 
-  const [rangeType, setRangeType] = useState<"day" | "week" | "month" | "year" | "custom">("month");
+  const [rangeType, setRangeType] = useState<
+    "day" | "week" | "month" | "year" | "custom"
+  >("month");
   const [customRange, setCustomRange] = useState<DateRange>({});
   const [showCalendar, setShowCalendar] = useState<boolean>(false);
   const [activeFilter, setActiveFilter] = useState<FilterCategory>("services");
 
-  // Cálculo de fechas idéntico al componente de finanzas
+  // Cálculo de fechas unificado y estandarizado a ISO Timestamps completos
   const { startDate, endDate } = useMemo(() => {
     const today = new Date();
-    let from: string | undefined;
-    let to: string | undefined;
+    let fromStr: string | undefined;
+    let toStr: string | undefined;
 
     if (rangeType === "day") {
-      from = today.toISOString().split("T")[0];
-      to = from;
+      fromStr = today.toISOString().split("T")[0];
+      toStr = fromStr;
     } else if (rangeType === "week") {
       const start = new Date(today);
       start.setDate(today.getDate() - today.getDay());
-      from = start.toISOString().split("T")[0];
-      to = today.toISOString().split("T")[0];
+      fromStr = start.toISOString().split("T")[0];
+      toStr = today.toISOString().split("T")[0];
     } else if (rangeType === "month") {
       const start = new Date(today.getFullYear(), today.getMonth(), 1);
-      from = start.toISOString().split("T")[0];
-      to = today.toISOString().split("T")[0];
+      fromStr = start.toISOString().split("T")[0];
+      toStr = today.toISOString().split("T")[0];
     } else if (rangeType === "year") {
       const start = new Date(today.getFullYear(), 0, 1);
-      from = start.toISOString().split("T")[0];
-      to = today.toISOString().split("T")[0];
-    } else if (rangeType === "custom" && customRange.from && customRange.to) {
-      from = customRange.from;
-      to = customRange.to;
+      fromStr = start.toISOString().split("T")[0];
+      toStr = today.toISOString().split("T")[0];
+    } else if (rangeType === "custom") {
+      fromStr = customRange.from;
+      toStr = customRange.to || customRange.from;
     }
 
-    // Ajuste clave para abarcar todo el día completo (00:00 a 23:59)
-    if (from && to && from === to) {
-      from = `${from}T00:00:00.000Z`;
-      to = `${to}T23:59:59.999Z`;
+    let fFrom = fromStr;
+    let fTo = toStr;
+
+    // Garantizar abarcar desde el inicio del primer día hasta el fin del último día
+    if (fFrom && fTo) {
+      fFrom = `${fFrom}T00:00:00.000Z`;
+      fTo = `${fTo}T23:59:59.999Z`;
     }
 
-    return { startDate: from, endDate: to };
+    return { startDate: fFrom, endDate: fTo };
   }, [rangeType, customRange]);
 
   const { metrics, loading, error, refetch } = useUserMetrics({
@@ -62,6 +67,11 @@ export default function MetricsPage() {
     startDate,
     endDate,
   });
+
+  const handleCustomRangeChange = (newRange: DateRange) => {
+    setCustomRange(newRange);
+    setRangeType("custom");
+  };
 
   if (loading) {
     return (
@@ -94,7 +104,7 @@ export default function MetricsPage() {
           rangeType={rangeType}
           onRangeTypeChange={(type) => setRangeType(type)}
           customRange={customRange}
-          onCustomRangeChange={setCustomRange}
+          onCustomRangeChange={handleCustomRangeChange}
           showCalendar={showCalendar}
           setShowCalendar={setShowCalendar}
         />
@@ -157,7 +167,7 @@ export default function MetricsPage() {
           {/* Renderizado de Métricas */}
           <div className="w-full">
             {activeFilter === "services" && (
-              <div className="rounded-2xl border border-pink-600/40 bg-luminiBrandBlue p-6 shadow-xl">
+              <div>
                 <h2 className="mb-5 text-lg font-semibold text-white flex items-center gap-2">
                   <FaChartBar className="text-pink-500" /> Servicios Más Realizados
                 </h2>
@@ -166,7 +176,7 @@ export default function MetricsPage() {
                     metrics.topServices.map((service, index) => (
                       <div
                         key={service.serviceId}
-                        className="flex items-center justify-between rounded-xl bg-gray-900/40 border border-pink-600/20 p-4 text-base"
+                        className="flex items-center justify-between rounded-xl bg-luminiBrandBlue border border-pink-600/20 p-4 text-base"
                       >
                         <div className="flex items-center gap-4">
                           <span className="text-sm font-bold text-pink-400 bg-pink-950/50 px-3 py-1.5 rounded-lg">
@@ -194,7 +204,7 @@ export default function MetricsPage() {
             )}
 
             {activeFilter === "categories" && (
-              <div className="rounded-2xl border border-pink-600/40 bg-luminiBrandBlue p-6 shadow-xl">
+              <div>
                 <h2 className="mb-5 text-lg font-semibold text-white flex items-center gap-2">
                   <FaChartBar className="text-pink-500" /> Categorías con Mayor Demanda
                 </h2>
@@ -203,7 +213,7 @@ export default function MetricsPage() {
                     metrics.topCategories.map((cat, index) => (
                       <div
                         key={cat.categoryId}
-                        className="flex items-center justify-between rounded-xl bg-gray-900/40 border border-pink-600/20 p-4 text-base"
+                        className="flex items-center justify-between rounded-xl bg-luminiBrandBlue border border-pink-600/20 p-4 text-base"
                       >
                         <div className="flex items-center gap-4">
                           <span className="text-sm font-bold text-pink-400 bg-pink-950/50 px-3 py-1.5 rounded-lg">
@@ -231,7 +241,7 @@ export default function MetricsPage() {
             )}
 
             {activeFilter === "payments" && (
-              <div className="rounded-2xl border border-pink-600/40 bg-luminiBrandBlue p-6 shadow-xl">
+              <div>
                 <h2 className="mb-5 text-lg font-semibold text-white flex items-center gap-2">
                   <FaWallet className="text-pink-500" /> Métodos de Pago más Utilizados
                 </h2>
@@ -240,7 +250,7 @@ export default function MetricsPage() {
                     metrics.paymentMethodsBreakdown.map((pm) => (
                       <div
                         key={pm.paymentMethodId}
-                        className="flex items-center justify-between rounded-xl bg-gray-900/40 border border-pink-600/20 p-4 text-base"
+                        className="flex items-center justify-between rounded-xl bg-luminiBrandBlue border border-pink-600/20 p-4 text-base"
                       >
                         <div>
                           <p className="font-semibold text-white">{pm.paymentMethodName}</p>
@@ -263,7 +273,7 @@ export default function MetricsPage() {
             )}
 
             {activeFilter === "clients" && (
-              <div className="rounded-2xl border border-pink-600/40 bg-luminiBrandBlue p-6 shadow-xl">
+              <div>
                 <h2 className="mb-5 text-xl font-semibold text-white flex items-center gap-2">
                   <FaUsers className="text-pink-500" /> Clientes Más Recurrentes
                 </h2>
@@ -272,7 +282,7 @@ export default function MetricsPage() {
                     metrics.topClients.map((client) => (
                       <div
                         key={client.clientId}
-                        className="flex items-center justify-between rounded-xl bg-gray-900/40 border border-pink-600/20 p-4 text-base"
+                        className="flex items-center justify-between rounded-xl bg-luminiBrandBlue border border-pink-600/20 p-4 text-base"
                       >
                         <div>
                           <p className="font-semibold text-white">{client.clientName}</p>

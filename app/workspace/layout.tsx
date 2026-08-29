@@ -1,6 +1,6 @@
 "use client";
 
-import Navbar from "../components/NavBar";
+import WorkspaceNavBar from "./components/WorkspaceNavBar"
 import BottomNavWorkspace from "./components/BottomNavWorkspace";
 import MenuPage from "./menu/page";
 import { useState, useMemo } from "react";
@@ -33,7 +33,7 @@ export default function WorkspaceLayout({
     <EstablishmentProvider>
       <div className="min-h-screen flex flex-col bg-brandBlue text-white relative px-1">
         {!sidebarOpen && (
-          <Navbar
+          <WorkspaceNavBar
             onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
             userId={user?.id}
             sessionId={sessionId}

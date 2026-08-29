@@ -20,46 +20,99 @@ export default function FinanceDashboard() {
   const { activeEstablishment } = useEstablishment();
 
   // Estados del DateRangePicker
-  const [rangeType, setRangeType] = useState<"day" | "week" | "month" | "year" | "custom" | "all">("month");
+  const [rangeType, setRangeType] = useState<
+    "day" | "week" | "month" | "year" | "custom" | "all"
+  >("month");
   const [showCalendar, setShowCalendar] = useState<boolean>(false);
   const [customRange, setCustomRange] = useState<DateRange>({});
 
-  // Calcular las fechas formateadas para la API
+  // Reemplazar únicamente el useMemo actual por este:
+
   const { startDate, endDate } = useMemo(() => {
-    const now = new Date();
-    let start: Date | null = null;
-    let end: Date | null = new Date();
+    if (rangeType === "all") {
+      return { startDate: undefined, endDate: undefined };
+    }
+
+    const today = new Date();
+
+    // Caso Custom (Fecha manual)
+    if (rangeType === "custom") {
+      if (!customRange.from)
+        return { startDate: undefined, endDate: undefined };
+
+      const [fY, fM, fD] = customRange.from.split("-").map(Number);
+      const start = new Date(fY, fM - 1, fD, 0, 0, 0, 0);
+
+      let end: Date;
+      if (customRange.to) {
+        const [tY, tM, tD] = customRange.to.split("-").map(Number);
+        end = new Date(tY, tM - 1, tD, 23, 59, 59, 999);
+      } else {
+        end = new Date(fY, fM - 1, fD, 23, 59, 59, 999);
+      }
+
+      return {
+        startDate: start.toISOString(),
+        endDate: end.toISOString(),
+      };
+    }
+
+    // Predefinidos
+    let start: Date;
+    let end: Date = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate(),
+      23,
+      59,
+      59,
+      999,
+    );
 
     switch (rangeType) {
       case "day":
-        start = new Date(now.setHours(0, 0, 0, 0));
+        start = new Date(
+          today.getFullYear(),
+          today.getMonth(),
+          today.getDate(),
+          0,
+          0,
+          0,
+          0,
+        );
         break;
+
       case "week": {
-        const day = now.getDay();
-        const diff = now.getDate() - day + (day === 0 ? -6 : 1); // Lunes
-        start = new Date(now.setDate(diff));
-        start.setHours(0, 0, 0, 0);
+        const dayOfWeek = today.getDay();
+        const diffToMonday =
+          today.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1);
+        start = new Date(
+          today.getFullYear(),
+          today.getMonth(),
+          diffToMonday,
+          0,
+          0,
+          0,
+          0,
+        );
         break;
       }
+
       case "month":
-        start = new Date(now.getFullYear(), now.getMonth(), 1);
+        start = new Date(today.getFullYear(), today.getMonth(), 1, 0, 0, 0, 0);
         break;
+
       case "year":
-        start = new Date(now.getFullYear(), 0, 1);
+        start = new Date(today.getFullYear(), 0, 1, 0, 0, 0, 0);
         break;
-      case "custom":
-        return {
-          startDate: customRange.from ? `${customRange.from}T00:00:00.000Z` : undefined,
-          endDate: customRange.to ? `${customRange.to}T23:59:59.999Z` : undefined,
-        };
-      case "all":
+
       default:
         return { startDate: undefined, endDate: undefined };
     }
 
     return {
-      startDate: start ? start.toISOString() : undefined,
-      endDate: end ? end.toISOString() : undefined,
+      startDate: start.toISOString(),
+      endDate: end.toISOString(),
     };
   }, [rangeType, customRange]);
 
@@ -67,7 +120,7 @@ export default function FinanceDashboard() {
   const { data, loading, error } = useFinanceIncomeProduct(
     activeEstablishment?.id,
     startDate,
-    endDate
+    endDate,
   );
 
   const isMarginPositive = (data?.margin ?? 0) >= 0;

@@ -113,7 +113,7 @@ export default function EstablishmentMetricsPage() {
   }
 
   return (
-    <div className="space-y-6 p-6 text-white max-w-5xl mx-auto">
+    <div className="space-y-5 p-6 text-white max-w-5xl mx-auto">
       {/* Selector de Rango de Fechas */}
       <div className="max-w-xl">
         <DateRangePicker
@@ -129,7 +129,7 @@ export default function EstablishmentMetricsPage() {
       {!showCalendar && (
         <>
           {/* Navegación por Pestañas */}
-          <div className="flex items-center gap-2 border-b border-pink-600/20 pb-4 overflow-x-auto">
+          <div className="flex items-center gap-2 border-b border-pink-600/20 pb-3 overflow-x-auto">
             <span className="text-xs text-gray-400 flex items-center gap-1.5 mr-2 shrink-0">
               <FaFilter className="text-pink-500" /> Vista:
             </span>
@@ -193,16 +193,16 @@ export default function EstablishmentMetricsPage() {
           {/* Renderizado de Bloques de Métricas */}
           <div className="w-full">
             {activeFilter === "services" && (
-              <div className="rounded-2xl border border-pink-600/40 bg-luminiBrandBlue p-4 shadow-xl">
-                <h2 className="mb-5 text-lg font-semibold text-white flex items-center gap-2">
+              <div className="">
+                <h2 className="mb-2 text-md font-semibold text-white flex items-center gap-1.5">
                   <FaChartBar className="text-pink-500" /> Más solicitados
                 </h2>
-                <div className="space-y-3">
+                <div className="space-y-2">
                   {metrics?.topServices?.length ? (
                     metrics.topServices.map((service, index) => (
                       <div
                         key={service.serviceId}
-                        className="flex items-center justify-between rounded-xl bg-gray-900/40 border border-pink-600/20 p-4 text-base"
+                        className="flex items-center justify-between rounded-xl bg-luminiBrandBlue border border-pink-600/20 p-4 text-base"
                       >
                         <div className="flex items-center gap-4">
                           <span className="text-sm font-bold text-pink-400 bg-pink-950/50 px-3 py-1.5 rounded-lg">

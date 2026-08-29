@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { apiGet } from "@/app/lib/apiGet";
 import { apiPost } from "@/app/lib/apiPost";
 
@@ -27,18 +27,16 @@ export function useProductCategories(establishmentId?: string) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchCategories = async () => {
+  const fetchCategories = useCallback(async () => {
     if (!establishmentId) return;
     try {
       setLoading(true);
       setError(null);
 
-      // Categorías vinculadas al establecimiento
       const linked = await apiGet<ProductCategory[]>(
         `/product-categories/by-establishment/${establishmentId}`
       );
 
-      // Categorías sin establecimiento (plantillas)
       const unassigned = await apiGet<ProductCategory[]>(
         `/product-categories/unassigned`
       );
@@ -50,13 +48,12 @@ export function useProductCategories(establishmentId?: string) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [establishmentId]);
 
   useEffect(() => {
     fetchCategories();
-  }, [establishmentId]);
+  }, [fetchCategories]);
 
-  // Crear categoría desde cero
   const createCategory = async (dto: { name: string; description?: string }) => {
     try {
       await apiPost(`/product-categories`, {
@@ -69,7 +66,6 @@ export function useProductCategories(establishmentId?: string) {
     }
   };
 
-  // Crear categoría desde plantilla
   const createFromTemplate = async (templateId: string) => {
     try {
       await apiPost(
