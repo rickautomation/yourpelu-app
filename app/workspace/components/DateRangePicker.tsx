@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import RangeSelector from "./RangeSelector";
+import { FiCalendar, FiCheck } from "react-icons/fi";
 
 export interface DateRange {
   from?: string;
@@ -22,7 +23,7 @@ export const RANGES = [
 interface DateRangePickerProps {
   rangeType: "day" | "week" | "month" | "year" | "custom";
   onRangeTypeChange: (
-    type: "day" | "week" | "month" | "year" | "custom",
+    type: "day" | "week" | "month" | "year" | "custom"
   ) => void;
   customRange: DateRange;
   onCustomRangeChange: (range: DateRange) => void;
@@ -48,7 +49,6 @@ export default function DateRangePicker({
     return new Date(year, month - 1, day);
   };
 
-  // Formatea únicamente un objeto DateRange explícito (el del calendario)
   const formatCustomRangeText = (range: DateRange) => {
     if (!range.from) return null;
 
@@ -80,9 +80,7 @@ export default function DateRangePicker({
     }
   };
 
-  // Determina la etiqueta visible del botón selector
   const selectedRange = useMemo(() => {
-    // Si la opción elegida es "custom", mostramos el texto formateado si existe
     if (rangeType === "custom") {
       const formatted = formatCustomRangeText(customRange);
       if (formatted) {
@@ -93,7 +91,6 @@ export default function DateRangePicker({
       }
     }
 
-    // Para los accesos directos ("day", "week", "month", "year"), mostramos su nombre literal
     return (
       RANGES.find((r) => r.id === rangeType) || {
         id: "custom",
@@ -103,7 +100,7 @@ export default function DateRangePicker({
   }, [rangeType, customRange, calendarMode]);
 
   return (
-    <div>
+    <div className="space-y-4">
       <RangeSelector
         ranges={RANGES}
         selectedRange={selectedRange}
@@ -113,14 +110,24 @@ export default function DateRangePicker({
       />
 
       {showCalendar && (
-        <div className="mt-4">
+        <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-200">
+          {/* Encabezado Selección Actual */}
           {formatCustomRangeText(customRange) && (
-            <h2 className="text-xl font-bold mb-3 text-pink-400">
-              Selección actual: {formatCustomRangeText(customRange)}
-            </h2>
+            <div className="flex items-center gap-2 p-3 rounded-xl bg-pink-600/10 border border-pink-500/20">
+              <FiCalendar className="text-pink-400 text-lg shrink-0" />
+              <div>
+                <p className="text-[10px] uppercase font-bold tracking-wider text-gray-400">
+                  Rango Seleccionado
+                </p>
+                <p className="text-sm font-semibold text-pink-300">
+                  {formatCustomRangeText(customRange)}
+                </p>
+              </div>
+            </div>
           )}
 
-          <div className="flex w-full gap-2 mb-4">
+          {/* Selector de Modo (Día, Rango, Mes, Año) */}
+          <div className="flex w-full gap-1.5 p-1 bg-black/30 rounded-xl border border-pink-600/10">
             {[
               { id: "day", label: "Día" },
               { id: "range", label: "Rango" },
@@ -128,13 +135,16 @@ export default function DateRangePicker({
               { id: "year", label: "Año" },
             ].map((m) => (
               <button
+                type="button"
                 key={m.id}
                 onClick={() => {
                   setCalendarMode(m.id as any);
                   onCustomRangeChange({});
                 }}
-                className={`flex-1 px-3 py-2 rounded text-center ${
-                  calendarMode === m.id ? "bg-pink-600" : "bg-luminiBrandBlue"
+                className={`flex-1 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                  calendarMode === m.id
+                    ? "bg-pink-600 text-white shadow-md shadow-pink-600/30"
+                    : "text-gray-300 hover:text-white hover:bg-white/5"
                 }`}
               >
                 {m.label}
@@ -142,24 +152,25 @@ export default function DateRangePicker({
             ))}
           </div>
 
-          <div className="text-black">
+          {/* Calendario Estilizado */}
+          <div className="custom-calendar-container p-2 rounded-xl bg-black/20 border border-pink-600/10">
             <Calendar
               selectRange={calendarMode === "range"}
               view={
                 calendarMode === "month"
                   ? "year"
                   : calendarMode === "year"
-                    ? "decade"
-                    : "month"
+                  ? "decade"
+                  : "month"
               }
               onClickDay={(date) => {
                 if (calendarMode === "day") {
                   const dateStr = `${date.getFullYear()}-${String(
-                    date.getMonth() + 1,
-                  ).padStart(
+                    date.getMonth() + 1
+                  ).padStart(2, "0")}-${String(date.getDate()).padStart(
                     2,
-                    "0",
-                  )}-${String(date.getDate()).padStart(2, "0")}`;
+                    "0"
+                  )}`;
 
                   onCustomRangeChange({
                     from: dateStr,
@@ -171,18 +182,18 @@ export default function DateRangePicker({
               onChange={(value: any) => {
                 if (calendarMode === "range" && Array.isArray(value)) {
                   const fromStr = `${value[0].getFullYear()}-${String(
-                    value[0].getMonth() + 1,
-                  ).padStart(
+                    value[0].getMonth() + 1
+                  ).padStart(2, "0")}-${String(value[0].getDate()).padStart(
                     2,
-                    "0",
-                  )}-${String(value[0].getDate()).padStart(2, "0")}`;
+                    "0"
+                  )}`;
 
                   const toStr = `${value[1].getFullYear()}-${String(
-                    value[1].getMonth() + 1,
-                  ).padStart(
+                    value[1].getMonth() + 1
+                  ).padStart(2, "0")}-${String(value[1].getDate()).padStart(
                     2,
-                    "0",
-                  )}-${String(value[1].getDate()).padStart(2, "0")}`;
+                    "0"
+                  )}`;
 
                   onCustomRangeChange({
                     from: fromStr,
@@ -199,14 +210,14 @@ export default function DateRangePicker({
                   const end = new Date(year, month + 1, 0);
 
                   const fromStr = `${start.getFullYear()}-${String(
-                    start.getMonth() + 1,
+                    start.getMonth() + 1
                   ).padStart(2, "0")}-01`;
                   const toStr = `${end.getFullYear()}-${String(
-                    end.getMonth() + 1,
-                  ).padStart(
+                    end.getMonth() + 1
+                  ).padStart(2, "0")}-${String(end.getDate()).padStart(
                     2,
-                    "0",
-                  )}-${String(end.getDate()).padStart(2, "0")}`;
+                    "0"
+                  )}`;
 
                   onCustomRangeChange({
                     from: fromStr,
@@ -228,16 +239,20 @@ export default function DateRangePicker({
             />
           </div>
 
+          {/* Botón Aplicar */}
           <button
+            type="button"
+            disabled={!customRange.from}
             onClick={() => {
               if (customRange.from && customRange.to) {
                 onRangeTypeChange("custom");
                 setShowCalendar(false);
               }
             }}
-            className="mt-4 bg-blue-600 px-4 py-2 rounded text-white"
+            className="w-full inline-flex items-center justify-center gap-2 bg-pink-600 hover:bg-pink-500 disabled:opacity-50 disabled:cursor-not-allowed text-white py-2.5 rounded-xl font-semibold text-xs transition-all shadow-md shadow-pink-600/30"
           >
-            Aplicar selección
+            <FiCheck className="text-base" />
+            <span>Aplicar selección</span>
           </button>
         </div>
       )}

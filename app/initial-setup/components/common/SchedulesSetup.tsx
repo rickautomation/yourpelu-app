@@ -1,0 +1,243 @@
+"use client";
+import { useEstablishment } from "@/app/context/EstablishmentContext";
+import { apiPost } from "@/app/lib/apiPost";
+import React, { useEffect, useState } from "react";
+import { FiCheckCircle } from "react-icons/fi";
+import CustomTimeInput from "./CustomTimeInput";
+import { useRouter } from "next/navigation";
+
+interface StepSevenProps {
+  setStep?: (step: number) => void;
+}
+
+const SchedulesSetup: React.FC<StepSevenProps> = ({ setStep }) => {
+  const { activeEstablishment } = useEstablishment();
+  const router = useRouter();
+
+  // Mapeo de número → nombre de día
+  const dayNames: Record<number, string> = {
+    0: "Domingo",
+    1: "Lunes",
+    2: "Martes",
+    3: "Miércoles",
+    4: "Jueves",
+    5: "Viernes",
+    6: "Sábado",
+  };
+  const [showPopup, setShowPopup] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const applySchedule = async () => {
+    if (selectedDays.length === 0) {
+      alert("Selecciona al menos un día");
+      return;
+    }
+
+    if (mode === "continuo") {
+      if (!schedule.start1 || !schedule.end1) {
+        alert("Completa todos los horarios");
+        return;
+      }
+    } else if (mode === "dividido") {
+      if (
+        !schedule.start1 ||
+        !schedule.end1 ||
+        !schedule.start2 ||
+        !schedule.end2
+      ) {
+        alert("Completa todos los horarios");
+        return;
+      }
+    }
+
+    // construir intervalos
+    const intervals: { start: string; end: string }[] = [];
+    if (schedule.start1 && schedule.end1) {
+      intervals.push({ start: schedule.start1, end: schedule.end1 });
+    }
+    if (schedule.start2 && schedule.end2) {
+      intervals.push({ start: schedule.start2, end: schedule.end2 });
+    }
+
+    try {
+      setIsSubmitting(true);
+      // enviar para cada día seleccionado
+      for (const day of selectedDays) {
+        const scheduleEntity = schedules.find(
+          (sch) => dayNames[sch.dayOfWeek] === day,
+        );
+        if (!scheduleEntity) continue;
+
+        await apiPost(`/establishment/${scheduleEntity.id}/time-ranges`, {
+          intervals,
+        });
+      }
+
+      setShowPopup(true);
+      setTimeout(() => setShowPopup(false), 1000);
+
+      // 👇 refresca el componente y vuelve a cargar los datos
+      window.location.reload();
+    } catch (err: any) {
+      console.error(err);
+      alert(`Error al guardar horarios: ${err.message}`);
+    } finally {
+      setIsSubmitting(false); // 👈 volver a habilitar
+    }
+  };
+
+  const schedules = (activeEstablishment?.profile?.schedules || []).sort(
+    (a, b) => {
+      const order = [1, 2, 3, 4, 5, 6, 0]; // Lunes primero, Domingo último
+      return order.indexOf(a.dayOfWeek) - order.indexOf(b.dayOfWeek);
+    },
+  );
+
+  const [selectedDays, setSelectedDays] = useState<string[]>([]);
+  const [mode, setMode] = useState<"continuo" | "dividido">("continuo");
+
+  const [schedule, setSchedule] = useState<{
+    start1?: string;
+    end1?: string;
+    start2?: string;
+    end2?: string;
+  }>({});
+
+  const toggleDay = (day: string) => {
+    setSelectedDays((prev) =>
+      prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day],
+    );
+  };
+
+  useEffect(() => {
+    if (
+      schedules.length > 0 &&
+      schedules.every((sch) => sch.timeRanges && sch.timeRanges.length > 0)
+    ) {
+      if (setStep) setStep(8);
+      router.push("/initial-setup?step=8");
+    }
+  }, [schedules, setStep, router]);
+
+  return (
+    <div className="text-center">
+      {schedules.some(
+        (sch) => !sch.timeRanges || sch.timeRanges.length === 0,
+      ) && (
+        <div className="flex flex-wrap gap-2 justify-center mb-8">
+          {schedules.map((sch) => {
+            const isDisabled = sch.timeRanges && sch.timeRanges.length > 0;
+            const dayLabel = dayNames[sch.dayOfWeek];
+
+            return (
+              <button
+                key={sch.id}
+                type="button"
+                onClick={() => !isDisabled && toggleDay(dayLabel)}
+                disabled={isDisabled}
+                className={`border border-pink-500 min-w-25 rounded p-2 text-center text-lg font-medium transition-colors
+          ${selectedDays.includes(dayLabel) ? "bg-pink-500 text-white" : "border-pink-600 text-pink-600"}
+          ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}
+        `}
+              >
+                {dayLabel}
+              </button>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Selector de modo: solo si no están todos los días con horarios */}
+      {schedules.some(
+        (sch) => !sch.timeRanges || sch.timeRanges.length === 0,
+      ) && (
+        <div className="flex justify-center gap-4 mb-8">
+          <button
+            onClick={() => setMode("continuo")}
+            className={`p-2 rounded border border-pink-500 font-semibold transition-colors
+        ${mode === "continuo" ? "bg-pink-600 text-white" : "text-pink-600"}
+      `}
+          >
+            Horario continuo
+          </button>
+          <button
+            onClick={() => setMode("dividido")}
+            className={`px-4 py-2 rounded border border-pink-600 font-semibold transition-colors
+        ${mode === "dividido" ? "bg-pink-600 text-white" : "text-pink-600"}
+      `}
+          >
+            Horario dividido
+          </button>
+        </div>
+      )}
+
+      {/* Inputs según modo: solo si faltan días sin horarios */}
+      {schedules.some(
+        (sch) => !sch.timeRanges || sch.timeRanges.length === 0,
+      ) &&
+        (mode === "continuo" ? (
+          <div className="flex gap-4 w-full max-w-md mx-auto mb-8 rounded bg-luminiBrandBlue p-2">
+            <CustomTimeInput
+              value={schedule.start1 || ""}
+              onChange={(val) => setSchedule({ ...schedule, start1: val })}
+            />
+            <CustomTimeInput
+              value={schedule.end1 || ""}
+              onChange={(val) => setSchedule({ ...schedule, end1: val })}
+            />
+          </div>
+        ) : (
+          <div className="flex flex-col gap-4 w-full max-w-md mx-auto mb-8">
+            <div className="flex gap-4 w-full rounded bg-luminiBrandBlue p-2">
+              <CustomTimeInput
+                value={schedule.start1 || ""}
+                onChange={(val) => setSchedule({ ...schedule, start1: val })}
+              />
+              <CustomTimeInput
+                value={schedule.end1 || ""}
+                onChange={(val) => setSchedule({ ...schedule, end1: val })}
+              />
+            </div>
+            <div className="flex gap-4 w-full rounded bg-luminiBrandBlue p-2">
+              <CustomTimeInput
+                value={schedule.start2 || ""}
+                onChange={(val) => setSchedule({ ...schedule, start2: val })}
+              />
+              <CustomTimeInput
+                value={schedule.end2 || ""}
+                onChange={(val) => setSchedule({ ...schedule, end2: val })}
+              />
+            </div>
+          </div>
+        ))}
+
+      {/* Botón aplicar solo si hay días sin horarios */}
+      {schedules.some(
+        (sch) => !sch.timeRanges || sch.timeRanges.length === 0,
+      ) && (
+        <button
+          onClick={applySchedule}
+          disabled={isSubmitting} // 👈 deshabilita mientras se envía
+          className={`w-full px-6 py-2 rounded font-semibold transition-colors ${
+            isSubmitting
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-pink-400 text-white hover:bg-green-700"
+          }`}
+        >
+          {isSubmitting ? "Guardando..." : "Aplicar a días seleccionados"}
+        </button>
+      )}
+
+      {showPopup && (
+        <div className="fixed inset-0 backdrop-blur-sm bg-opacity-70 flex items-center justify-center z-50">
+          <div className="border border-green-500 bg-darkBrandBlue text-white rounded-lg shadow-lg p-6 flex items-center space-x-3">
+            <FiCheckCircle className="text-green-400 text-3xl" />
+            <span className="font-semibold">Horarios Guardados</span>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default SchedulesSetup;

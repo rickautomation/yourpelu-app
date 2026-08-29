@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useEstablishment } from "@/app/context/EstablishmentContext";
 import { useProductCategories } from "@/app/hooks/useProductCategories";
+import { useProducts } from "@/app/hooks/useProducts"; // 👈 Hook de productos
 import { IoAddSharp, IoCloseOutline } from "react-icons/io5";
 import { FiBox, FiTag, FiLayers } from "react-icons/fi";
 import { useRouter } from "next/navigation";
@@ -10,12 +11,23 @@ import CategoryProductSelector from "./components/CategoryProductSelector";
 
 export default function ProductsPage() {
   const { activeEstablishment } = useEstablishment();
-  const { linkedCategories, loading, error } = useProductCategories(
+  const { linkedCategories, loading, error, refetch } = useProductCategories(
     activeEstablishment?.id
   );
+  const { deleteProduct } = useProducts(activeEstablishment?.id);
 
   const router = useRouter();
   const [showOptions, setShowOptions] = useState(false);
+
+  // 👈 Función para eliminar y refrescar la UI
+  const handleDeleteProduct = async (productId: string) => {
+    try {
+      await deleteProduct(productId);
+      await refetch();
+    } catch (err) {
+      console.error("Error al eliminar el producto:", err);
+    }
+  };
 
   if (loading) {
     return (
@@ -73,10 +85,14 @@ export default function ProductsPage() {
           </p>
         </div>
       ) : (
-        <CategoryProductSelector linkedCategories={linkedCategories} />
+        /* 👈 Pasamos el handler como prop */
+        <CategoryProductSelector
+          linkedCategories={linkedCategories}
+          onDeleteProduct={handleDeleteProduct}
+        />
       )}
 
-      {/* Popup de Opciones (Acción flotante principal) */}
+      {/* Popup de Opciones */}
       {showOptions && (
         <div className="fixed inset-0 backdrop-blur-sm bg-black/30 flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
           <div className="border border-slate-700 bg-darkBrandBlue text-white rounded-2xl shadow-2xl p-6 space-y-4 w-full max-w-xs relative animate-in zoom-in-95 duration-200">
@@ -134,7 +150,7 @@ export default function ProductsPage() {
         </div>
       )}
 
-      {/* Botón Flotante de Acción */}
+      {/* Botón Flotante */}
       <button
         onClick={() => setShowOptions(true)}
         className="fixed bottom-20 right-6 p-2 rounded-full bg-pink-600 text-white shadow-xl shadow-pink-600/30 hover:bg-pink-500 hover:scale-105 active:scale-95 transition-all z-40 group flex items-center justify-center"

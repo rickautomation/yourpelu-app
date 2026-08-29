@@ -1,18 +1,15 @@
 "use client";
+
 import Link from "next/link";
 import { useSecureAuth } from "@/app/hooks/useSecureAuth";
-import { useUserProfile } from "@/app/hooks/useUserProfile"; // 👈 nuevo hook
+import { useUserProfile } from "@/app/hooks/useUserProfile";
 import {
   FiMenu,
-  FiCalendar,
   FiUser,
   FiLogOut,
   FiPlusCircle,
 } from "react-icons/fi";
 import { useState, useRef, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useEstablishment } from "@/app/context/EstablishmentContext";
-import { BiBarChart } from "react-icons/bi";
 import AddOptionsModal from "./AddOptionsModal";
 import { MdAttachMoney } from "react-icons/md";
 import { LuChartNoAxesCombined } from "react-icons/lu";
@@ -24,13 +21,16 @@ export default function BottomNavWorkspace({
   setSidebarOpen,
 }: any) {
   const { user, logout } = useSecureAuth();
-
-  // 👇 traemos el perfil con el hook nuevo
   const { profile } = useUserProfile(user?.id);
   
   const [menuOpen, setMenuOpen] = useState(false);
-  const [showAddModal, setShowAddModal] = useState(false); // 👈 nuevo estado
+  const [showAddModal, setShowAddModal] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  // Rutas dinámicas según el rol del usuario
+  const isStaff = user?.rol === "staff";
+  const financeHref = isStaff ? "/workspace/user-staff/finance" : "/workspace/finance";
+  const metricsHref = isStaff ? "/workspace/user-staff/metrics" : "/workspace/metrics";
 
   const getAvatarSrc = (avatarUrl?: string) => {
     if (!avatarUrl) return "";
@@ -38,7 +38,6 @@ export default function BottomNavWorkspace({
     return `${API_URL}${avatarUrl}`;
   };
 
-  // cerrar menú si se hace click fuera
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -62,9 +61,9 @@ export default function BottomNavWorkspace({
         <FiMenu className="w-6 h-6" />
       </button>
 
-      {/* Ejemplo: Turnos en workspace */}
+      {/* Enlace Finanzas (Dinámico) */}
       <Link
-        href="/workspace/finance"
+        href={financeHref}
         onClick={() => setSidebarOpen?.(false)}
         className="flex items-center justify-center border-4 rounded-lg"
       >
@@ -88,8 +87,9 @@ export default function BottomNavWorkspace({
         </Link>
       )}
 
+      {/* Enlace Métricas (Dinámico) */}
       <Link
-        href="/workspace/metrics"
+        href={metricsHref}
         onClick={() => setSidebarOpen?.(false)}
         className="flex items-center justify-center border-4 rounded-lg"
       >
@@ -139,7 +139,6 @@ export default function BottomNavWorkspace({
         )}
       </div>
 
-      {/* 👇 renderiza el modal si es admin y se activó */}
       {showAddModal && (
         <AddOptionsModal
           onClose={() => setShowAddModal(false)}

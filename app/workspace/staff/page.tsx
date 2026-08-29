@@ -1,10 +1,11 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import { useAuth } from "@/app/hooks/useAuth";
 import { apiGet } from "@/app/lib/apiGet";
-import { FiUserPlus } from "react-icons/fi";
+import { FiUserPlus, FiUsers } from "react-icons/fi";
 import { useEstablishment } from "@/app/context/EstablishmentContext";
-import { FaChevronCircleRight } from "react-icons/fa";
+import { FaChevronRight } from "react-icons/fa6";
 import { useRouter } from "next/navigation";
 
 type WorkRelationAttribute = {
@@ -24,7 +25,7 @@ export default function StaffPage() {
   const { user } = useAuth();
   const { activeEstablishment, loading } = useEstablishment();
 
-  const router = useRouter()
+  const router = useRouter();
 
   const [staff, setStaff] = useState<
     {
@@ -38,18 +39,15 @@ export default function StaffPage() {
       userProfile?: { avatarUrl?: string };
     }[]
   >([]);
-  const [types, setTypes] = useState<WorkRelationType[]>([]);
-  const [expandedStaffId, setExpandedStaffId] = useState<string | null>(null);
-
-  const [showPopup, setShowPopup] = useState(false);
+  const [, setTypes] = useState<WorkRelationType[]>([]);
+  const [showPopup] = useState(false);
 
   const fetchStaff = async (shopId: string) => {
     try {
       if (shopId) {
         const res = await apiGet<typeof staff>(
-          `/user/establishment/${shopId}/staff`,
+          `/user/establishment/${shopId}/staff`
         );
-        console.log("res staff: ", res);
         setStaff(res);
       }
     } catch (err) {
@@ -60,7 +58,6 @@ export default function StaffPage() {
   const fetchTypes = async () => {
     try {
       const resTypes = await apiGet<WorkRelationType[]>("/work-relation-types");
-      console.log("res types: ", resTypes);
       setTypes(resTypes);
     } catch (err: any) {
       console.error("Error cargando tipos de relación", err.message);
@@ -77,7 +74,6 @@ export default function StaffPage() {
 
   useEffect(() => {
     if (activeEstablishment?.id) {
-      setExpandedStaffId(null);
       fetchStaff(activeEstablishment?.id);
       fetchTypes();
     } else {
@@ -87,76 +83,113 @@ export default function StaffPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen ">
-        <div className="w-12 h-12 border-4 border-pink-500 border-t-transparent rounded-full animate-spin"></div>
+      <div className="flex items-center justify-center h-screen">
+        <div className="w-10 h-10 border-4 border-pink-500 border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col space-y-2 py-4 px-6">
+    <div className="flex flex-col space-y-5 py-6 px-4 max-w-4xl mx-auto pb-28">
+      {/* Toast de notificación */}
       {showPopup && (
-        <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm z-50">
-          <div className="bg-gray-800 p-6 rounded-lg shadow-xl text-center">
-            <p className="text-white text-lg font-semibold">
-              Enlace copiado ✅
-            </p>
-          </div>
+        <div className="fixed top-5 right-5 z-50 bg-gray-800 text-white px-4 py-3 rounded-2xl shadow-xl border border-pink-500/30 flex items-center gap-2 animate-slideIn">
+          <p className="text-sm font-medium">Enlace copiado ✅</p>
         </div>
       )}
 
-      <div className="flex flex-col space-y-2 mt-2">
+      {/* Encabezado de la página */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-white tracking-tight">
+            Gestión de <span className="text-pink-400">Personal</span>
+          </h1>
+          <p className="text-xs text-gray-400 mt-0.5">
+            Miembros del equipo vinculados al establecimiento.
+          </p>
+        </div>
+        <div className="bg-luminiBrandBlue border border-pink-600/30 px-3 py-1.5 rounded-xl text-xs text-pink-300 font-semibold flex items-center gap-1.5 shadow-sm">
+          <FiUsers className="w-4 h-4 text-pink-400" />
+          <span>{staff.length}</span>
+        </div>
+      </div>
+
+      {/* Lista de Personal */}
+      <div className="space-y-3">
         {staff.length === 0 ? (
-          <p className="text-gray-400 text-center"></p>
+          <div className="flex flex-col items-center justify-center py-12 px-4 text-center bg-luminiBrandBlue/50 border border-dashed border-pink-600/20 rounded-2xl">
+            <FiUsers className="w-12 h-12 text-pink-400/50 mb-3" />
+            <p className="text-base font-semibold text-white">
+              No hay miembros registrados
+            </p>
+            <p className="text-xs text-gray-400 mt-1 max-w-xs">
+              Agregá integrantes a tu equipo para gestionar permisos y turnos.
+            </p>
+          </div>
         ) : (
-          staff.map((member) => (
-            <div
-              key={member.id}
-              className="flex items-center justify-between px-3 py-2 rounded-lg bg-luminiBrandBlue shadow-md"
-            >
-              <div className="flex items-center gap-3 py-2">
-                {/* Avatar o iniciales */}
-                {member.userProfile?.avatarUrl ? (
-                  <img
-                    src={getImageSrc(member.userProfile.avatarUrl)}
-                    alt={`${member.name} ${member.lastname}`}
-                    className="w-12 h-12 rounded-full border border-gray-600"
-                  />
-                ) : (
-                  <div className="w-12 h-12 flex items-center justify-center rounded-full bg-pink-700 text-white font-bold">
-                    {member.name.charAt(0)}
-                    {member.lastname.charAt(0)}
-                  </div>
-                )}
+          staff.map((member) => {
+            const isCurrentUser = member.id === user?.id;
 
-                {member.id === user?.id ? (
-                  <p className="text-2xl">Vos</p>
-                ) : (
-                  <div>
-                    <p className="text-xl">{member.name}</p>
-                    <p className="text-xl">{member.lastname}</p>
-                  </div>
-                )}
-              </div>
-
-              {/* Icono de navegación */}
-              <button
-                type="button"
+            return (
+              <div
+                key={member.id}
                 onClick={() => router.push(`/workspace/staff/${member.id}`)}
-                className="ml-auto text-pink-400 hover:text-pink-600 transition-colors"
+                className="group flex items-center justify-between p-4 bg-luminiBrandBlue hover:bg-pink-600/10 border border-pink-600/20 hover:border-pink-500/50 rounded-2xl transition-all duration-200 shadow-lg cursor-pointer"
               >
-                <FaChevronCircleRight className="w-6 h-6" />
-              </button>
-            </div>
-          ))
+                <div className="flex items-center gap-3.5">
+                  {/* Avatar o Iniciales */}
+                  <div className="relative">
+                    {member.userProfile?.avatarUrl ? (
+                      <img
+                        src={getImageSrc(member.userProfile.avatarUrl)}
+                        alt={`${member.name} ${member.lastname}`}
+                        className="w-12 h-12 rounded-full object-cover border-2 border-pink-500/40 shadow-sm"
+                      />
+                    ) : (
+                      <div className="w-12 h-12 flex items-center justify-center rounded-full bg-linear-to-r from-pink-600 to-pink-800 text-white font-bold text-base border-2 border-pink-500/30 shadow-sm">
+                        {member.name?.charAt(0)}
+                        {member.lastname?.charAt(0)}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Datos del Miembro */}
+                  <div className="flex flex-col">
+                    <div className="flex items-center gap-2">
+                      <p className="text-base font-semibold text-white group-hover:text-pink-300 transition-colors">
+                        {member.name} {member.lastname}
+                      </p>
+                      {isCurrentUser && (
+                        <span className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-pink-500/20 text-pink-300 border border-pink-500/40 rounded-md">
+                          Vos
+                        </span>
+                      )}
+                    </div>
+                    {member.phoneNumber && (
+                      <p className="text-xs text-gray-400 mt-0.5">
+                        {member.phoneNumber}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Acción / Flecha */}
+                <div className="p-2 text-pink-400 group-hover:text-pink-300 group-hover:translate-x-1 transition-all">
+                  <FaChevronRight className="w-4 h-4" />
+                </div>
+              </div>
+            );
+          })
         )}
       </div>
 
+      {/* Botón Flotante para Agregar Miembro */}
       <button
         onClick={() => router.push("/workspace/staff/new")}
-        className="fixed bottom-20 right-6 p-2 rounded-full bg-pink-500 text-white  shadow-md shadow-black hover:bg-pink-600 transition-colors"
+        aria-label="Agregar miembro"
+        className="fixed bottom-20 right-6 p-2 rounded-full bg-linear-to-r from-pink-500 to-pink-600 text-white shadow-xl shadow-pink-900/30 hover:shadow-pink-600/40 hover:scale-105 active:scale-95 transition-all duration-200 border border-pink-400/30 z-30"
       >
-        <FiUserPlus className="text-3xl" />
+        <FiUserPlus className="w-8 h-8" />
       </button>
     </div>
   );

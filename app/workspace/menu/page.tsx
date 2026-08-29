@@ -41,11 +41,6 @@ export default function MenuPage({
   const { establishments, activeEstablishment, setActiveEstablishment } =
     useEstablishment();
   const [showSelector, setShowSelector] = useState(false);
-  const { goTo } = useNavigation();
-
-  const router = useRouter();
-
-  console.log("menu user: ", user);
 
   const handleSelectEstablishment = async (shop: Establishment) => {
     try {
@@ -152,9 +147,9 @@ export default function MenuPage({
             </>
           )}
 
-          <button className="fixed bottom-20 right-6 p-2 rounded-full bg-pink-500 text-white shadow-md shadow-black hover:bg-pink-600 transition-colors">
+          {/* <button className="fixed bottom-20 right-6 p-2 rounded-full bg-pink-500 text-white shadow-md shadow-black hover:bg-pink-600 transition-colors">
             <IoAddSharp className="text-3xl " />
-          </button>
+          </button> */}
         </div>
       </nav>
     </aside>

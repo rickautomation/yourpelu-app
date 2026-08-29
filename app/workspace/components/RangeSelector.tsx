@@ -32,7 +32,7 @@ export default function RangeSelector({
       <div className="relative flex-1">
         <button
           onClick={() => setShowDropdown(!showDropdown)}
-          className="w-full px-3 py-2 bg-luminiBrandBlue border border-pink-600 text-white rounded flex justify-between items-center text-lg"
+          className="w-full px-3 py-2 bg-luminiBrandBlue border border-pink-500/30 text-white rounded-lg flex justify-between items-center text-lg"
         >
           {selectedRange.label}
           <FiChevronDown
@@ -70,7 +70,7 @@ export default function RangeSelector({
       {/* Botón calendario */}
       <button
         onClick={() => setShowCalendar(!showCalendar)}
-        className="bg-luminiBrandBlue border border-pink-600 px-2 py-2 rounded hover:bg-gray-600 flex items-center gap-2"
+        className="bg-luminiBrandBlue border border-pink-500/30 px-2 py-2 rounded-lg hover:bg-gray-600 flex items-center gap-2"
       >
         <FaRegCalendarAlt className="w-7 h-7" />
       </button>
