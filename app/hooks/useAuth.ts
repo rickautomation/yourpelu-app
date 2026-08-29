@@ -35,33 +35,25 @@ export function useAuth() {
   const fetchUser = useCallback(async () => {
     try {
       const data = await apiGet<User>("/auth/me");
-      setUser(data); // 👈 ya trae userProfile embebido
+      setUser(data);
       setError(null);
     } catch (err: any) {
-      if (!isRefreshing) {
-        isRefreshing = true;
-        refreshPromise = apiPost<{ ok: boolean }>("/auth/refresh", {}).finally(
-          () => {
-            isRefreshing = false;
-            refreshPromise = null;
-          },
-        );
-      }
       try {
+        if (!isRefreshing) {
+          isRefreshing = true;
+          refreshPromise = apiPost<{ ok: boolean }>("/auth/refresh", {}).finally(
+            () => {
+              isRefreshing = false;
+              refreshPromise = null;
+            }
+          );
+        }
+
         const refreshRes = await refreshPromise;
+
         if (refreshRes?.ok) {
           const data = await apiGet<User>("/auth/me");
-
-          let profile: UserProfile | null = null;
-          if (data?.id) {
-            try {
-              profile = await apiGet<UserProfile>(`/user-profiles/${data.id}`);
-            } catch {
-              profile = null;
-            }
-          }
-
-          setUser({ ...data, userProfile: profile || undefined });
+          setUser(data);
           setError(null);
         } else {
           setError("No autorizado");
@@ -72,7 +64,6 @@ export function useAuth() {
         setUser(null);
       }
     } finally {
-      // 👇 este finally se ejecuta siempre, tanto si el try inicial funciona como si falla
       setLoading(false);
     }
   }, []);
@@ -94,11 +85,11 @@ export function useAuth() {
 
   const refreshUser = async (updatedUser?: User) => {
     if (updatedUser) {
-      setUser(updatedUser); // 👈 actualiza el estado sin recargar
+      setUser(updatedUser);
       setError(null);
       return;
     }
-    await fetchUser(); // fallback normal
+    await fetchUser();
   };
 
   const isAuthenticated = !!user && !error;

@@ -42,6 +42,8 @@ export default function MenuPage({
     useEstablishment();
   const [showSelector, setShowSelector] = useState(false);
 
+  console.log("user: ", user)
+
   const handleSelectEstablishment = async (shop: Establishment) => {
     try {
       await apiPost("/current-establishments/set", {
