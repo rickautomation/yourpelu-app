@@ -5,12 +5,10 @@ export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const hostname = request.headers.get("host") || "";
 
-  // --- Lógica de auth ---
   let token = request.cookies.get("auth_token")?.value;
 
   if (pathname.startsWith("/workspace")) {
     if (!token) {
-      // Intentar refrescar con refresh_token
       const refresh = request.cookies.get("refresh_token")?.value;
       if (refresh) {
         try {
@@ -22,11 +20,15 @@ export async function proxy(request: NextRequest) {
           });
 
           if (resp.ok) {
-            // si refrescó bien, dejar pasar
-            return NextResponse.next();
+            const response = NextResponse.next();
+            // ⚠️ CRÍTICO: Copiar las cookies devueltas por NestJS hacia la respuesta del cliente
+            const setCookieHeader = resp.headers.get("set-cookie");
+            if (setCookieHeader) {
+              response.headers.set("set-cookie", setCookieHeader);
+            }
+            return response;
           }
         } catch {
-          // si falla, redirigir
           return NextResponse.redirect(new URL("/login", request.url));
         }
       }
@@ -40,7 +42,7 @@ export async function proxy(request: NextRequest) {
 
       switch (role) {
         case "admin":
-          break; // acceso completo
+          break;
 
         case "manager":
           if (pathname.startsWith("/workspace/admin-only")) {
@@ -49,12 +51,10 @@ export async function proxy(request: NextRequest) {
           break;
 
         case "staff": {
-          // 1. Redirección automática si intenta acceder directamente a /workspace o /workspace/
           if (pathname === "/workspace" || pathname === "/workspace/") {
             return NextResponse.redirect(new URL("/workspace/user-staff", request.url));
           }
 
-          // 2. Rutas permitidas para Staff (incluyendo /workspace/profile)
           const allowedPaths = [
             "/workspace/user-staff",
             "/workspace/profile",
@@ -75,7 +75,6 @@ export async function proxy(request: NextRequest) {
           return NextResponse.redirect(new URL("/unauthorized", request.url));
       }
     } catch {
-      // si el token está corrupto, intentar refrescar
       const refresh = request.cookies.get("refresh_token")?.value;
       if (refresh) {
         try {
@@ -87,7 +86,12 @@ export async function proxy(request: NextRequest) {
           });
 
           if (resp.ok) {
-            return NextResponse.next();
+            const response = NextResponse.next();
+            const setCookieHeader = resp.headers.get("set-cookie");
+            if (setCookieHeader) {
+              response.headers.set("set-cookie", setCookieHeader);
+            }
+            return response;
           }
         } catch {
           return NextResponse.redirect(new URL("/login", request.url));
@@ -97,7 +101,7 @@ export async function proxy(request: NextRequest) {
     }
   }
 
-  // --- Lógica de subdominios ---
+  // Lógica de subdominios
   const currentHost = hostname
     .replace(".yourpelu.com", "")
     .replace(".localhost:8001", "");
