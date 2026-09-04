@@ -15,20 +15,7 @@ const FinalStep: React.FC<FinalStepProps> = ({ onFinish }) => {
 
   const handleFinish = async () => {
     setLoading(true);
-    try {
-      if (onFinish) {
-        await onFinish();
-      } else {
-        router.push("/workspace");
-        router.refresh();
-      }
-    } catch (error) {
-      console.error("Error al finalizar la configuración:", error);
-      // Fallback de navegación en caso de error de router
-      window.location.href = "/workspace";
-    } finally {
-      setLoading(false);
-    }
+    window.location.href = "/workspace";
   };
 
   return (
