@@ -483,8 +483,8 @@ export default function OfferingForm(props: OfferingFormProps) {
 
       {/* Popup de Éxito */}
       {showSuccessPopup && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-900 border border-emerald-500/40 text-white rounded-2xl p-6 shadow-2xl flex flex-col items-center space-y-3 max-w-xs text-center animate-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-md flex items-center justify-center z-50 p-4">
+          <div className="bg-darkBrandBlue border border-emerald-500/40 text-white rounded-2xl p-6 shadow-2xl flex flex-col items-center space-y-3 max-w-xs text-center animate-in zoom-in-95 duration-200">
             <FiCheckCircle className="text-emerald-400 text-5xl animate-bounce" />
             <span className="font-bold text-lg">¡Registrado con éxito!</span>
             <p className="text-xs text-gray-400">La transacción se procesó correctamente.</p>

@@ -55,7 +55,7 @@ const ActsStaffToggle: React.FC<StaffToggleProps> = ({ user, setStep }) => {
 
       // 👇 Avanzamos siempre al paso 4
       setStep(4);
-      router.push("/dashboard/initial-setup?step=4");
+      router.push("/initial-setup?step=4");
     } catch (error) {
       console.error("Error actualizando staff status:", error);
       alert("No se pudo actualizar el estado de staff");

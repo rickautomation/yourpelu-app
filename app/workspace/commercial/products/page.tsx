@@ -12,7 +12,7 @@ import CategoryProductSelector from "./components/CategoryProductSelector";
 export default function ProductsPage() {
   const { activeEstablishment } = useEstablishment();
   const { linkedCategories, loading, error, refetch } = useProductCategories(
-    activeEstablishment?.id
+    activeEstablishment?.id,
   );
   const { deleteProduct } = useProducts(activeEstablishment?.id);
 
@@ -34,7 +34,9 @@ export default function ProductsPage() {
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="flex flex-col items-center gap-3">
           <div className="w-8 h-8 border-4 border-pink-500 border-t-transparent rounded-full animate-spin" />
-          <p className="text-slate-400 text-sm font-medium">Cargando categorías...</p>
+          <p className="text-slate-400 text-sm font-medium">
+            Cargando categorías...
+          </p>
         </div>
       </div>
     );
@@ -63,9 +65,12 @@ export default function ProductsPage() {
           <div className="p-3 bg-pink-500/10 border border-pink-500/20 rounded-full text-pink-400 mb-3">
             <FiLayers className="text-2xl" />
           </div>
-          <h3 className="text-slate-200 font-semibold text-base mb-1">Sin categorías creadas</h3>
+          <h3 className="text-slate-200 font-semibold text-base mb-1">
+            Sin categorías creadas
+          </h3>
           <p className="text-slate-400 text-xs max-w-sm mb-4">
-            Es necesario crear categorías primero para poder organizar y agregar tus productos.
+            Es necesario crear categorías primero para poder organizar y agregar
+            tus productos.
           </p>
           <button
             onClick={() => router.push("products/new-category")}
@@ -79,9 +84,12 @@ export default function ProductsPage() {
           <div className="p-3 bg-pink-500/10 border border-pink-500/20 rounded-full text-pink-400 mb-3">
             <FiBox className="text-2xl" />
           </div>
-          <h3 className="text-slate-200 font-semibold text-base mb-1">Aún no hay productos</h3>
+          <h3 className="text-slate-200 font-semibold text-base mb-1">
+            Aún no hay productos
+          </h3>
           <p className="text-slate-400 text-xs max-w-sm">
-            Empieza a agregar artículos a tus categorías usando el botón flotante inferior.
+            Empieza a agregar artículos a tus categorías usando el botón
+            flotante inferior.
           </p>
         </div>
       ) : (
@@ -89,6 +97,7 @@ export default function ProductsPage() {
         <CategoryProductSelector
           linkedCategories={linkedCategories}
           onDeleteProduct={handleDeleteProduct}
+          onRefresh={refetch}
         />
       )}
 
@@ -97,7 +106,9 @@ export default function ProductsPage() {
         <div className="fixed inset-0 backdrop-blur-sm bg-black/30 flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
           <div className="border border-slate-700 bg-darkBrandBlue text-white rounded-2xl shadow-2xl p-6 space-y-4 w-full max-w-xs relative animate-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between pb-2 border-b border-slate-800">
-              <p className="font-semibold text-slate-100 text-sm">¿Qué deseas crear?</p>
+              <p className="font-semibold text-slate-100 text-sm">
+                ¿Qué deseas crear?
+              </p>
               <button
                 onClick={() => setShowOptions(false)}
                 className="text-slate-400 hover:text-slate-200 transition-colors"
@@ -119,7 +130,9 @@ export default function ProductsPage() {
                 </div>
                 <div className="text-left">
                   <p className="font-semibold">Nueva categoría</p>
-                  <p className="text-[10px] text-slate-400">Organiza por secciones</p>
+                  <p className="text-[10px] text-slate-400">
+                    Organiza por secciones
+                  </p>
                 </div>
               </button>
 
@@ -135,7 +148,9 @@ export default function ProductsPage() {
                 </div>
                 <div className="text-left">
                   <p className="font-semibold">Nuevo producto</p>
-                  <p className="text-[10px] text-slate-400">Añade stock y precios</p>
+                  <p className="text-[10px] text-slate-400">
+                    Añade stock y precios
+                  </p>
                 </div>
               </button>
             </div>
@@ -151,13 +166,15 @@ export default function ProductsPage() {
       )}
 
       {/* Botón Flotante */}
-      <button
-        onClick={() => setShowOptions(true)}
-        className="fixed bottom-20 right-6 p-2 rounded-full bg-pink-600 text-white shadow-xl shadow-pink-600/30 hover:bg-pink-500 hover:scale-105 active:scale-95 transition-all z-40 group flex items-center justify-center"
-        aria-label="Crear nuevo"
-      >
-        <IoAddSharp className="w-8 h-8 group-hover:rotate-90 transition-transform duration-200" />
-      </button>
+      {!noCategories && (
+        <button
+          onClick={() => setShowOptions(true)}
+          className="fixed bottom-20 right-6 p-2 rounded-full bg-pink-600 text-white shadow-xl shadow-pink-600/30 hover:bg-pink-500 hover:scale-105 active:scale-95 transition-all z-40 group flex items-center justify-center"
+          aria-label="Crear nuevo"
+        >
+          <IoAddSharp className="w-8 h-8 group-hover:rotate-90 transition-transform duration-200" />
+        </button>
+      )}
     </div>
   );
 }

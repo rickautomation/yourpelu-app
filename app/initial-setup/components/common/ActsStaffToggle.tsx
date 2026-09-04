@@ -1,9 +1,9 @@
 "use client";
+
 import React, { useState } from "react";
 import { apiPatch } from "@/app/lib/apiPatch";
 import { useRouter } from "next/navigation";
 import { useEstablishment } from "@/app/context/EstablishmentContext";
-import { useUserEstablishment } from "@/app/hooks/useUserEstablishment";
 
 interface User {
   id: string;
@@ -31,9 +31,6 @@ const ActsStaffToggle: React.FC<StaffToggleProps> = ({ user, setStep }) => {
   const [loading, setLoading] = useState(false);
 
   const { activeEstablishment } = useEstablishment();
-
-  console.log("active: ", activeEstablishment);
-
   const router = useRouter();
 
   const handleConfirm = async () => {
@@ -48,16 +45,16 @@ const ActsStaffToggle: React.FC<StaffToggleProps> = ({ user, setStep }) => {
         `/user-staff-establishments/${user.id}/${activeEstablishment.id}`,
         {
           actsAsStaff: isStaff,
-        },
+        }
       );
 
       setIsStaff(response.actsAsStaff);
 
-      // 👇 Avanzamos siempre al paso 4
+      // Avanzar al paso 4
       setStep(4);
-      router.push("/dashboard/initial-setup?step=4");
+      router.push("/initial-setup?step=4");
     } catch (error) {
-      console.error("Error actualizando staff status:", error);
+      console.error("Error actualizando estado de staff:", error);
       alert("No se pudo actualizar el estado de staff");
     } finally {
       setLoading(false);
@@ -65,36 +62,57 @@ const ActsStaffToggle: React.FC<StaffToggleProps> = ({ user, setStep }) => {
   };
 
   return (
-    <div className="flex flex-col gap-8 text-center">
-      <p className="text-lg text-white font-medium">
-        ¿Quieres que tu cuenta funcione además de propietario/administrador como parte del{" "}
-        <strong>staff</strong> en este establecimiento?
+    <div className="max-w-lg mx-auto text-center">
+      <h2 className="text-2xl sm:text-3xl font-extrabold text-white mb-2 tracking-tight">
+        ¿Atenderás clientes en este local?
+      </h2>
+
+      <p className="text-gray-300 mb-8 text-sm sm:text-base leading-relaxed">
+        Indica si tu usuario también figurará en la agenda de turnos como parte del equipo de <strong className="text-white font-semibold">staff</strong>, además de administrar la plataforma.
       </p>
 
-      {/* Toggle más grande */}
-      <label className="flex items-center gap-3 cursor-pointer justify-center">
+      {/* Switch / Toggle estilizado */}
+      <div className="flex flex-col items-center gap-6 mb-10">
         <div
           onClick={() => setIsStaff(!isStaff)}
-          className={`w-16 h-8 flex items-center rounded-full p-1 transition-colors ${
-            isStaff ? "bg-green-500" : "bg-gray-400"
-          }`}
+          className="flex items-center gap-4 cursor-pointer select-none group"
         >
           <div
-            className={`bg-white w-6 h-6 rounded-full shadow-md transform transition-transform ${
-              isStaff ? "translate-x-8" : "translate-x-0"
+            className={`w-16 h-9 flex items-center rounded-full p-1 transition-colors duration-200 ${
+              isStaff ? "bg-pink-500" : "bg-white/20"
             }`}
-          />
+          >
+            <div
+              className={`bg-white w-7 h-7 rounded-full shadow-md transform transition-transform duration-200 ${
+                isStaff ? "translate-x-7" : "translate-x-0"
+              }`}
+            />
+          </div>
+
+          <span
+            className={`text-xl font-bold tracking-wide transition-colors ${
+              isStaff ? "text-pink-400" : "text-gray-400"
+            }`}
+          >
+            {isStaff ? "SÍ, Atenderé clientes" : "NO, Solo administraré"}
+          </span>
         </div>
-        <span className="text-xl font-semibold">{isStaff ? "SI" : "NO"}</span>
-      </label>
+      </div>
 
       {/* Botón de confirmación */}
       <button
         onClick={handleConfirm}
         disabled={loading}
-        className="px-4 py-2 bg-blue-600 text-white rounded-md font-semibold hover:bg-blue-700 disabled:opacity-50"
+        className="w-full bg-pink-500 hover:bg-pink-600 disabled:bg-pink-500/50 text-white font-semibold py-3.5 px-6 rounded-xl shadow-lg shadow-pink-500/25 transition-all duration-200 active:scale-95 flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed"
       >
-        {loading ? "Guardando..." : "Confirmar"}
+        {loading ? (
+          <>
+            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            <span>Guardando preferencia...</span>
+          </>
+        ) : (
+          <span>Confirmar y continuar</span>
+        )}
       </button>
     </div>
   );

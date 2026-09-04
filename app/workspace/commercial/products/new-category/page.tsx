@@ -45,8 +45,8 @@ export default function AddCategories() {
     <div className="max-w-xl mx-auto p-4 sm:p-6 space-y-5">
       {/* Alerta de éxito flotante */}
       {showSuccessPopup && (
-        <div className="fixed inset-0 backdrop-blur-sm bg-black/60 flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
-          <div className="border border-emerald-500/40 bg-luminiBrandBlue text-white rounded-2xl shadow-2xl p-6 flex items-center gap-4 animate-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 backdrop-blur-sm bg-black/30 flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
+          <div className="border border-emerald-500/40 bg-darkBrandBlue text-white rounded-2xl shadow-2xl p-6 flex items-center gap-4 animate-in zoom-in-95 duration-200">
             <div className="p-2.5 bg-emerald-500/15 border border-emerald-500/30 rounded-xl">
               <FiCheckCircle className="text-emerald-400 text-2xl shrink-0" />
             </div>
