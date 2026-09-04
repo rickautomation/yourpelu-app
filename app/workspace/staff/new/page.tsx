@@ -6,7 +6,12 @@ import { apiPost } from "@/app/lib/apiPost";
 import { FaExclamation, FaWhatsapp } from "react-icons/fa";
 import { useEstablishment } from "@/app/context/EstablishmentContext";
 import { apiGet } from "@/app/lib/apiGet";
-import { FiChevronDown, FiChevronUp, FiUserPlus, FiArrowLeft } from "react-icons/fi";
+import {
+  FiChevronDown,
+  FiChevronUp,
+  FiUserPlus,
+  FiArrowLeft,
+} from "react-icons/fi";
 
 type WorkRelationAttribute = {
   id: string;
@@ -148,7 +153,8 @@ export default function NewStaffPage() {
                 Invitación Creada
               </h3>
               <p className="text-xs text-gray-300 mt-1">
-                Envía el enlace de acceso directo al nuevo colaborador por WhatsApp.
+                Envía el enlace de acceso directo al nuevo colaborador por
+                WhatsApp.
               </p>
             </div>
 
@@ -162,7 +168,7 @@ ${activationLink}
 ⚠️ Recordá que este enlace es único y solo funciona una vez.`;
 
                 const whatsappUrl = `https://api.whatsapp.com/send?phone=${formattedPhone}&text=${encodeURIComponent(
-                  messageToSend
+                  messageToSend,
                 )}`;
 
                 setShowModal(false);
@@ -287,8 +293,9 @@ ${activationLink}
                 )}
               </button>
 
+              {/* Menú Desplegable (Despliegue hacia ARRIBA) */}
               {showTypes && (
-                <div className="absolute left-0 right-0 mt-1.5 bg-luminiBrandBlue border border-pink-600/40 rounded-xl shadow-2xl z-20 max-h-56 overflow-y-auto divide-y divide-pink-600/10">
+                <div className="absolute left-0 right-0 bottom-full mb-2 bg-luminiBrandBlue border border-pink-600/40 rounded-xl shadow-2xl z-30 max-h-56 overflow-y-auto divide-y divide-pink-600/10">
                   {types.map((t) => (
                     <div
                       key={t.id}
@@ -321,7 +328,7 @@ ${activationLink}
                     className="fixed inset-0 z-10"
                     onClick={() => setTypeError(false)}
                   />
-                  <div className="absolute left-1/2 -bottom-9 -translate-x-1/2 z-20 animate-fadeIn">
+                  <div className="absolute left-1/2 -top-8 -translate-x-1/2 z-20 animate-fadeIn">
                     <div className="flex items-center gap-1.5 bg-amber-500 text-gray-950 text-xs font-semibold px-2.5 py-1 rounded-md shadow-md">
                       <FaExclamation />
                       <span>Selecciona un tipo de relación</span>

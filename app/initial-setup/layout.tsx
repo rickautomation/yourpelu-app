@@ -1,27 +1,19 @@
 "use client";
 
-import { useState, useMemo } from "react";
 import { useSecureAuth } from "../hooks/useSecureAuth";
 import { EstablishmentProvider } from "../context/EstablishmentContext";
 import Image from "next/image";
 
-export default function WorkspaceLayout({
+export default function InitialSetupLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { user, loading, router } = useSecureAuth();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-
-  const sessionId = useMemo(() => {
-    return typeof crypto.randomUUID === "function"
-      ? crypto.randomUUID()
-      : String(Date.now());
-  }, []);
+  const { loading } = useSecureAuth();
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen">
+      <div className="flex items-center justify-center h-screen bg-brandBlue">
         <div className="w-12 h-12 border-4 border-pink-500 border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
@@ -29,17 +21,23 @@ export default function WorkspaceLayout({
 
   return (
     <EstablishmentProvider>
-      <div className="p-4 bg-brandBlue flex justify-center">
-        <Image
-          src="/yourpelu-logo.png"
-          alt="Yourpelu Logo"
-          width={68}
-          height={68}
-          className="h-10 w-auto"
-        />
-      </div>
-      <div className="min-h-screen flex flex-col bg-brandBlue text-white relative px-1">
-        <main className="relative z-20 pt-10">{children}</main>
+      <div className="min-h-screen flex flex-col bg-brandBlue text-white">
+        {/* Header / Nav unificado */}
+        <header className="p-4 flex justify-center bg-brandBlue select-none">
+          <Image
+            src="/yourpelu-logo.png"
+            alt="Yourpelu Logo"
+            width={68}
+            height={68}
+            className="h-10 w-auto"
+            priority
+          />
+        </header>
+
+        {/* Contenido principal sin espacios o bordes indeseados */}
+        <main className="flex-1 w-full max-w-4xl mx-auto px-4 py-6">
+          {children}
+        </main>
       </div>
     </EstablishmentProvider>
   );

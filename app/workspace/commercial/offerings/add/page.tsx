@@ -7,6 +7,8 @@ import { useState, useEffect, useRef } from "react";
 import { useClients } from "@/app/hooks/useClients";
 import { useEstablishment } from "@/app/context/EstablishmentContext";
 import OfferingForm from "../components/OfferingForm";
+import { useRouter } from "next/navigation";
+import { FiPlusCircle, FiAlertCircle } from "react-icons/fi";
 
 export type CreateOfferingDto = {
   price: number;
@@ -20,6 +22,7 @@ export type CreateOfferingDto = {
 };
 
 export default function AddOwnOffering() {
+  const router = useRouter();
   const { user } = useAuth();
   const { activeEstablishment, settings } = useEstablishment();
   const { clientCategories, paymentMethods, loading } = useOfferingsCategories(
@@ -29,8 +32,12 @@ export default function AddOwnOffering() {
   const { clients, addClient } = useClients();
 
   const [selectedCategory, setSelectedCategory] = useState<any | null>(null);
-  const [selectedClientType, setSelectedClientType] = useState<any | null>(null);
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<any | null>(null);
+  const [selectedClientType, setSelectedClientType] = useState<any | null>(
+    null,
+  );
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<
+    any | null
+  >(null);
 
   const [showCategoryPopup, setShowCategoryPopup] = useState(false);
   const [showClientTypePopup, setShowClientTypePopup] = useState(false);
@@ -127,7 +134,12 @@ export default function AddOwnOffering() {
   ]);
 
   async function handleSubmit() {
-    if (!user?.id || !activeEstablishment?.id || !selectedCategory || !selectedClientType) {
+    if (
+      !user?.id ||
+      !activeEstablishment?.id ||
+      !selectedCategory ||
+      !selectedClientType
+    ) {
       console.error("Faltan datos requeridos para crear el offering");
       return;
     }
@@ -157,10 +169,58 @@ export default function AddOwnOffering() {
     }
   }
 
-  if (loading && !componentLoading) {
+  // Spinner de Carga
+  if (loading || componentLoading) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="w-12 h-12 border-4 border-pink-500 border-t-transparent rounded-full animate-spin"></div>
+      <div className="flex items-center justify-center h-64">
+        <div className="w-10 h-10 border-4 border-pink-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  // 🔴 GUARDIA: Si no existen categorías/servicios configurados
+  if (!clientCategories || clientCategories.length === 0) {
+    return (
+      <div className="p-6">
+        <div className="max-w-md mx-auto my-8 p-6 bg-white/5 border border-white/10 rounded-2xl text-center space-y-4 shadow-xl">
+          <div className="w-14 h-14 mx-auto rounded-full bg-pink-500/10 border border-pink-500/30 flex items-center justify-center text-pink-400">
+            <FiAlertCircle className="text-3xl" />
+          </div>
+
+          <h3 className="text-xl font-bold text-white">
+            Aún no has agregado servicios
+          </h3>
+
+          <p className="text-sm text-gray-300 leading-relaxed">
+            Para comenzar a registrar atenciones o cobros, primero debes agregar
+            los servicios que ofrece tu establecimiento.
+          </p>
+
+          {/* Opciones de creación integradas */}
+          <div className="flex flex-col gap-2.5 pt-2">
+            <button
+              type="button"
+              onClick={() =>
+                router.push("/workspace/commercial/offerings/new/from-template")
+              }
+              className="w-full bg-cyan-950/60 border border-cyan-500/40 hover:border-cyan-400 text-cyan-300 font-semibold py-3 px-4 rounded-xl transition-all duration-200 active:scale-95 flex items-center justify-center gap-2 cursor-pointer text-sm shadow-md"
+            >
+              <FiPlusCircle className="text-lg" />
+              <span>Crear desde plantilla</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() =>
+                router.push("/workspace/commercial/offerings/new/from-custom")
+              }
+              className="w-full bg-pink-500 hover:bg-pink-600 text-white font-semibold py-3 px-4 rounded-xl shadow-lg shadow-pink-500/25 transition-all duration-200 active:scale-95 flex items-center justify-center gap-2 cursor-pointer text-sm"
+            >
+              <FiPlusCircle className="text-lg" />
+              <span>Crear desde cero</span>
+            </button>
+          </div>
+        </div>
       </div>
     );
   }

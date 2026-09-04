@@ -96,7 +96,7 @@ const handleSubmit = async () => {
 
     setTimeout(() => {
       setStep(3);
-      router.push("/dashboard/initial-setup?step=3");
+      router.push("/initial-setup?step=3");
     }, 1500);
   } catch (error) {
     console.error("Error creando barbería:", error);

@@ -112,7 +112,7 @@ const SelectScheduleDays: React.FC<StepSixProps> = ({ setStep, user }) => {
         setActiveEstablishment(response);
 
         setStep(8); // avanzar al siguiente paso
-        router.push("/dashboard/initial-setup?step=8");
+        router.push("/initial-setup?step=8");
       } else {
         router.refresh();
         alert("Todavía no se creó el establecimiento");

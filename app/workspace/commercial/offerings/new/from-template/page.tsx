@@ -65,7 +65,7 @@ export default function NewOfferingFromTemplatePage({
         <div className="relative flex-1">
           <button
             onClick={() => setShowDropdown(!showDropdown)}
-            className="w-full px-4 py-3 bg-slate-800/80 hover:bg-slate-800 text-slate-100 rounded-xl border border-slate-700 hover:border-slate-600 flex justify-between items-center text-sm font-medium transition-all shadow-sm"
+            className="w-full px-4 py-3 bg-luminiBrandBlue hover:bg-slate-800 text-slate-100 rounded-xl border border-slate-700 hover:border-slate-600 flex justify-between items-center text-sm font-medium transition-all shadow-sm"
           >
             <span className="truncate flex items-center gap-2">
               <FiTag className="text-slate-400 shrink-0" />
@@ -79,7 +79,7 @@ export default function NewOfferingFromTemplatePage({
           </button>
           
           {showDropdown && (
-            <ul className="absolute top-full left-0 mt-2 w-full max-h-64 overflow-y-auto bg-slate-800 border border-slate-700 rounded-xl shadow-xl z-20 py-1 divide-y divide-slate-700/50">
+            <ul className="absolute top-full left-0 mt-2 w-full max-h-64 overflow-y-auto bg-luminiBrandBlue border border-slate-700 rounded-xl shadow-xl z-20 py-1 divide-y divide-slate-700/50">
               {globalCategories.map((cat: any) => (
                 <li
                   key={cat.id}
@@ -95,17 +95,6 @@ export default function NewOfferingFromTemplatePage({
             </ul>
           )}
         </div>
-
-        {inWizard && (
-          <div className="flex-1">
-            <Link
-              href="/dashboard/offerings/new/from-custom?inWizard=true"
-              className="w-full px-4 py-3 bg-pink-600 hover:bg-pink-500 text-white text-xs font-semibold rounded-xl transition-all text-center block shadow-md shadow-pink-600/20 whitespace-nowrap"
-            >
-              Crear desde cero
-            </Link>
-          </div>
-        )}
       </div>
 
       {/* Listado de Servicios */}
@@ -123,7 +112,7 @@ export default function NewOfferingFromTemplatePage({
               recentlyAdded === service.id ? (
                 <div
                   key={service.id}
-                  className="px-5 py-4 bg-emerald-500/15 border border-emerald-500/30 rounded-xl shadow-sm flex items-center gap-3 animate-in fade-in duration-200"
+                  className="px-5 py-4 bg-luminiBrandBlue border border-emerald-500/30 rounded-xl shadow-sm flex items-center gap-3 animate-in fade-in duration-200"
                 >
                   <FiCheckCircle className="text-emerald-400 text-xl shrink-0" />
                   <p className="text-emerald-200 text-sm font-medium">Servicio agregado correctamente</p>
@@ -131,7 +120,7 @@ export default function NewOfferingFromTemplatePage({
               ) : (
                 <div
                   key={service.id}
-                  className="p-4 bg-slate-800/50 hover:bg-slate-800/80 border border-slate-700/60 rounded-2xl shadow-sm transition-all flex flex-col gap-3"
+                  className="p-4 bg-luminiBrandBlue hover:bg-slate-800/80 border border-slate-700/60 rounded-2xl shadow-sm transition-all flex flex-col gap-3"
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex flex-col">
@@ -160,7 +149,7 @@ export default function NewOfferingFromTemplatePage({
 
                   {/* Input desplegable para el precio */}
                   {openPriceInput === service.id && (
-                    <div className="flex flex-col gap-3 p-3 mt-1 bg-slate-900/60 rounded-xl border border-slate-700/60">
+                    <div className="flex flex-col gap-3 p-3 mt-1 bg-darkBrandBlue rounded-xl border border-slate-700/60">
                       <div className="relative">
                         <span className="absolute left-3 top-2.5 text-slate-400 text-sm">$</span>
                         <input
@@ -168,7 +157,7 @@ export default function NewOfferingFromTemplatePage({
                           placeholder="Ingresa el precio"
                           value={price}
                           onChange={(e) => setPrice(e.target.value)}
-                          className="w-full pl-7 pr-3 py-2 bg-slate-800 text-slate-100 rounded-lg border border-slate-700 focus:border-pink-500 text-sm outline-none transition-all placeholder:text-slate-500"
+                          className="w-full pl-7 pr-3 py-2 bg-exposeBrandBlue text-slate-100 rounded-lg border border-slate-700 focus:border-pink-500 text-sm outline-none transition-all placeholder:text-slate-500"
                           autoFocus
                         />
                       </div>
@@ -231,27 +220,6 @@ export default function NewOfferingFromTemplatePage({
             </div>
           )}
       </div>
-
-      {inWizard && (
-        <div className="pt-4 mt-4 flex justify-end border-t border-slate-800">
-          <button
-            onClick={() => {
-              if (setStep) {
-                setStep(6);
-              }
-              router.push("/dashboard/initial-setup?step=6");
-            }}
-            disabled={clientOfferings.length === 0}
-            className={`px-6 py-2.5 rounded-xl font-medium text-sm transition-all shadow-md ${
-              clientOfferings.length === 0
-                ? "bg-slate-800 text-slate-500 border border-slate-700/50 cursor-not-allowed"
-                : "bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-600/20"
-            }`}
-          >
-            Finalizar
-          </button>
-        </div>
-      )}
 
       {/* Error Popup Moderno */}
       {showErrorPopup && (

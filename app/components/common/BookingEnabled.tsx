@@ -79,7 +79,7 @@ const BookingEnabled: React.FC<StepFiveProps> = ({ setStep, user }) => {
               }
               // En ambos casos avanzamos al step 7
               setStep(7);
-              router.push("/dashboard/initial-setup?step=7");
+              router.push("/initial-setup?step=7");
             } else {
               alert("Todavía no se creó el establecimiento");
             }

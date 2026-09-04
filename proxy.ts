@@ -21,7 +21,6 @@ export async function proxy(request: NextRequest) {
 
           if (resp.ok) {
             const response = NextResponse.next();
-            // ⚠️ CRÍTICO: Copiar las cookies devueltas por NestJS hacia la respuesta del cliente
             const setCookieHeader = resp.headers.get("set-cookie");
             if (setCookieHeader) {
               response.headers.set("set-cookie", setCookieHeader);
@@ -41,11 +40,23 @@ export async function proxy(request: NextRequest) {
       const role = payload?.rol;
 
       switch (role) {
+        case "user": {
+          // Si el usuario es 'user' y NO está en la ruta del setup, lo enviamos allí
+          if (!pathname.startsWith("/initial-setup")) {
+            return NextResponse.redirect(new URL("/initial-setup", request.url));
+          }
+          break;
+        }
+
         case "admin":
+          // Si un admin intenta entrar manualmente al setup inicial, lo enviamos a la raíz del workspace
+          if (pathname.startsWith("/workspace/initial-setup")) {
+            return NextResponse.redirect(new URL("/workspace", request.url));
+          }
           break;
 
         case "manager":
-          if (pathname.startsWith("/workspace/admin-only")) {
+          if (pathname.startsWith("/workspace/admin-only") || pathname.startsWith("/workspace/initial-setup")) {
             return NextResponse.redirect(new URL("/unauthorized", request.url));
           }
           break;

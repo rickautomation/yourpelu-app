@@ -58,9 +58,13 @@ export default function EstablishmentMetricsPage() {
       to = customRange.to;
     }
 
-    if (from && to && from === to) {
-      from = `${from}T00:00:00.000Z`;
-      to = `${to}T23:59:59.999Z`;
+    // CORRECCIÓN: Garantizar el rango completo de tiempo (inicio de día a fin de día)
+    // siempre que existan 'from' y 'to', sin importar si son iguales o distintos.
+    if (from && to) {
+      const cleanFrom = from.split("T")[0];
+      const cleanTo = to.split("T")[0];
+      from = `${cleanFrom}T00:00:00.000Z`;
+      to = `${cleanTo}T23:59:59.999Z`;
     }
 
     return { startDate: from, endDate: to };

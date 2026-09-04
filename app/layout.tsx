@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Lexend_Deca } from "next/font/google";
 import "./globals.css";
 import { ServiceWorkerRegister } from "./components/ServiceWorkerRegister";
 
@@ -11,6 +11,13 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+
+// Configuración global de Lexend Deca
+const lexendDeca = Lexend_Deca({
+  subsets: ["latin"],
+  variable: "--font-lexend-deca",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -40,7 +47,7 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/icons/icon-192.png" />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased h-full w-full overflow-x-hidden bg-darkBrandBlue`}
+        className={`${lexendDeca.className} ${geistSans.variable} ${geistMono.variable} antialiased h-full w-full overflow-x-hidden bg-darkBrandBlue`}
       >
         <main className="relative z-20">
           {children} 

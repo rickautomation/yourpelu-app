@@ -3,28 +3,29 @@ import { useState, useMemo } from "react";
 import { useAuth } from "@/app/hooks/useAuth";
 import { WizardProvider } from "@/app/context/WizardContext";
 import { useRouter } from "next/navigation";
-import SelectEstablishmentType from "@/app/components/common/SelectEstablishmentType";
-import EstablishmentCreationForm from "@/app/components/common/EstablishmentCreationForm";
-import ActsStaffToggle from "@/app/components/common/ActsStaffToggle";
-import UploadLogo from "@/app/components/common/UploadLogo";
-import BookingEnabled from "@/app/components/common/BookingEnabled";
-import SelectScheduleDays from "@/app/components/common/SelectScheduleDays";
-import SchedulesSetup from "@/app/components/common/SchedulesSetup";
+import SelectEstablishmentType from "./common/SelectEstablishmentType";
+import EstablishmentCreationForm from "./common/EstablishmentCreationForm";
+import ActsStaffToggle from "./common/ActsStaffToggle";
+import UploadLogo from "./common/UploadLogo";
+import BookingEnabled from "./common/BookingEnabled";
+import SelectScheduleDays from "./common/SelectScheduleDays";
+import SchedulesSetup from "./common/SchedulesSetup";
 import SchedulesConfirm from "./SchedulesConfirm";
+import FinalStep from "./common/FinalStep";
 
 interface WizardProps {
   onFinish?: () => void;
   userName: string;
   userId: string;
   step?: number; // 👈 nuevo prop
-  initialType?: string | null ;
+  initialType?: string | null;
 }
 
 export default function EstablishmentSetupWizard({
   userName,
   userId,
   step: initialStep = 0,
-  initialType
+  initialType,
 }: WizardProps) {
   const { user } = useAuth();
 
@@ -32,7 +33,9 @@ export default function EstablishmentSetupWizard({
 
   const [step, setStep] = useState(initialStep); // Si ya se está renderizando, salta al paso 2
 
-  const [selectedType, setSelectedType] = useState<string | null>(initialType ?? null);
+  const [selectedType, setSelectedType] = useState<string | null>(
+    initialType ?? null,
+  );
 
   const sessionId = useMemo(() => {
     return typeof crypto.randomUUID === "function"
@@ -44,15 +47,42 @@ export default function EstablishmentSetupWizard({
     <WizardProvider>
       <div className="text-white px-6">
         {step === 0 && (
-          <div className="text-center">
-            <h2 className="text-2xl font-bold mb-4">Hola {userName}!</h2>
-            <p className="mb-6">
-              Vamos a configurar tu establecimiento. Completa los datos y la
-              crearemos en el sistema.
+          <div className="max-w-lg mx-auto text-center py-4">
+            {/* Icono de bienvenida plano */}
+            <div className="w-16 h-16 bg-pink-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6 text-pink-500">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-8 h-8"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M13.5 21v-7.5a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 .75.75V21m-4.5 0H2.25M12 21.75V12m0 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm0 0v9.75"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M3.75 21v-9a3.75 3.75 0 0 1 3.75-3.75h10.5A3.75 3.75 0 0 1 21 12v9"
+                />
+              </svg>
+            </div>
+
+            <h2 className="text-3xl sm:text-4xl font-extrabold mb-3 tracking-tight text-white">
+              ¡Hola <span className="text-pink-500">{userName}</span>!
+            </h2>
+
+            <p className="text-gray-300 mb-8 text-base sm:text-lg leading-relaxed max-w-md mx-auto">
+              Vamos a configurar tu establecimiento. Completa los datos
+              iniciales y lo crearemos en el sistema en unos pocos pasos.
             </p>
+
             <button
               onClick={() => setStep(1)}
-              className="bg-green-500 px-6 py-2 rounded font-semibold"
+              className="w-full sm:w-auto bg-pink-500 hover:bg-pink-600 text-white font-semibold px-8 py-3.5 rounded-xl shadow-lg shadow-pink-500/25 transition-all duration-200 active:scale-95 cursor-pointer"
             >
               Empezar
             </button>
@@ -77,40 +107,23 @@ export default function EstablishmentSetupWizard({
           />
         )}
 
-        {step === 3 && user && <ActsStaffToggle user={user} setStep={setStep}/>}
+        {step === 3 && user && (
+          <ActsStaffToggle user={user} setStep={setStep} />
+        )}
 
         {step === 4 && user && <UploadLogo setStep={setStep} user={user} />}
 
         {step === 5 && user && <BookingEnabled setStep={setStep} user={user} />}
 
-        {step === 6 && user && <SelectScheduleDays setStep={setStep} user={user} />}
+        {step === 6 && user && (
+          <SelectScheduleDays setStep={setStep} user={user} />
+        )}
 
         {step === 7 && user && <SchedulesSetup setStep={setStep} />}
 
-        {step === 8 && user && <SchedulesConfirm setStep={setStep}/>}
+        {step === 8 && user && <SchedulesConfirm setStep={setStep} />}
 
-        {step === 9 && (
-          <div className="text-center">
-            <h2 className="text-2xl font-bold mb-4">¡Listo!</h2>
-            <p className="mb-6">
-              Has completado la configuración. Puedes empezar a
-              gestionar tus servicios y staff.
-            </p>
-            <p>
-              ya puedes agregar servicios, productos, miembros a tu staff y gestionar tu establecimiento desde el menú
-              de navegación.
-            </p>
-
-            <button
-              onClick={() => {
-                window.location.href = "/workspace";
-              }}
-              className="mt-4 bg-pink-400 text-white px-4 py-2 rounded hover:bg-pink-500 transition-colors font-semibold"
-            >
-              Terminar
-            </button>
-          </div>
-        )}
+        {step === 9 && user && <FinalStep />}
       </div>
     </WizardProvider>
   );

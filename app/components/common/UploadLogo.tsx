@@ -179,7 +179,7 @@ const UploadLogo: React.FC<StepThreeProps> = ({ setStep, user }) => {
           <button
             onClick={() => {
               setStep(5);
-              router.push("/dashboard/initial-setup?step=5");
+              router.push("/initial-setup?step=5");
             }}
             className="bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600 transition-colors font-semibold"
           >
