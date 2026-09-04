@@ -26,6 +26,7 @@ export default function EstablishmentSetupWizard({
   userId,
   step: initialStep = 0,
   initialType,
+  onFinish,
 }: WizardProps) {
   const { user } = useAuth();
 
@@ -123,7 +124,7 @@ export default function EstablishmentSetupWizard({
 
         {step === 8 && user && <SchedulesConfirm setStep={setStep} />}
 
-        {step === 9 && user && <FinalStep />}
+        {step === 9 && user && <FinalStep onFinish={onFinish} />}
       </div>
     </WizardProvider>
   );
