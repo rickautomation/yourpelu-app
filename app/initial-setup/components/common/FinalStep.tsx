@@ -14,8 +14,23 @@ const FinalStep: React.FC<FinalStepProps> = ({ onFinish }) => {
   const [loading, setLoading] = useState(false);
 
   const handleFinish = async () => {
+    if (loading) return;
     setLoading(true);
-    window.location.href = "/workspace";
+
+    try {
+      // 1. Ejecutamos la función de cierre si existe
+      if (onFinish) {
+        await onFinish();
+      }
+
+      // 2. Damos un pequeño respiro (150ms) para que React pinte el estado de carga
+      setTimeout(() => {
+        window.location.href = "/workspace";
+      }, 150);
+    } catch (error) {
+      console.error("Error al finalizar:", error);
+      setLoading(false); // Si hay error, reactivamos el botón
+    }
   };
 
   return (
