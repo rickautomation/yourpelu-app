@@ -124,7 +124,7 @@ export default function EstablishmentSetupWizard({
 
         {step === 8 && user && <SchedulesConfirm setStep={setStep} />}
 
-        {step === 9 && user && <FinalStep onFinish={onFinish} />}
+        {step === 9 && user && <FinalStep />}
       </div>
     </WizardProvider>
   );
