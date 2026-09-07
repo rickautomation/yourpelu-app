@@ -88,7 +88,7 @@ export default function SetupAccountPage() {
 
       if (isSuccess) {
         setTimeout(() => {
-          router.push("/workspace");
+          router.push("/workspace/user-staff");
         }, 1500);
       }
     } catch (err: any) {
