@@ -2,6 +2,6 @@
 
 import UnderConstructionPage from "@/app/components/UnderConstructionPage"
 
-export default function ServicesPage () {
+export default function OthersCostsPage () {
     return <UnderConstructionPage/>
 }

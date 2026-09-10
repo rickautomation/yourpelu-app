@@ -7,6 +7,7 @@ export interface UserFinancesResponse {
   deduction: number;
   finalTotal: number;
   commissionRate?: number | null;
+  workRelation: string
 }
 
 interface UseUserFinancesOptions {
