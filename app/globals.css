@@ -1,8 +1,9 @@
+/* globals.css */
 @import "tailwindcss/preflight";   /* antes era @tailwind base */
 @import "tailwindcss/theme";       /* antes era @tailwind components */
 @import "tailwindcss/utilities";   /* antes era @tailwind utilities */
 
-/* Estilos PWA / App Nativa */
+/* tus estilos personalizados */
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -15,38 +16,13 @@
   }
 }
 
-/* Experiencia Nativa en Móviles (iOS/Android) */
-html, body {
-  /* Soporte para el área segura de notch e indicadores de inicio */
-  padding-top: env(safe-area-inset-top);
-  padding-bottom: env(safe-area-inset-bottom);
-  padding-left: env(safe-area-inset-left);
-  padding-right: env(safe-area-inset-right);
-
-  /* Evita selección accidental de texto al presionar botones o cards */
-  -webkit-user-select: none;
-  user-select: none;
-
-  /* Elimina el recuadro gris/azul al tocar enlaces o botones en móviles */
-  -webkit-tap-highlight-color: transparent;
-
-  /* Evita el efecto de rebote en el scroll global de iOS */
-  overscroll-behavior-y: none;
-}
-
-/* Permitir selección de texto normal en inputs y textareas */
-input, textarea {
-  -webkit-user-select: text;
-  user-select: text;
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
 
-/* Clases custom de marca */
+/* ejemplo de clase custom */
 .bg-brandBlue {
   background-color: #1b1b45;
 }
@@ -80,7 +56,12 @@ body {
 }
 
 .border-ligthBrandBlue {
-  color: #3d3d6e;
+  color: #3d3d6e
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
 }
 
 @theme inline {
@@ -90,7 +71,19 @@ body {
   --font-mono: var(--font-geist-mono);
 }
 
-/* Animaciones */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
 @keyframes fadeIn {
   from { opacity: 0 }
   to { opacity: 1 }
@@ -118,40 +111,39 @@ body {
   animation: fadeInOut 2s ease-in-out forwards;
 }
 
-/* Datepicker estilos */
 .react-datepicker {
-  background-color: #1f2937;
-  border: 1px solid #374151;
+  background-color: #1f2937; /* bg-gray-800 */
+  border: 1px solid #374151; /* border-gray-700 */
   color: #fff;
   border-radius: 0.5rem;
 }
 
 .react-datepicker__header {
-  background-color: #111827;
+  background-color: #111827; /* bg-gray-900 */
   border-bottom: 1px solid #374151;
 }
 
 .react-datepicker__current-month {
-  color: #a78bfa;
+  color: #a78bfa; /* purple-400 */
 }
 
 .react-datepicker__day-name,
 .react-datepicker__day {
-  color: #d1d5db;
+  color: #d1d5db; /* gray-300 */
 }
 
 .react-datepicker__day--selected,
 .react-datepicker__day--keyboard-selected {
-  background-color: #7c3aed;
+  background-color: #7c3aed; /* purple-600 */
   color: #fff;
 }
 
 .react-datepicker__day:hover {
-  background-color: #4c1d95;
+  background-color: #4c1d95; /* purple-900 */
   color: #fff;
 }
 
-/* Estilos react-calendar */
+/* --- Personalización de react-calendar --- */
 .custom-calendar-container .react-calendar {
   width: 100%;
   background-color: transparent;
@@ -242,3 +234,4 @@ body {
 @import "swiper/css";
 @import "swiper/css/navigation";
 @import "swiper/css/pagination";
+
