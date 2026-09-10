@@ -1,4 +1,4 @@
-const CACHE_NAME = "yourpelu-cache-v3"; // <--- Cambia la versión cuando hagas cambios estructurales
+const CACHE_NAME = "yourpelu-cache-v4"; // <--- Cambia la versión cuando hagas cambios estructurales
 const STATIC_ASSETS = ["/workspace", "/manifest.json", "/Your.png"];
 
 // Instalación
