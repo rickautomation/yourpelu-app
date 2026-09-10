@@ -1,4 +1,4 @@
-const CACHE_NAME = "yourpelu-cache-v6";
+const CACHE_NAME = "yourpelu-cache-v7";
 const STATIC_ASSETS = ["/", "/manifest.json", "/yourpelu-logo.png"];
 
 // Instalación: cachea solo assets estáticos
