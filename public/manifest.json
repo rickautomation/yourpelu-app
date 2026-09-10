@@ -3,8 +3,8 @@
   "short_name": "YourPelu",
   "start_url": "/workspace",
   "display": "standalone",
-  "background_color": "#1800ad",
-  "theme_color": "#1800ad",
+  "background_color": "#1b1b45",
+  "theme_color": "#1b1b45",
   "description": "Gestión de barbershops y turnos desde tu dispositivo.",
   "icons": [
     { "src": "/Your.png", "sizes": "500x500", "type": "image/png" },

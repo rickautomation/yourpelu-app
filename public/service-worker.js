@@ -1,5 +1,5 @@
-const CACHE_NAME = "yourpelu-cache-v5";
-const STATIC_ASSETS = ["/", "/manifest.json", "/Your.png"];
+const CACHE_NAME = "yourpelu-cache-v6";
+const STATIC_ASSETS = ["/", "/manifest.json", "/yourpelu-logo.png"];
 
 // Instalación: cachea solo assets estáticos
 self.addEventListener("install", (event) => {
