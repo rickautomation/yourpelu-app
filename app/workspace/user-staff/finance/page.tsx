@@ -91,7 +91,7 @@ export default function UserStaffFinancePage() {
           day: "numeric",
           month: "long",
           year: "numeric",
-        })
+        }),
       );
     }
 
@@ -101,7 +101,7 @@ export default function UserStaffFinancePage() {
         date.toLocaleDateString("es-AR", {
           month: "long",
           year: "numeric",
-        })
+        }),
       );
     }
 
@@ -117,7 +117,7 @@ export default function UserStaffFinancePage() {
           day: "2-digit",
           month: "2-digit",
           year: "numeric",
-        }
+        },
       );
 
       if (!rawTo || rawFrom === rawTo) {
@@ -126,18 +126,15 @@ export default function UserStaffFinancePage() {
             day: "numeric",
             month: "long",
             year: "numeric",
-          })
+          }),
         );
       }
 
-      const toDate = new Date(`${rawTo}T00:00:00`).toLocaleDateString(
-        "es-AR",
-        {
-          day: "2-digit",
-          month: "2-digit",
-          year: "numeric",
-        }
-      );
+      const toDate = new Date(`${rawTo}T00:00:00`).toLocaleDateString("es-AR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      });
       return `${fromDate} a ${toDate}`;
     }
 
@@ -184,12 +181,15 @@ export default function UserStaffFinancePage() {
           {/* Datos Financieros */}
           {!loading && !error && data && data.totalOfferings > 0 ? (
             <div className="space-y-4 animate-in fade-in duration-200">
-              {/* Tarjetas de Métricas */}
+              {/* Modificación en UserStaffFinancePage.tsx (frontend) para las tarjetas de métricas */}
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="p-5 rounded-xl bg-darkBrandBlue border border-gray-800 shadow-sm flex flex-col justify-between">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                      Total Acumulado Bruto
+                      {data.workRelation === "empleado"
+                        ? "Total Generado"
+                        : "Total Acumulado Bruto"}
                     </span>
                     <div className="p-2 bg-blue-500/10 text-blue-400 rounded-lg border border-blue-500/20">
                       <FiDollarSign className="w-4 h-4" />
@@ -203,17 +203,34 @@ export default function UserStaffFinancePage() {
                 <div className="p-5 rounded-xl bg-darkBrandBlue border border-gray-800 shadow-sm flex flex-col justify-between">
                   <div className="flex justify-between items-center">
                     <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                      Retención Establecimiento
+                      {data.workRelation === "empleado"
+                        ? "Sueldo Fijo Asignado"
+                        : data.workRelation === "arrendador"
+                          ? "Canon / Alquiler Fijo"
+                          : "Retención Establecimiento"}
                     </span>
-                    {data.commissionRate !== undefined && (
-                      <span className="text-xs bg-pink-500/20 text-pink-400 px-2.5 py-1 rounded-full font-semibold border border-pink-500/30">
-                        {data.commissionRate}%
-                      </span>
-                    )}
+                    {data.commissionRate !== null &&
+                      data.workRelation === "contratista" && (
+                        <span className="text-xs bg-pink-500/20 text-pink-400 px-2.5 py-1 rounded-full font-semibold border border-pink-500/30">
+                          {data.commissionRate}%
+                        </span>
+                      )}
                   </div>
-                  <span className="text-3xl font-extrabold text-red-400 mt-3 flex items-center gap-1">
-                    <FiMinusCircle className="text-2xl" />
-                    {formatCurrency(data.deduction)}
+                  <span
+                    className={`text-3xl font-extrabold mt-3 flex items-center gap-1 ${
+                      data.workRelation === "empleado"
+                        ? "text-emerald-400"
+                        : "text-red-400"
+                    }`}
+                  >
+                    {data.workRelation !== "empleado" && (
+                      <FiMinusCircle className="text-2xl" />
+                    )}
+                    {formatCurrency(
+                      data.workRelation === "empleado"
+                        ? data.finalTotal
+                        : data.deduction,
+                    )}
                   </span>
                 </div>
               </div>
@@ -222,7 +239,9 @@ export default function UserStaffFinancePage() {
               <div className="p-6 rounded-xl bg-linear-to-r from-blue-900/60 to-indigo-900/60 border border-blue-500/30 text-center shadow-lg">
                 <span className="text-xs font-semibold tracking-wider text-blue-200 uppercase flex items-center justify-center gap-1.5">
                   <FiCheckCircle className="text-blue-400" />
-                  Total Neto Recaudado
+                  {data.workRelation === "empleado"
+                    ? "Sueldo a Cobrar"
+                    : "Total Neto Recaudado"}
                 </span>
                 <div className="text-4xl font-black text-white mt-2">
                   {formatCurrency(data.finalTotal)}

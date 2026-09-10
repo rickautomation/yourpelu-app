@@ -240,7 +240,7 @@ export default function EstablishmentMetricsPage() {
             )}
 
             {activeFilter === "categories" && (
-              <div className="rounded-2xl border border-pink-600/40 bg-luminiBrandBlue p-4 shadow-xl">
+              <div className="">
                 <h2 className="mb-5 text-lg font-semibold text-white flex items-center gap-2">
                   <FaChartBar className="text-pink-500" /> Categorías mas
                   demandadas
@@ -250,7 +250,7 @@ export default function EstablishmentMetricsPage() {
                     metrics.topCategories.map((cat, index) => (
                       <div
                         key={cat.categoryId}
-                        className="flex items-center justify-between rounded-xl bg-gray-900/40 border border-pink-600/20 p-4 text-base"
+                        className="flex items-center justify-between rounded-xl bg-darkBrandBlue border border-pink-600/20 p-4 text-base"
                       >
                         <div className="flex items-center gap-4">
                           <span className="text-sm font-bold text-pink-400 bg-pink-950/50 px-3 py-1.5 rounded-lg">
@@ -284,7 +284,7 @@ export default function EstablishmentMetricsPage() {
 
             {/* SECCIÓN NUEVA: Desempeño del Staff */}
             {activeFilter === "staff" && (
-              <div className="rounded-2xl border border-pink-600/40 bg-luminiBrandBlue p-4 shadow-xl">
+              <div className="">
                 <h2 className="mb-5 text-lg font-semibold text-white flex items-center gap-2">
                   <FaUserTie className="text-pink-500" /> Desempeño del Equipo
                 </h2>
@@ -333,7 +333,7 @@ export default function EstablishmentMetricsPage() {
             )}
 
             {activeFilter === "payments" && (
-              <div className="rounded-2xl border border-pink-600/40 bg-luminiBrandBlue p-4 shadow-xl">
+              <div className="">
                 <h2 className="mb-5 text-lg font-semibold text-white flex items-center gap-2">
                   <FaWallet className="text-pink-500" /> Métodos de Pago
                 </h2>

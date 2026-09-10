@@ -6,12 +6,13 @@ import { LiaHandScissors } from "react-icons/lia";
 import { IoBagOutline, IoStorefrontOutline } from "react-icons/io5";
 import { MdBalance, MdOutlineElectricBolt } from "react-icons/md";
 import { BsBoxSeam } from "react-icons/bs";
+import { FiTool } from "react-icons/fi";
 
 export default function FinacePage() {
   const { goTo } = useNavigation();
 
   return (
-    <div className="p-4 max-w-4xl mx-auto space-y-4 animate-slideIn">
+    <div className="px-4 py-2 max-w-4xl mx-auto space-y-4 animate-slideIn">
       {/* Encabezado */}
       <div className="text-center py-2">
         <h1 className="text-2xl font-bold text-white tracking-tight">
@@ -20,7 +21,7 @@ export default function FinacePage() {
       </div>
 
       {/* Grid de Accesos */}
-      <div className="grid grid-cols-2 gap-3 w-full">
+      <div className="grid grid-cols-2 gap-2 w-full">
         {/* Staff */}
         <button
           onClick={() => goTo("/workspace/finance/staff")}
@@ -48,13 +49,15 @@ export default function FinacePage() {
           <p className="text-base font-semibold text-white mt-2">Tienda</p>
         </button>
 
-        {/* Servicios */}
+        {/* Mantenimiento y Varios (Reparaciones, imprevistos, roturas) */}
         <button
-          onClick={() => goTo("/workspace/finance/services")}
+          onClick={() => goTo("/workspace/finance/basic-services")} // O la ruta que elijas, ej: /workspace/finance/expenses
           className="flex flex-col items-center justify-center p-4 bg-luminiBrandBlue hover:bg-pink-600/10 border border-pink-600/30 hover:border-pink-500 rounded-2xl h-32 transition-all duration-200 shadow-lg group"
         >
-          <LiaHandScissors className="w-10 h-10 text-pink-400 group-hover:scale-110 transition-transform duration-200" />
-          <p className="text-base font-semibold text-white mt-2">Servicios</p>
+          <MdOutlineElectricBolt className="w-10 h-10 text-pink-400 group-hover:scale-110 transition-transform duration-200" />
+          <p className="text-sm font-semibold text-white mt-2 text-center">
+            Servicios básicos
+          </p>
         </button>
 
         {/* Insumos */}
@@ -68,11 +71,13 @@ export default function FinacePage() {
 
         {/* Servicios básicos */}
         <button
-          onClick={() => goTo("/workspace/finance/basic-services")}
+          onClick={() => goTo("/workspace/finance/others-costs")}
           className="flex flex-col items-center justify-center p-4 bg-luminiBrandBlue hover:bg-pink-600/10 border border-pink-600/30 hover:border-pink-500 rounded-2xl h-32 transition-all duration-200 shadow-lg group"
         >
-          <MdOutlineElectricBolt className="w-10 h-10 text-pink-400 group-hover:scale-110 transition-transform duration-200" />
-          <p className="text-sm font-semibold text-white mt-2 text-center">Servicios básicos</p>
+          <FiTool className="w-10 h-10 text-pink-400 group-hover:scale-110 transition-transform duration-200" />
+          <p className="text-sm font-semibold text-white mt-2 text-center">
+            Otros
+          </p>
         </button>
 
         {/* Balance */}
@@ -81,7 +86,9 @@ export default function FinacePage() {
           className="flex flex-col items-center justify-center p-4 bg-luminiBrandBlue hover:bg-pink-600/10 border border-pink-600/30 hover:border-pink-500 rounded-2xl h-28 col-span-2 transition-all duration-200 shadow-lg group"
         >
           <MdBalance className="w-10 h-10 text-pink-400 group-hover:scale-110 transition-transform duration-200" />
-          <p className="text-base font-semibold text-white mt-1">Balance General</p>
+          <p className="text-base font-semibold text-white mt-1">
+            Balance General
+          </p>
         </button>
       </div>
     </div>
