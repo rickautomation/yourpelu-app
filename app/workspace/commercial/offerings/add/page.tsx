@@ -58,6 +58,8 @@ export default function AddOwnOffering() {
 
   const [componentLoading, setComponentLoading] = useState(true);
 
+  const [submitting, setSubmitting] = useState(false);
+
   const filteredClients = clients.filter((client) =>
     `${client.name} ${client.lastname} ${client.email ?? ""} ${client.phone ?? ""}`
       .toLowerCase()
@@ -156,6 +158,7 @@ export default function AddOwnOffering() {
     };
 
     try {
+      setSubmitting(true); // <-- Bloquea el botón
       const offering = await createOffering(dto);
       if (offering) {
         setShowSuccessPopup(true);
@@ -166,6 +169,8 @@ export default function AddOwnOffering() {
       }
     } catch (err) {
       console.error("Error creando offering:", err);
+    } finally {
+      setSubmitting(false); // <-- Libera el botón al terminar
     }
   }
 
@@ -265,6 +270,7 @@ export default function AddOwnOffering() {
         addClient={addClient}
         handleSubmit={handleSubmit}
         loading={loading}
+        submitting={submitting}
       />
     </div>
   );
