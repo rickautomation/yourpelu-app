@@ -14,19 +14,16 @@ export default function CommercialPage() {
   const { goTo } = useNavigation();
 
   return (
-    <div className="p-4 max-w-4xl mx-auto space-y-4 animate-slideIn">
+    <div className="px-4 py-2 max-w-4xl mx-auto space-y-4 animate-slideIn">
       {/* Encabezado */}
-      <div className="text-center py-2">
+      <div className="text-center pb-2">
         <h1 className="text-2xl font-bold text-white tracking-tight">
           Menú <span className="text-pink-400">Comercial</span>
         </h1>
-        <p className="text-xs sm:text-sm text-gray-400 mt-1">
-          Gestioná tus servicios, agenda de turnos, productos y clientes.
-        </p>
       </div>
 
       {/* Grid de Accesos */}
-      <div className="grid grid-cols-2 gap-3 w-full">
+      <div className="grid grid-cols-2 gap-2 w-full">
         {/* Servicios */}
         <button
           onClick={() => goTo("/workspace/commercial/offerings")}

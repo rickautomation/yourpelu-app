@@ -22,7 +22,7 @@ export default function LoginPage({ setView }: Props) {
       const data = await apiPost<{ ok: boolean }>("/auth/login", form);
       if (data.ok) {
         setMessage("Login exitoso ✅");
-        router.push("/dashboard");
+        router.push("/workspace");
       }
     } catch (err: any) {
       console.log("err: ", err);
