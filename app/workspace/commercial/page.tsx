@@ -9,6 +9,7 @@ import {
 } from "react-icons/io5";
 import { LuUsers } from "react-icons/lu";
 import { useNavigation } from "@/app/lib/useNavegation";
+import { BsBoxSeam } from "react-icons/bs";
 
 export default function CommercialPage() {
   const { goTo } = useNavigation();
@@ -61,12 +62,21 @@ export default function CommercialPage() {
         </button>
 
         {/* Tienda */}
-        <button
+        {/* <button
           onClick={() => goTo("/workspace/commercial/market")}
           className="flex flex-col items-center justify-center p-4 bg-luminiBrandBlue hover:bg-pink-600/10 border border-pink-600/30 hover:border-pink-500 rounded-2xl h-32 transition-all duration-200 shadow-lg group"
         >
           <IoStorefrontOutline className="w-10 h-10 text-pink-400 group-hover:scale-110 transition-transform duration-200" />
           <p className="text-base font-semibold text-white mt-2">Tienda</p>
+        </button> */}
+
+        {/* Insumos */}
+        <button
+          onClick={() => goTo("/workspace/commercial/supplies")}
+          className="flex flex-col items-center justify-center p-4 bg-luminiBrandBlue hover:bg-pink-600/10 border border-pink-600/30 hover:border-pink-500 rounded-2xl h-32 transition-all duration-200 shadow-lg group"
+        >
+          <BsBoxSeam className="w-10 h-10 text-pink-400 group-hover:scale-110 transition-transform duration-200" />
+          <p className="text-base font-semibold text-white mt-2">Insumos</p>
         </button>
 
         {/* Clientes */}
