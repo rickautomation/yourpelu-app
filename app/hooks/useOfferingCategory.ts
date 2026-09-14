@@ -65,28 +65,27 @@ export function useOfferingsCategories(establishmentId?: string) {
 
   useEffect(() => {
     const fetchCategories = async () => {
+      // Si no hay establishmentId, evitamos hacer peticiones innecesarias o con valor undefined
+      if (!establishmentId) return;
+
       setLoading(true);
       setError(null);
+
       try {
-        // globales con sus types y clientTypes
-        const globals = await apiGet<OfferingCategory[]>(
-          "/offering-categories",
-        );
-        setGlobalCategories(globals);
-
-        // métodos de pago
-        const methods = await apiGet<PaymentMethod[]>("/payment-methods");
-        setPaymentMethods(methods);
-
-        // propias de la barbería con clientTypes
-        if (establishmentId) {
-          const clients = await apiGet<ClientOfferingCategory[]>(
+        // Ejecutamos las peticiones en paralelo de manera segura
+        const [globals, methods, clients] = await Promise.all([
+          apiGet<OfferingCategory[]>("/offering-categories"),
+          apiGet<PaymentMethod[]>(
+            `/payment-methods/establishment/${establishmentId}`,
+          ),
+          apiGet<ClientOfferingCategory[]>(
             `/client-offering-categories/establishment/${establishmentId}/with-client-types`,
-          );
-          setClientCategories(clients);
-        } else {
-          setClientCategories([]);
-        }
+          ),
+        ]);
+
+        setGlobalCategories(globals);
+        setPaymentMethods(methods);
+        setClientCategories(clients);
       } catch (err: any) {
         console.error("Error cargando categorías:", err);
         setError(err);
@@ -94,6 +93,7 @@ export function useOfferingsCategories(establishmentId?: string) {
         setLoading(false);
       }
     };
+
     fetchCategories();
   }, [establishmentId]);
 

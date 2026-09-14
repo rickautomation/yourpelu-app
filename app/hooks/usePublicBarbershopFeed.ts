@@ -54,6 +54,7 @@ type Establishment = {
   profile?: ProfileData;
   staff?: Staff[];
 };
+
 export function usePublicBarbershopFeed(slug: string) {
   const [establishment, setEstablishment] = useState<Establishment | null>(
     null,

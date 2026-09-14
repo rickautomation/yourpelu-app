@@ -11,7 +11,6 @@ export type CreateOfferingDto = {
   price: number;
   userId: string;
   clientId?: string | null;
-  barbershopId?: string | null;
   establishmentId?: string | null;
   clientOfferingTypeId?: string | null;
   clientOfferingCategoryId?: string | null;
