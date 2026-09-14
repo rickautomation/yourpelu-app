@@ -89,8 +89,6 @@ export default function IncomeStaffPage() {
     );
   }, [balance]);
 
-  console.log("balance: ", balance);
-
   const getWorkRelationBadgeStyle = (relation: string | null) => {
     const rel = relation?.toLowerCase();
 
