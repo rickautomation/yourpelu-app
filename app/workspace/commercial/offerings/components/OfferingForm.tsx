@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { 
   FiCheckCircle, 
   FiChevronDown, 
@@ -57,6 +58,7 @@ interface OfferingFormProps {
   addClient: (client: any) => Promise<any>;
   handleSubmit: () => void;
   loading: boolean;
+  submitting: boolean;
 }
 
 export default function OfferingForm(props: OfferingFormProps) {
@@ -98,6 +100,7 @@ export default function OfferingForm(props: OfferingFormProps) {
     addClient,
     handleSubmit,
     loading,
+    submitting,
   } = props;
 
   return (
@@ -474,10 +477,10 @@ export default function OfferingForm(props: OfferingFormProps) {
 
         <button
           onClick={handleSubmit}
-          disabled={loading || !selectedCategory || !selectedClientType}
+          disabled={submitting || !selectedCategory || !selectedClientType}
           className="w-full py-3 bg-pink-500 hover:bg-pink-600 disabled:opacity-40 disabled:hover:bg-pink-500 text-white font-bold rounded-xl transition-all shadow-lg active:scale-[0.98] mt-2"
         >
-          {loading ? "Registrando..." : "Confirmar y Registrar"}
+          {submitting ? "Registrando..." : "Confirmar y Registrar"}
         </button>
       </div>
 
