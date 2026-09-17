@@ -62,6 +62,7 @@ export async function proxy(request: NextRequest) {
           break;
 
         case "staff": {
+          console.log("payload", payload, role)
           if (pathname === "/workspace" || pathname === "/workspace/") {
             return NextResponse.redirect(new URL("/workspace/user-staff", request.url));
           }
@@ -70,6 +71,7 @@ export async function proxy(request: NextRequest) {
             "/workspace/user-staff",
             "/workspace/profile",
             "/workspace/commercial/offerings/add",
+            "/workspace/commercial/offerings/history",
             "/workspace/commercial/clients",
             "/workspace/commercial/appointments",
           ];
