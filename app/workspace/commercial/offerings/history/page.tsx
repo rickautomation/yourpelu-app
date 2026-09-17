@@ -6,7 +6,14 @@ import { useOfferingsCrud } from "@/app/hooks/useOfferingsCrud";
 import DateRangePicker, {
   DateRange,
 } from "@/app/workspace/components/DateRangePicker";
-import { FiCalendar, FiTrash2, FiUser, FiTag, FiFolder, FiAlertTriangle } from "react-icons/fi";
+import {
+  FiCalendar,
+  FiTrash2,
+  FiUser,
+  FiTag,
+  FiFolder,
+  FiAlertTriangle,
+} from "react-icons/fi";
 
 const formatCurrency = (amount: number | undefined) => {
   if (amount === undefined || amount === null) return "$ 0";
@@ -28,6 +35,8 @@ export default function OfferingsHistoryPage() {
   >("month");
   const [showCalendar, setShowCalendar] = useState<boolean>(false);
   const [customRange, setCustomRange] = useState<DateRange>({});
+
+  console.log("off: ", offerings);
 
   // Estados para el Modal de Confirmación de Borrado
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -190,19 +199,36 @@ export default function OfferingsHistoryPage() {
                   key={off.id}
                   className="bg-luminiBrandBlue/50 border border-white/10 rounded-2xl p-5 shadow-lg flex flex-col justify-between space-y-4 hover:border-white/20 transition-all"
                 >
-                  {/* Cabecera de la tarjeta: Fecha y Botón Borrar */}
-                  <div className="flex items-center justify-between border-b border-white/5 pb-3">
-                    <span className="text-xs font-medium text-gray-400">
-                      {off.createdAt
-                        ? new Date(off.createdAt).toLocaleDateString("es-AR", {
-                            day: "2-digit",
-                            month: "2-digit",
-                            year: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })
-                        : "Fecha no disponible"}
-                    </span>
+                  {/* Cabecera de la tarjeta: Fecha, Usuario y Botón Borrar */}
+                  <div className="flex items-start justify-between border-b border-white/5 pb-3">
+                    <div className="space-y-1">
+                      <span className="text-xs font-medium text-gray-400 block">
+                        {off.createdAt
+                          ? new Date(off.createdAt).toLocaleDateString(
+                              "es-AR",
+                              {
+                                day: "2-digit",
+                                month: "2-digit",
+                                year: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              },
+                            )
+                          : "Fecha no disponible"}
+                      </span>
+                      {/* 👇 Nombre y apellido del usuario debajo de la fecha */}
+                      {off.user && (
+                        <div className="flex items-center gap-2 text-gray-300">
+                          <div className="border border-pink-600 rounded-full ">
+                            <FiUser className="text-pink-600 shrink-0" />
+                          </div>
+                          <span className="truncate">
+                            {off.user?.name} {off.user?.lastname}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
                     <button
                       onClick={() => openDeleteModal(off.id)}
                       className="border border-white/10 p-2 text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors"
@@ -269,11 +295,14 @@ export default function OfferingsHistoryPage() {
               <div className="p-3 bg-rose-500/10 rounded-xl border border-rose-500/20">
                 <FiAlertTriangle className="w-6 h-6" />
               </div>
-              <h3 className="text-lg font-bold text-white">Eliminar registro</h3>
+              <h3 className="text-lg font-bold text-white">
+                Eliminar registro
+              </h3>
             </div>
-            
+
             <p className="text-sm text-gray-300">
-              ¿Estás seguro de que deseas eliminar este servicio del historial? Esta acción no se puede deshacer.
+              ¿Estás seguro de que deseas eliminar este servicio del historial?
+              Esta acción no se puede deshacer.
             </p>
 
             <div className="flex items-center justify-end gap-3 pt-2">
