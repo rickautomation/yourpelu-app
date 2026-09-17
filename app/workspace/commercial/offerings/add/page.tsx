@@ -14,7 +14,6 @@ export type CreateOfferingDto = {
   price: number;
   userId: string;
   clientId?: string | null;
-  barbershopId?: string | null;
   establishmentId?: string | null;
   clientOfferingTypeId?: string | null;
   clientOfferingCategoryId?: string | null;
@@ -150,10 +149,10 @@ export default function AddOwnOffering() {
       price: Number(selectedClientType.price),
       userId: user.id,
       establishmentId: activeEstablishment.id,
-      clientOfferingTypeId: selectedClientType?.id || null,
-      clientOfferingCategoryId: selectedCategory?.id || null,
-      paymentMethodId: selectedPaymentMethod?.id || null,
-      clientId: selectedClient?.id || null,
+      clientOfferingTypeId: selectedClientType?.id || undefined,
+      clientOfferingCategoryId: selectedCategory?.id || undefined,
+      paymentMethodId: selectedPaymentMethod?.id || undefined,
+      clientId: selectedClient?.id || undefined,
     };
 
     try {
