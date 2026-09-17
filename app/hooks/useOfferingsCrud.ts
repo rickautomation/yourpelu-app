@@ -24,6 +24,7 @@ export type Offering = {
   clientOfferingType?: { name: string };
   clientOfferingCategory?: { name: string };
   paymentMethod?: { name: string };
+  user?: {name: string, lastname: string}
   // Agrega más relaciones según necesites mostrar en la tabla
 };
 

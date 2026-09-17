@@ -236,6 +236,13 @@ export default function OfferingsHistoryPage() {
                         {off.clientOfferingCategory?.name || "Sin categoría"}
                       </span>
                     </div>
+
+                    <div className="flex items-center gap-2 text-gray-300">
+                      <FiFolder className="text-gray-400 shrink-0" />
+                      <span className="truncate">
+                        {off.user?.name} {off.user?.lastname}
+                      </span>
+                    </div>
                   </div>
 
                   {/* Pie de la tarjeta: Precio */}
