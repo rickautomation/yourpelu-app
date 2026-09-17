@@ -149,7 +149,6 @@ export default function AddOwnOffering() {
     const dto: CreateOfferingDto = {
       price: Number(selectedClientType.price),
       userId: user.id,
-      barbershopId: activeEstablishment.id,
       establishmentId: activeEstablishment.id,
       clientOfferingTypeId: selectedClientType?.id || null,
       clientOfferingCategoryId: selectedCategory?.id || null,
