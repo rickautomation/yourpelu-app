@@ -6,7 +6,6 @@ import { apiPost } from "../lib/apiPost";
 import { apiPatch } from "../lib/apiPatch";
 import { apiDelete } from "../lib/apiDelete";
 
-// DTO que coincide con tu backend
 export type CreateOfferingDto = {
   price: number;
   userId: string;
@@ -16,11 +15,16 @@ export type CreateOfferingDto = {
   clientOfferingCategoryId?: string | null;
   paymentMethodId?: string | null;
 };
-// Tipo de respuesta mínima (podés ampliarlo según tu entidad Offering)
+
 export type Offering = {
   id: string;
   price: number;
-  // relaciones mínimas que quieras mostrar
+  createdAt?: string;
+  client?: { name: string; lastname: string };
+  clientOfferingType?: { name: string };
+  clientOfferingCategory?: { name: string };
+  paymentMethod?: { name: string };
+  // Agrega más relaciones según necesites mostrar en la tabla
 };
 
 export function useOfferingsCrud() {
@@ -28,12 +32,18 @@ export function useOfferingsCrud() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
-  // GET all
-  async function fetchOfferings() {
+  // GET all con soporte para filtros de fecha y establecimiento
+  async function fetchOfferings(establishmentId?: string, startDate?: string, endDate?: string) {
     setLoading(true);
     setError(null);
     try {
-      const data = await apiGet<Offering[]>("/offerings");
+      const params = new URLSearchParams();
+      if (establishmentId) params.append("establishmentId", establishmentId);
+      if (startDate) params.append("startDate", startDate);
+      if (endDate) params.append("endDate", endDate);
+
+      const query = params.toString() ? `?${params.toString()}` : "";
+      const data = await apiGet<Offering[]>(`/offerings${query}`);
       setOfferings(data);
     } catch (err: any) {
       setError(err);
@@ -48,7 +58,7 @@ export function useOfferingsCrud() {
     setError(null);
     try {
       const offering = await apiPost<Offering>("/offerings", dto);
-      setOfferings((prev) => [...prev, offering]);
+      setOfferings((prev) => [offering, ...prev]);
       return offering;
     } catch (err: any) {
       setError(err);
