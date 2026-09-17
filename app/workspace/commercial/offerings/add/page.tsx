@@ -9,6 +9,7 @@ import { useEstablishment } from "@/app/context/EstablishmentContext";
 import OfferingForm from "../components/OfferingForm";
 import { useRouter } from "next/navigation";
 import { FiPlusCircle, FiAlertCircle } from "react-icons/fi";
+import { FaWpforms } from "react-icons/fa";
 
 export type CreateOfferingDto = {
   price: number;
@@ -270,6 +271,13 @@ export default function AddOwnOffering() {
         loading={loading}
         submitting={submitting}
       />
+       <button
+        onClick={() => router.push("/workspace/commercial/offerings/history")}
+        className="fixed bottom-20 right-6 p-2 rounded-full bg-pink-600 hover:bg-pink-500 text-white shadow-lg shadow-pink-600/40 hover:scale-105 active:scale-95 transition-all duration-200 z-10"
+        aria-label="Agregar servicio"
+      >
+        <FaWpforms className="text-4xl" />
+      </button>
     </div>
   );
 }

@@ -24,7 +24,6 @@ const SchedulesSetup: React.FC<StepSevenProps> = ({ setStep }) => {
     4: "Jueves",
     5: "Viernes",
     6: "Sábado",
-    7: "Domingo",
     0: "Domingo",
   };
 

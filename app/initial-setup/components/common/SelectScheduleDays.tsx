@@ -116,7 +116,7 @@ const SelectScheduleDays: React.FC<StepSixProps> = ({ setStep, user }) => {
         Jueves: 4,
         Viernes: 5,
         Sábado: 6,
-        Domingo: 7,
+        Domingo: 0,
       };
 
       const days = selectedDays.map((d) => dayMap[d]);
