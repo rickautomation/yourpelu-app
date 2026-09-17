@@ -151,10 +151,10 @@ export default function AddOwnOffering() {
       userId: user.id,
       barbershopId: activeEstablishment.id,
       establishmentId: activeEstablishment.id,
-      clientOfferingTypeId: selectedClientType?.id || null,
-      clientOfferingCategoryId: selectedCategory?.id || null,
-      paymentMethodId: selectedPaymentMethod?.id || null,
-      clientId: selectedClient?.id || null,
+      clientOfferingTypeId: selectedClientType?.id || undefined,
+      clientOfferingCategoryId: selectedCategory?.id || undefined,
+      paymentMethodId: selectedPaymentMethod?.id || undefined,
+      clientId: selectedClient?.id || undefined,
     };
 
     try {
