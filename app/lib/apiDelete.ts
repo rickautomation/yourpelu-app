@@ -17,5 +17,7 @@ export async function apiDelete<T>(url: string): Promise<T> {
     throw new Error(msg);
   }
 
-  return res.json() as Promise<T>;
+  // 👇 Verificamos si la respuesta tiene contenido (por ejemplo, evita el error con status 204 No Content)
+  const text = await res.text();
+  return text ? (JSON.parse(text) as T) : (null as T);
 }

@@ -6,7 +6,7 @@ import { useOfferingsCrud } from "@/app/hooks/useOfferingsCrud";
 import DateRangePicker, {
   DateRange,
 } from "@/app/workspace/components/DateRangePicker";
-import { FiCalendar, FiTrash2, FiUser, FiTag, FiFolder } from "react-icons/fi";
+import { FiCalendar, FiTrash2, FiUser, FiTag, FiFolder, FiAlertTriangle } from "react-icons/fi";
 
 const formatCurrency = (amount: number | undefined) => {
   if (amount === undefined || amount === null) return "$ 0";
@@ -28,6 +28,10 @@ export default function OfferingsHistoryPage() {
   >("month");
   const [showCalendar, setShowCalendar] = useState<boolean>(false);
   const [customRange, setCustomRange] = useState<DateRange>({});
+
+  // Estados para el Modal de Confirmación de Borrado
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [offeringToDelete, setOfferingToDelete] = useState<string | null>(null);
 
   // Cálculo dinámico de fechas ISO
   const { startDate, endDate } = useMemo(() => {
@@ -116,16 +120,27 @@ export default function OfferingsHistoryPage() {
     };
   }, [rangeType, customRange]);
 
-  // Cada vez que cambie el establecimiento activo o las fechas, volvemos a buscar
+  // Recargar al cambiar establecimiento o fechas
   useEffect(() => {
     if (activeEstablishment?.id) {
       fetchOfferings(activeEstablishment.id, startDate, endDate);
     }
   }, [activeEstablishment?.id, startDate, endDate]);
 
-  const handleDelete = async (id: string) => {
-    if (confirm("¿Estás seguro de que deseas eliminar este registro?")) {
-      await deleteOffering(id);
+  const openDeleteModal = (id: string) => {
+    setOfferingToDelete(id);
+    setIsDeleteModalOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (offeringToDelete) {
+      await deleteOffering(offeringToDelete);
+      setIsDeleteModalOpen(false);
+      setOfferingToDelete(null);
+      // Volvemos a refrescar la lista por seguridad
+      if (activeEstablishment?.id) {
+        fetchOfferings(activeEstablishment.id, startDate, endDate);
+      }
     }
   };
 
@@ -177,7 +192,7 @@ export default function OfferingsHistoryPage() {
                 >
                   {/* Cabecera de la tarjeta: Fecha y Botón Borrar */}
                   <div className="flex items-center justify-between border-b border-white/5 pb-3">
-                    <span className="text-mdfont-medium text-gray-400">
+                    <span className="text-xs font-medium text-gray-400">
                       {off.createdAt
                         ? new Date(off.createdAt).toLocaleDateString("es-AR", {
                             day: "2-digit",
@@ -189,11 +204,11 @@ export default function OfferingsHistoryPage() {
                         : "Fecha no disponible"}
                     </span>
                     <button
-                      onClick={() => handleDelete(off.id)}
-                      className="border p-2 text-red-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors"
+                      onClick={() => openDeleteModal(off.id)}
+                      className="border border-white/10 p-2 text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors"
                       title="Eliminar registro"
                     >
-                      <FiTrash2 className="w-6 h-6" />
+                      <FiTrash2 className="w-5 h-5" />
                     </button>
                   </div>
 
@@ -236,6 +251,41 @@ export default function OfferingsHistoryPage() {
               ))}
             </div>
           )}
+        </div>
+      )}
+
+      {/* POPUP MODAL DE CONFIRMACIÓN */}
+      {isDeleteModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
+          <div className="bg-[#131b2e] border border-white/10 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center gap-3 text-rose-400">
+              <div className="p-3 bg-rose-500/10 rounded-xl border border-rose-500/20">
+                <FiAlertTriangle className="w-6 h-6" />
+              </div>
+              <h3 className="text-lg font-bold text-white">Eliminar registro</h3>
+            </div>
+            
+            <p className="text-sm text-gray-300">
+              ¿Estás seguro de que deseas eliminar este servicio del historial? Esta acción no se puede deshacer.
+            </p>
+
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setIsDeleteModalOpen(false)}
+                className="px-4 py-2 rounded-xl text-sm font-medium text-gray-300 hover:bg-white/5 transition-colors border border-white/10"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={confirmDelete}
+                className="px-4 py-2 rounded-xl text-sm font-medium bg-rose-600 text-white hover:bg-rose-500 transition-colors shadow-lg shadow-rose-600/20"
+              >
+                Sí, eliminar
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
