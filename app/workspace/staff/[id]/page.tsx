@@ -1,9 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { apiGet } from "@/app/lib/apiGet";
-import { apiPatch } from "@/app/lib/apiPatch";
+import { useStaffDetail } from "@/app/hooks/useStaffDetail";
 import {
   FiArrowLeft,
   FiMail,
@@ -12,47 +10,33 @@ import {
   FiCheck,
   FiX,
   FiBriefcase,
+  FiRepeat,
 } from "react-icons/fi";
-
-type WorkRelationAttribute = {
-  id: string;
-  name: string;
-  description?: string;
-};
-
-type WorkRelationType = {
-  id: string;
-  name: string;
-  description?: string;
-  attributes: WorkRelationAttribute[];
-};
-
-type WorkRelation = {
-  id: string;
-  amount?: number | null;
-  type: WorkRelationType;
-};
-
-type User = {
-  id: string;
-  name: string;
-  lastname: string;
-  rol: string;
-  phoneNumber: string;
-  email?: string;
-  userProfile?: { avatarUrl?: string };
-  workRelations?: WorkRelation[];
-};
+import { useState } from "react";
 
 export default function StaffDetailPage() {
   const params = useParams();
   const router = useRouter();
   const id = Array.isArray(params.id) ? params.id[0] : params.id;
+  
+  // Estado para controlar qué tarjeta/relación tiene abierto el popup actualmente
+  const [modalOpenId, setModalOpenId] = useState<string | null>(null);
 
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [editingAmountId, setEditingAmountId] = useState<string | null>(null);
-  const [newAmount, setNewAmount] = useState<number | null>(null);
+  const {
+    user,
+    loading,
+    availableTypes,
+    editingAmountId,
+    setEditingAmountId,
+    newAmount,
+    setNewAmount,
+    editingTypeId,
+    setEditingTypeId,
+    selectedNewTypeId,
+    setSelectedNewTypeId,
+    handleSaveAmount,
+    handleSaveType,
+  } = useStaffDetail(id);
 
   const getImageSrc = (url?: string) => {
     if (!url) return "";
@@ -94,33 +78,6 @@ export default function StaffDetailPage() {
         };
     }
   };
-
-  const handleSaveAmount = async (relationId: string) => {
-    try {
-      await apiPatch(`/work-relations/${relationId}`, { amount: newAmount });
-      const res = await apiGet<User>(`/user/${id}`);
-      setUser(res);
-      setEditingAmountId(null);
-      setNewAmount(null);
-    } catch (err) {
-      console.error("Error guardando comisión", err);
-    }
-  };
-
-  useEffect(() => {
-    if (!id) return;
-    const fetchUser = async () => {
-      try {
-        const res = await apiGet<User>(`/user/${id}`);
-        setUser(res);
-      } catch (err) {
-        console.error("Error cargando usuario", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchUser();
-  }, [id]);
 
   if (loading) {
     return (
@@ -197,38 +154,133 @@ export default function StaffDetailPage() {
       </div>
 
       {/* Relaciones de Trabajo / Esquema de Pago */}
-      {user.rol != "admin" && (
+      {user.rol !== "admin" && (
         <div className="space-y-4 p-2">
           <h2 className="text-sm font-semibold uppercase tracking-wider text-pink-400 flex items-center gap-2">
             <FiBriefcase className="text-base" />
-            <span>Relacion Laboral</span>
+            <span>Relación Laboral</span>
           </h2>
 
           {user.workRelations?.map((wr) => {
-            const isEditing = editingAmountId === wr.id;
+            const isEditingAmount = editingAmountId === wr.id;
             const hasAmount = wr.amount !== null && wr.amount !== undefined;
             const labels = getLabelByType(wr.type.name);
+            const isModalOpen = modalOpenId === wr.id;
 
             return (
               <div
                 key={wr.id}
                 className="bg-luminiBrandBlue border border-pink-600/30 p-5 rounded-2xl shadow-lg space-y-4"
               >
+                {/* Cabecera de la Relación */}
                 <div className="flex items-start justify-between gap-4 border-b border-pink-600/20 pb-3">
-                  <div>
-                    <h3 className="text-lg font-bold text-white">
-                      {capitalizeFirst(wr.type.name)}
-                    </h3>
-                    {wr.type.description && (
-                      <p className="text-xs text-gray-400 mt-0.5">
-                        {wr.type.description}
-                      </p>
-                    )}
+                  <div className="flex-1 flex items-center justify-between">
+                    <div>
+                      <h3 className="text-lg font-bold text-white">
+                        {capitalizeFirst(wr.type.name)}
+                      </h3>
+                      {wr.type.description && (
+                        <p className="text-xs text-gray-400 mt-0.5">
+                          {wr.type.description}
+                        </p>
+                      )}
+                    </div>
+                    <button
+                      onClick={() => {
+                        setEditingTypeId(wr.id);
+                        setSelectedNewTypeId(wr.type.id);
+                        setModalOpenId(wr.id); // Abre el popup/modal
+                      }}
+                      className="inline-flex items-center gap-1.5 text-md text-pink-400 hover:text-pink-300 bg-pink-500/10 border border-pink-500/20 px-3 py-1.5 rounded-xl transition-colors"
+                      title="Cambiar tipo de relación"
+                    >
+                      <FiRepeat className="text-sm" />
+                      <span>Cambiar</span>
+                    </button>
                   </div>
                 </div>
 
+                {/* MODAL / POPUP PARA SELECCIONAR NUEVO TIPO */}
+                {isModalOpen && (
+                  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-6">
+                    <div className="bg-darkBrandBlue border border-pink-500/40 rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-5 animate-in fade-in zoom-in-95 duration-200">
+                      
+                      {/* Cabecera del Popup */}
+                      <div className="flex items-center justify-between border-b border-pink-500/20 pb-3">
+                        <h3 className="text-base font-bold text-white flex items-center gap-2">
+                          <FiRepeat className="text-pink-400" />
+                          Cambiar Relación Laboral
+                        </h3>
+                        <button
+                          onClick={() => {
+                            setModalOpenId(null);
+                            setEditingTypeId(null);
+                            setSelectedNewTypeId("");
+                          }}
+                          className="text-gray-400 hover:text-white transition-colors p-1"
+                        >
+                          <FiX className="text-lg" />
+                        </button>
+                      </div>
+
+                      {/* Lista de opciones en el Popup */}
+                      <div className="space-y-2 max-h-60 overflow-y-auto pr-1">
+                        <label className="text-xs font-semibold text-gray-400 block uppercase tracking-wider mb-2">
+                          Selecciona una opción:
+                        </label>
+                        {availableTypes.map((t) => {
+                          const isSelected = selectedNewTypeId === t.id;
+                          return (
+                            <button
+                              key={t.id}
+                              type="button"
+                              onClick={() => {
+                                setSelectedNewTypeId(t.id);
+                              }}
+                              className={`w-full text-left px-4 py-3 rounded-xl text-sm transition-all flex items-center justify-between border ${
+                                isSelected
+                                  ? "bg-pink-600/20 text-pink-300 border-pink-500 font-semibold shadow-md"
+                                  : "bg-black/30 text-gray-200 border-pink-500/10 hover:bg-pink-600/10 hover:border-pink-500/30 hover:text-white"
+                              }`}
+                            >
+                              <span>{capitalizeFirst(t.name)}</span>
+                              {isSelected && (
+                                <FiCheck className="text-pink-400 text-base" />
+                              )}
+                            </button>
+                          );
+                        })}
+                      </div>
+
+                      {/* Botones de acción del Popup */}
+                      <div className="flex items-center gap-3 pt-2">
+                         <button
+                          onClick={() => {
+                            setModalOpenId(null);
+                            setEditingTypeId(null);
+                            setSelectedNewTypeId("");
+                          }}
+                          className="flex-1 inline-flex items-center justify-center gap-2 bg-gray-800 hover:bg-gray-700 text-gray-300 border border-gray-700 px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors"
+                        >
+                          Cancelar
+                        </button>
+                        <button
+                          onClick={() => {
+                            setModalOpenId(null);
+                            handleSaveType(wr.id); // Guarda el cambio seleccionado
+                          }}
+                          className="flex-1 inline-flex items-center justify-center gap-2 bg-pink-600 hover:bg-pink-500 text-white px-4 py-2.5 rounded-xl text-sm font-semibold transition-all shadow-lg shadow-pink-600/30"
+                        >
+                          <FiCheck className="text-base" /> Guardar
+                        </button>
+                      </div>
+
+                    </div>
+                  </div>
+                )}
+
                 {/* Bloque de Edición o Muestra de Monto */}
-                {isEditing ? (
+                {isEditingAmount ? (
                   <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-1">
                     <div className="flex-1">
                       <input
