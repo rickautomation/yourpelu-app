@@ -239,7 +239,7 @@ export default function OfferingsHistoryPage() {
                   </div>
 
                   {/* Cuerpo de la tarjeta: Detalles */}
-                  <div className="space-y-2 text-sm">
+                  <div className="space-y-1 text-sm">
                     <div className="flex items-center gap-2 text-gray-200">
                       <FiUser className="text-gray-400 shrink-0" />
                       <span className="font-medium truncate">
@@ -260,13 +260,6 @@ export default function OfferingsHistoryPage() {
                       <FiFolder className="text-gray-400 shrink-0" />
                       <span className="truncate">
                         {off.clientOfferingCategory?.name || "Sin categoría"}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-2 text-gray-300">
-                      <FiFolder className="text-gray-400 shrink-0" />
-                      <span className="truncate">
-                        {off.user?.name} {off.user?.lastname}
                       </span>
                     </div>
                   </div>

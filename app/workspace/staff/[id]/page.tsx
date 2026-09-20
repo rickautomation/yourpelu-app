@@ -3,7 +3,6 @@
 import { useParams, useRouter } from "next/navigation";
 import { useStaffDetail } from "@/app/hooks/useStaffDetail";
 import {
-  FiArrowLeft,
   FiMail,
   FiPhone,
   FiEdit3,
