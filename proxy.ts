@@ -1,6 +1,38 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
+// Función auxiliar para manejar la renovación del token
+async function handleTokenRefresh(request: NextRequest) {
+  const refresh = request.cookies.get("refresh_token")?.value;
+  if (!refresh) {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
+  try {
+    const resp = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/refresh`, {
+      method: "POST",
+      headers: {
+        cookie: `refresh_token=${refresh}`,
+      },
+    });
+
+    if (resp.ok) {
+      // Redirigimos a la misma URL para que la request se vuelva a ejecutar
+      // con las nuevas cookies ya establecidas en el cliente.
+      const response = NextResponse.redirect(request.url);
+      const setCookieHeader = resp.headers.get("set-cookie");
+      if (setCookieHeader) {
+        response.headers.set("set-cookie", setCookieHeader);
+      }
+      return response;
+    }
+  } catch {
+    // Si falla el fetch de refresh
+  }
+
+  return NextResponse.redirect(new URL("/login", request.url));
+}
+
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const hostname = request.headers.get("host") || "";
@@ -9,30 +41,7 @@ export async function proxy(request: NextRequest) {
 
   if (pathname.startsWith("/workspace")) {
     if (!token) {
-      const refresh = request.cookies.get("refresh_token")?.value;
-      if (refresh) {
-        try {
-          const resp = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/refresh`, {
-            method: "POST",
-            headers: {
-              cookie: `refresh_token=${refresh}`,
-            },
-          });
-
-          if (resp.ok) {
-            const response = NextResponse.next();
-            const setCookieHeader = resp.headers.get("set-cookie");
-            if (setCookieHeader) {
-              response.headers.set("set-cookie", setCookieHeader);
-            }
-            return response;
-          }
-        } catch {
-          return NextResponse.redirect(new URL("/login", request.url));
-        }
-      }
-
-      return NextResponse.redirect(new URL("/login", request.url));
+      return await handleTokenRefresh(request);
     }
 
     try {
@@ -41,28 +50,27 @@ export async function proxy(request: NextRequest) {
 
       switch (role) {
         case "user": {
-          // Si el usuario es 'user' y NO está en la ruta del setup, lo enviamos allí
           if (!pathname.startsWith("/initial-setup")) {
             return NextResponse.redirect(new URL("/initial-setup", request.url));
           }
           break;
         }
 
-        case "admin":
-          // Si un admin intenta entrar manualmente al setup inicial, lo enviamos a la raíz del workspace
+        case "admin": {
           if (pathname.startsWith("/workspace/initial-setup")) {
             return NextResponse.redirect(new URL("/workspace", request.url));
           }
           break;
+        }
 
-        case "manager":
+        case "manager": {
           if (pathname.startsWith("/workspace/admin-only") || pathname.startsWith("/workspace/initial-setup")) {
             return NextResponse.redirect(new URL("/unauthorized", request.url));
           }
           break;
+        }
 
         case "staff": {
-          console.log("payload", payload, role)
           if (pathname === "/workspace" || pathname === "/workspace/") {
             return NextResponse.redirect(new URL("/workspace/user-staff", request.url));
           }
@@ -88,29 +96,8 @@ export async function proxy(request: NextRequest) {
           return NextResponse.redirect(new URL("/unauthorized", request.url));
       }
     } catch {
-      const refresh = request.cookies.get("refresh_token")?.value;
-      if (refresh) {
-        try {
-          const resp = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/refresh`, {
-            method: "POST",
-            headers: {
-              cookie: `refresh_token=${refresh}`,
-            },
-          });
-
-          if (resp.ok) {
-            const response = NextResponse.next();
-            const setCookieHeader = resp.headers.get("set-cookie");
-            if (setCookieHeader) {
-              response.headers.set("set-cookie", setCookieHeader);
-            }
-            return response;
-          }
-        } catch {
-          return NextResponse.redirect(new URL("/login", request.url));
-        }
-      }
-      return NextResponse.redirect(new URL("/login", request.url));
+      // Si el token está mal formado (falla el atob o JSON.parse)
+      return await handleTokenRefresh(request);
     }
   }
 
@@ -140,6 +127,6 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!api|_next/static|_next/image|favicon.ico|.*\\.css$|.*\\.js$|.*\\.png$|.*\\.jpg$).*)",
+    "/((?!api|_next/static|_next/image|favicon.ico|.*\\.css$\vert{}.*\\.js$|.*\\.png$\vert{}.*\\.jpg$).*)",
   ],
 };
