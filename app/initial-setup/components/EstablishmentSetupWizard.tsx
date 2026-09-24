@@ -1,8 +1,8 @@
 "use client";
-import { useState, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useAuth } from "@/app/hooks/useAuth";
 import { WizardProvider } from "@/app/context/WizardContext";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import SelectEstablishmentType from "./common/SelectEstablishmentType";
 import EstablishmentCreationForm from "./common/EstablishmentCreationForm";
 import ActsStaffToggle from "./common/ActsStaffToggle";
@@ -10,14 +10,15 @@ import UploadLogo from "./common/UploadLogo";
 import BookingEnabled from "./common/BookingEnabled";
 import SelectScheduleDays from "./common/SelectScheduleDays";
 import SchedulesSetup from "./common/SchedulesSetup";
-import SchedulesConfirm from "./SchedulesConfirm";
+import SchedulesConfirm from "./common/SchedulesConfirm";
 import FinalStep from "./common/FinalStep";
+import TimeRangesConfirm from "./common/TimeRangesConfirm";
 
 interface WizardProps {
   onFinish?: () => void;
   userName: string;
   userId: string;
-  step?: number; // 👈 nuevo prop
+  step?: number;
   initialType?: string | null;
 }
 
@@ -29,20 +30,39 @@ export default function EstablishmentSetupWizard({
   onFinish,
 }: WizardProps) {
   const { user } = useAuth();
-
   const router = useRouter();
+  const searchParams = useSearchParams();
 
-  const [step, setStep] = useState(initialStep); // Si ya se está renderizando, salta al paso 2
+  // Estado sincronizado con la URL para soportar las flechas de navegación del navegador
+  const [step, setStep] = useState(initialStep);
+  const [selectedType, setSelectedType] = useState<string | null>(initialType ?? null);
 
-  const [selectedType, setSelectedType] = useState<string | null>(
-    initialType ?? null,
-  );
+  // Sincronizar el paso y el tipo cuando el usuario usa el botón "Atrás" o "Adelante" del navegador
+  useEffect(() => {
+    const stepParam = searchParams.get("step");
+    const typeParam = searchParams.get("type");
+
+    if (stepParam) {
+      const parsedStep = parseInt(stepParam, 10);
+      if (!isNaN(parsedStep) && parsedStep !== step) {
+        setStep(parsedStep);
+      }
+    } else if (!stepParam && step !== 0) {
+      setStep(0);
+    }
+
+    if (typeParam && typeParam !== selectedType) {
+      setSelectedType(typeParam);
+    }
+  }, [searchParams]);
 
   const sessionId = useMemo(() => {
     return typeof crypto.randomUUID === "function"
       ? crypto.randomUUID()
       : String(Date.now());
   }, []);
+
+  console.log("user: ", user);
 
   return (
     <WizardProvider>
@@ -82,7 +102,10 @@ export default function EstablishmentSetupWizard({
             </p>
 
             <button
-              onClick={() => setStep(1)}
+              onClick={() => {
+                setStep(1);
+                router.push("/initial-setup?step=1");
+              }}
               className="w-full sm:w-auto bg-pink-500 hover:bg-pink-600 text-white font-semibold px-8 py-3.5 rounded-xl shadow-lg shadow-pink-500/25 transition-all duration-200 active:scale-95 cursor-pointer"
             >
               Empezar
@@ -103,7 +126,7 @@ export default function EstablishmentSetupWizard({
           <EstablishmentCreationForm
             userId={user.id}
             sessionId={sessionId}
-            selectedType={selectedType} // 👈 ahora siempre es string
+            selectedType={selectedType}
             setStep={setStep}
           />
         )}
@@ -120,11 +143,13 @@ export default function EstablishmentSetupWizard({
           <SelectScheduleDays setStep={setStep} user={user} />
         )}
 
-        {step === 7 && user && <SchedulesSetup setStep={setStep} />}
+        {step === 7 && user && <SchedulesConfirm setStep={setStep} />}
 
-        {step === 8 && user && <SchedulesConfirm setStep={setStep} />}
+        {step === 8 && user && <SchedulesSetup setStep={setStep} />}
 
-        {step === 9 && user && <FinalStep />}
+        {step === 9 && user && <TimeRangesConfirm setStep={setStep} />}
+
+        {step === 10 && user && <FinalStep />}
       </div>
     </WizardProvider>
   );

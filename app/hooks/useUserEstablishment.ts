@@ -27,6 +27,7 @@ type Establishment = {
   slug: string;
   bookingLink?: string;
   workModel?: WorkModel | null;
+  schedules?: Schedule[];
 };
 
 type EstablishmentImage = { id: string; imageUrl: string };

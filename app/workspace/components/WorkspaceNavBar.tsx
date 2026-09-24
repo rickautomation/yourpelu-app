@@ -38,6 +38,8 @@ export default function Navbar({
 
   const router = useRouter();
 
+  console.log("actiie: ", activeEstablishment)
+
   // Ruta dinámicas según el rol
   const logoHref = user?.rol === "staff" ? "/workspace/user-staff" : "/workspace";
 
